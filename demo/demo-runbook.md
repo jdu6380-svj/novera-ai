@@ -7,7 +7,7 @@ Expected live duration: **3–5 minutes**. Use only the fictional files in `demo
 Complete this section before the timed demonstration:
 
 1. Run `node demo/validate-demo.mjs` and require a passing result.
-2. Open the protected DeepSeek Preview candidate and confirm `/api/v1/health` reports `ready`, a connected database, and `generation.provider=deepseek`.
+2. Open the protected Validation candidate and confirm `/api/v1/health` reports `status: "ready"`. The anonymous health response intentionally omits provider and dependency details.
 3. Require `PHASE6_STAGING_SMOKE_PASSED` and the interview evaluation report from the same release candidate before presenting the flow as live-validated. Otherwise label the run as a Demo or blocked Validation check.
 4. Open the Knowledge Workspace. Confirm it says `实时知识库`; stop if it says `演示数据模式`.
 

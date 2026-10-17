@@ -8,6 +8,17 @@ import { getPublicSupabaseKey } from "@/infrastructure/supabase/public-config";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function publicHealthResponse(status: "demo" | "ready" | "blocked", httpStatus: 200 | 503): Response {
+  return Response.json(
+    {
+      product: "Novera AI",
+      status,
+      checked_at: new Date().toISOString(),
+    },
+    { status: httpStatus, headers: { "cache-control": "no-store" } },
+  );
+}
+
 function configured(name: string): boolean {
   const value = process.env[name]?.trim();
   return Boolean(value && value !== "[SENSITIVE]");
@@ -38,26 +49,7 @@ async function withTimeout<T>(
 
 export async function GET(): Promise<Response> {
   if (isPublicDemoMode()) {
-    return Response.json(
-      {
-        product: "Novera AI",
-        status: "demo",
-        checked_at: new Date().toISOString(),
-        dependencies: {
-          environment: { configured: true, missing: [] },
-          database: { status: "not_checked", default_knowledge_base_ready: false },
-          embedding: { provider: "disabled", model: "disabled", model_version: null, dimensions: null, credential_configured: false },
-          generation: { provider: "disabled", model: "disabled", prompt_version: null, credential_configured: false },
-        },
-        data_classification: {
-          mode: "public_demo",
-          live_api: "Disabled in public Production.",
-          demo_corpus: "Fictional Asteria Workcloud portfolio data.",
-          fallback_ui: "Preset answers and Evidence only; no shared database writes.",
-        },
-      },
-      { status: 200, headers: { "cache-control": "no-store" } },
-    );
+    return publicHealthResponse("demo", 200);
   }
 
   const requiredVariables = [
@@ -79,8 +71,8 @@ export async function GET(): Promise<Response> {
   if (!getPublicSupabaseKey()) {
     missingVariables.push("NEXT_PUBLIC_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
   }
-  const embedding = getEmbeddingIdentityConfig();
-  const language = getLanguageModelIdentityConfig();
+  getEmbeddingIdentityConfig();
+  getLanguageModelIdentityConfig();
   let database: "connected" | "unavailable" | "not_checked" = "not_checked";
   let knowledgeBaseReady = false;
 
@@ -115,43 +107,5 @@ export async function GET(): Promise<Response> {
     database === "connected" &&
     knowledgeBaseReady;
 
-  return Response.json(
-    {
-      product: "Novera AI",
-      status: ready ? "ready" : "blocked",
-      checked_at: new Date().toISOString(),
-      dependencies: {
-        environment: {
-          configured: missingVariables.length === 0,
-          missing: missingVariables,
-        },
-        database: {
-          status: database,
-          default_knowledge_base_ready: knowledgeBaseReady,
-        },
-        embedding: {
-          provider: embedding.provider,
-          model: embedding.model,
-          model_version: embedding.modelVersion,
-          dimensions: embedding.dimensions,
-          credential_configured: configured(embeddingCredential),
-        },
-        generation: {
-          provider: language.provider,
-          model: language.model,
-          prompt_version: language.promptVersion,
-          credential_configured: configured(languageCredential),
-        },
-      },
-      data_classification: {
-        live_api: "Real Supabase and provider configuration when status is ready.",
-        demo_corpus: "Fictional Asteria Workcloud portfolio data.",
-        fallback_ui: "Clearly labelled demo mode; never evidence of a live RAG pass.",
-      },
-    },
-    {
-      status: ready ? 200 : 503,
-      headers: { "cache-control": "no-store" },
-    },
-  );
+  return publicHealthResponse(ready ? "ready" : "blocked", ready ? 200 : 503);
 }

@@ -475,7 +475,7 @@ upload
 
 Verified locally on October 17, 2026:
 
-- **165 passing tests across 37 files** (`npm test`);
+- **174 passing tests across 39 files** (`npm test`);
 - Demo integrity validation passed (`npm run demo:validate`); and
 - deterministic retrieval evaluation passed (`npm run eval:retrieval`).
 

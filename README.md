@@ -209,7 +209,7 @@ embedding → pgvector → READY → retrieval → QA Run → Claim → Evidence
 → metrics. It is excluded from the first public file set and was not run in this
 publication-preparation pass. The current local verification record is:
 
-- `npm test`: **170 tests across 38 files**;
+- `npm test`: **174 tests across 39 files**;
 - `npm run typecheck`: passed;
 - `npm run lint`: passed; and
 - `npm run build`: passed with Next.js 16.2.12.

@@ -27,7 +27,7 @@ Question → Task Understanding → retrieval → bounded context
 
 ## Local verification status — 2026-10-17
 
-In this local review, `npm test` passed with 165 tests across 37 files, `npm run demo:validate` passed with five documents, 14 supported questions, 4 knowledge-gap cases, and 36 evidence quotes, and `npm run eval:retrieval` passed for five deterministic fixture cases. These results do not establish staging or production behavior. Staging smoke, online Supabase/Vercel configuration, protected Preview behavior, and human user testing were not verified in this review. DOCX parsing is implemented and has parser unit coverage; end-to-end DOCX upload was not verified. Evidence previews expose verified quotes and locator metadata; an embedded document viewer is not implemented.
+In this local review, `npm test` passed with 174 tests across 39 files, `npm run demo:validate` passed with five documents, 14 supported questions, 4 knowledge-gap cases, and 36 evidence quotes, and `npm run eval:retrieval` passed for five deterministic fixture cases. These results do not establish staging or production behavior. Staging smoke, online Supabase/Vercel configuration, protected Preview behavior, and human user testing were not verified in this review. DOCX parsing is implemented and has parser unit coverage; end-to-end DOCX upload was not verified. Evidence previews expose verified quotes and locator metadata; an embedded document viewer is not implemented.
 
 ## Outcome and next gate
 
