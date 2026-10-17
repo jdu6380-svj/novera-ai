@@ -48,3 +48,4 @@ Insight logging is evidence capture only. It does not automatically edit documen
 ## Escalation path
 
 Customer Operations owns intake and first response. Product Platform owns confirmed product defects. Growth Product owns onboarding experiments. The on-call lead is the escalation point for S1 incidents and decides whether to open an incident channel.
+

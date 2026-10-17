@@ -42,3 +42,4 @@ Growth Product owns the rollout. Customer Success owns qualitative follow-up. Th
 ## Open questions
 
 The experiment does not identify which wording change drove the lift. A follow-up test should isolate role-mapping copy from the integration skip affordance. No conclusion should be drawn about ARR or customer-level profitability from this brief.
+

@@ -40,3 +40,4 @@ Kiteframe has the broadest native connector count in this snapshot, while RelayO
 Copperlane has the clearest documented combination of custom roles and scoped integration permissions. RelayOS offers custom roles only on Enterprise, so plan fit matters when permission design is a buying criterion.
 
 The brief does not compare implementation effort, uptime, security certifications, or total cost of ownership. Those topics require separate verified sources.
+
