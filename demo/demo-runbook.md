@@ -6,12 +6,12 @@ Expected live duration: **3–5 minutes**. Use only the fictional files in `demo
 
 Complete this section before the timed demonstration:
 
-1. Run `node demo/validate-demo.mjs` and require a passing result.
-2. Open the protected Validation candidate and confirm `/api/v1/health` reports `status: "ready"`. The anonymous health response intentionally omits provider and dependency details.
-3. Require `PHASE6_STAGING_SMOKE_PASSED` and the interview evaluation report from the same release candidate before presenting the flow as live-validated. Otherwise label the run as a Demo or blocked Validation check.
-4. Open the Knowledge Workspace. Confirm it says `实时知识库`; stop if it says `演示数据模式`.
+1. Run `node demo/validate-demo.mjs` and require a passing result. This is the public, local fixture check.
+2. For the public repository version, use the fictional corpus and describe the flow as a Demo unless a separately configured environment has been validated.
+3. A live Validation run requires a protected Preview, internal staging checks, and the matching internal evaluation records. Those commands and reports are not included in the public repository; do not present the flow as live-validated without that evidence.
+4. If a configured environment is available, open the Knowledge Workspace and label it accurately as `实时知识库` or `演示数据模式`.
 
-For a configured staging environment, `npm run smoke:phase6:staging` independently validates a temporary real upload → processing → embedding → retrieval → QA → Evidence → metrics path. It does not import this full portfolio corpus. If the local network cannot reach the protected Preview hostname, stop and record the network block rather than presenting the Demo snapshot as live evidence.
+The internal staging path validates temporary real upload → processing → embedding → retrieval → QA → Evidence → metrics. It does not import this full portfolio corpus. If the local network cannot reach the protected Preview hostname, stop and record the network block rather than presenting the Demo snapshot as live evidence.
 
 ## 2. Build READY knowledge
 
@@ -23,7 +23,7 @@ Before the timed demonstration, upload these five files from the **Add document*
 4. `demo/corpus/04-support-escalation-sop.md`
 5. `demo/corpus/05-competitor-comparison.md`
 
-The browser flow computes SHA-256, initializes a signed upload, writes to private Storage, completes the upload, and schedules processing. Wait until every document displays **Ready** before running questions. Do not upload `manifest.json`, this runbook, or `company-background.md` as knowledge sources.
+In a separately configured live environment, the browser flow computes SHA-256, initializes a signed upload, writes to private Storage, completes the upload, and schedules processing. Wait until every document displays **Ready** before running questions. This live upload path is not established by the public local fixture check. Do not upload `manifest.json`, this runbook, or `company-background.md` as knowledge sources.
 
 ## 3. Timed demo: supported analysis (2–3 minutes)
 
