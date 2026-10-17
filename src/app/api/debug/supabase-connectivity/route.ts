@@ -12,14 +12,9 @@ interface ResolvedAddress {
 }
 
 function isEnabled(): boolean {
-  const vercelEnvironment = process.env.VERCEL_ENV?.trim();
+  // Vercel system variables identify deployments regardless of their target environment.
+  if (process.env.VERCEL === "1" || process.env.VERCEL_ENV?.trim()) return false;
 
-  // Never expose this diagnostic route on a Vercel production deployment.
-  if (vercelEnvironment === "production") return false;
-  if (vercelEnvironment === "preview" || vercelEnvironment === "development") return true;
-  if (process.env.NODE_ENV === "development") return true;
-
-  // `next start` sets NODE_ENV=production locally. Keep that case opt-in.
   return process.env.SUPABASE_CONNECTIVITY_DEBUG === "1";
 }
 
