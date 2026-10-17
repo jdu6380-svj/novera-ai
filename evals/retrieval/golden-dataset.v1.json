@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0",
+  "datasetId": "novera-retrieval-golden-v1",
+  "corpusId": "novera-enterprise-knowledge-fixture-v1",
+  "description": "Phase 3 retrieval baseline covering every Task Understanding Layer intent against a curated enterprise-knowledge corpus.",
+  "createdAt": "2026-08-03T00:00:00.000Z",
+  "cases": [
+    {
+      "id": "qa-cancellation-reason",
+      "question": "企业客户取消订阅时最常提到的原因是什么？",
+      "taskType": "qa",
+      "topK": 5,
+      "expectedDocuments": [
+        {
+          "documentId": "fixture-doc-customer-feedback-h1",
+          "documentName": "客户反馈汇总 2026-H1"
+        }
+      ],
+      "expectedChunks": [
+        {
+          "chunkId": "fixture-chunk-feedback-cancellation",
+          "documentId": "fixture-doc-customer-feedback-h1",
+          "documentName": "客户反馈汇总 2026-H1",
+          "sectionPath": "4. 取消订阅反馈 > 主要原因"
+        }
+      ],
+      "tags": ["customer-feedback", "fact-retrieval"]
+    },
+    {
+      "id": "summary-q2-retention",
+      "question": "总结 Q2 用户留存报告的核心结论。",
+      "taskType": "summary",
+      "topK": 5,
+      "expectedDocuments": [
+        {
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告"
+        }
+      ],
+      "expectedChunks": [
+        {
+          "chunkId": "fixture-chunk-retention-executive-summary",
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告",
+          "sectionPath": "1. 执行摘要"
+        },
+        {
+          "chunkId": "fixture-chunk-retention-drivers",
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告",
+          "sectionPath": "3. 流失驱动因素 > 新用户激活"
+        }
+      ],
+      "tags": ["retention", "multi-chunk"]
+    },
+    {
+      "id": "analysis-first-week-churn",
+      "question": "分析新用户首周流失增加的主要原因。",
+      "taskType": "analysis",
+      "topK": 5,
+      "expectedDocuments": [
+        {
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告"
+        },
+        {
+          "documentId": "fixture-doc-customer-feedback-h1",
+          "documentName": "客户反馈汇总 2026-H1"
+        }
+      ],
+      "expectedChunks": [
+        {
+          "chunkId": "fixture-chunk-retention-drivers",
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告",
+          "sectionPath": "3. 流失驱动因素 > 新用户激活"
+        },
+        {
+          "chunkId": "fixture-chunk-feedback-onboarding",
+          "documentId": "fixture-doc-customer-feedback-h1",
+          "documentName": "客户反馈汇总 2026-H1",
+          "sectionPath": "2. 新用户反馈 > 首次使用"
+        }
+      ],
+      "tags": ["root-cause", "cross-document"]
+    },
+    {
+      "id": "compare-atlas-novadesk",
+      "question": "比较 Atlas 和 NovaDesk 在权限管理与集成能力上的差异。",
+      "taskType": "compare",
+      "topK": 5,
+      "expectedDocuments": [
+        {
+          "documentId": "fixture-doc-competitor-atlas-novadesk",
+          "documentName": "竞品分析：Atlas vs NovaDesk"
+        }
+      ],
+      "expectedChunks": [
+        {
+          "chunkId": "fixture-chunk-competitor-comparison-matrix",
+          "documentId": "fixture-doc-competitor-atlas-novadesk",
+          "documentName": "竞品分析：Atlas vs NovaDesk",
+          "sectionPath": "3. 能力对比 > 权限与集成矩阵"
+        }
+      ],
+      "tags": ["competitor", "comparison"]
+    },
+    {
+      "id": "recommend-trial-activation",
+      "question": "针对试用用户激活率下降，建议优先采取哪些行动？",
+      "taskType": "recommend",
+      "topK": 5,
+      "expectedDocuments": [
+        {
+          "documentId": "fixture-doc-adoption-strategy",
+          "documentName": "产品采用策略备忘录"
+        },
+        {
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告"
+        }
+      ],
+      "expectedChunks": [
+        {
+          "chunkId": "fixture-chunk-adoption-priorities",
+          "documentId": "fixture-doc-adoption-strategy",
+          "documentName": "产品采用策略备忘录",
+          "sectionPath": "2. 优先行动 > 试用期激活"
+        },
+        {
+          "chunkId": "fixture-chunk-retention-drivers",
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告",
+          "sectionPath": "3. 流失驱动因素 > 新用户激活"
+        }
+      ],
+      "tags": ["recommendation", "cross-document"]
+    }
+  ]
+}

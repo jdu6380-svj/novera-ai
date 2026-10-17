@@ -1,0 +1,2 @@
+-- Phase 1 deterministic records are created by migrations.
+-- Keep this file for local Supabase reset compatibility and future demo fixtures.

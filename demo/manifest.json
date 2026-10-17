@@ -1,0 +1,694 @@
+{
+  "schemaVersion": "1.0.0",
+  "datasetId": "novera-phase6-asteria-demo-v1",
+  "datasetRevision": 1,
+  "createdAt": "2026-08-04T00:00:00.000Z",
+  "company": {
+    "name": "Asteria Workcloud",
+    "product": "RelayOS",
+    "fictional": true,
+    "disclaimer": "Asteria Workcloud, RelayOS, every person, customer, competitor, metric, and event in this dataset is fictional and created only for a portfolio demonstration."
+  },
+  "uploadContract": {
+    "encoding": "utf-8",
+    "maxFileSizeBytes": 20971520,
+    "selectedFormat": "markdown",
+    "selectedMimeType": "text/markdown",
+    "supportedExtensions": ["pdf", "md", "markdown", "txt"],
+    "notes": [
+      "The demo corpus uses Markdown because the current parser preserves ATX heading hierarchy and one-based line locators.",
+      "Fixture document IDs are stable manifest identifiers; ingestion generates real document and chunk UUIDs."
+    ]
+  },
+  "documents": [
+    {
+      "order": 1,
+      "fixtureDocumentId": "asteria-retention-q2-2026",
+      "path": "corpus/01-q2-retention-review.md",
+      "filename": "01-q2-retention-review.md",
+      "mimeType": "text/markdown",
+      "sizeBytes": 3449,
+      "contentSha256": "394ec21e2ea380db620d0c18df9cd8b54e4ca8a3af8f8f4659468f415549e68d",
+      "expectedTitle": "Asteria Workcloud — Q2 2026 Customer Retention Review",
+      "purpose": "Defines the retention decline, activation signal, coded churn reasons, segment pattern, and analytical limits."
+    },
+    {
+      "order": 2,
+      "fixtureDocumentId": "asteria-onboarding-experiment-2026-06",
+      "path": "corpus/02-onboarding-experiment-brief.md",
+      "filename": "02-onboarding-experiment-brief.md",
+      "mimeType": "text/markdown",
+      "sizeBytes": 2358,
+      "contentSha256": "25a036ca0ff9f345b468689b26170d467eac5645afe5604318191aced07c22f2",
+      "expectedTitle": "Asteria Workcloud — Guided Onboarding Experiment Brief",
+      "purpose": "Defines a controlled onboarding treatment, observed activation lift, rollout recommendation, guardrails, and retention limitation."
+    },
+    {
+      "order": 3,
+      "fixtureDocumentId": "asteria-relayos-release-notes-v3-8",
+      "path": "corpus/03-product-release-notes.md",
+      "filename": "03-product-release-notes.md",
+      "mimeType": "text/markdown",
+      "sizeBytes": 2191,
+      "contentSha256": "0141117b2824645e5113aeef03706a2b88a1702435ace6d06244124469057b1b",
+      "expectedTitle": "RelayOS Product Release Notes: v3.8 and v3.8.2",
+      "purpose": "Documents the April role-mapping change, related support signal, July clarity fixes, and directional follow-up."
+    },
+    {
+      "order": 4,
+      "fixtureDocumentId": "asteria-support-escalation-sop-2026",
+      "path": "corpus/04-support-escalation-sop.md",
+      "filename": "04-support-escalation-sop.md",
+      "mimeType": "text/markdown",
+      "sizeBytes": 2657,
+      "contentSha256": "3d4c7a7ac3541fbb9bf39ec6ac4cf0e44410a7ff13d2e89c92c77fa86b78f175",
+      "expectedTitle": "RelayOS Support Escalation SOP",
+      "purpose": "Defines severity, response targets, required source evidence, ownership, and lightweight Knowledge Insight logging."
+    },
+    {
+      "order": 5,
+      "fixtureDocumentId": "asteria-competitor-brief-2026-07",
+      "path": "corpus/05-competitor-comparison.md",
+      "filename": "05-competitor-comparison.md",
+      "mimeType": "text/markdown",
+      "sizeBytes": 2285,
+      "contentSha256": "be56ae55466648ae204a2fc2ba36eb81e45d83c052bec6360569356a58d8caff",
+      "expectedTitle": "Fictional Competitor Brief: RelayOS, Kiteframe, and Copperlane",
+      "purpose": "Provides a bounded comparison of fictional permission, SSO, integration, API, and audit-log capabilities."
+    }
+  ],
+  "typicalQuestions": [
+    {
+      "id": "qa-activation-definition",
+      "taskType": "qa",
+      "question": "What activation event does the Q2 retention review use, and how did the rate change?",
+      "expectedOutcome": "supported",
+      "expectedDocuments": ["asteria-retention-q2-2026"],
+      "expectedAnswerPoints": [
+        "Activation is the first workflow published within 48 hours of workspace creation.",
+        "The April–June cohort reached 52%, down from the 68% January–March baseline.",
+        "The event is a leading indicator rather than a substitute for retention."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-retention-q2-2026",
+          "sectionPath": [
+            "Asteria Workcloud — Q2 2026 Customer Retention Review",
+            "Activation funnel"
+          ],
+          "quote": "The activation event is “first workflow published within 48 hours of workspace creation.” It is a leading indicator, not a retention substitute. In the April–June cohort, 52% of eligible workspaces reached the event, down from 68% in the January–March baseline.",
+          "locator": { "lineStart": 30, "lineEnd": 30 }
+        }
+      ]
+    },
+    {
+      "id": "summary-q2-retention",
+      "taskType": "summary",
+      "question": "Summarize the Q2 2026 retention review and its main limitations.",
+      "expectedOutcome": "supported",
+      "expectedDocuments": ["asteria-retention-q2-2026"],
+      "expectedAnswerPoints": [
+        "April cohort 90-day paid-logo retention was 84%, compared with a 91% January–March average.",
+        "First-week activation fell from 68% to 52%.",
+        "Setup confusion was the largest coded reason, but the review does not prove release causation."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-retention-q2-2026",
+          "sectionPath": [
+            "Asteria Workcloud — Q2 2026 Customer Retention Review",
+            "Executive summary"
+          ],
+          "quote": "The April 2026 trial-to-paid cohort reached 84% 90-day paid-logo retention, compared with a 91% average for the January–March 2026 cohorts.",
+          "locator": { "lineStart": 22, "lineEnd": 22 }
+        },
+        {
+          "documentFixtureId": "asteria-retention-q2-2026",
+          "sectionPath": [
+            "Asteria Workcloud — Q2 2026 Customer Retention Review",
+            "Executive summary"
+          ],
+          "quote": "First-week activation fell from 68% in the January–March 2026 baseline to 52% in the April–June 2026 cohort.",
+          "locator": { "lineStart": 24, "lineEnd": 24 }
+        },
+        {
+          "documentFixtureId": "asteria-retention-q2-2026",
+          "sectionPath": [
+            "Asteria Workcloud — Q2 2026 Customer Retention Review",
+            "Churn evidence",
+            "Coded reasons"
+          ],
+          "quote": "Among 126 coded churn interviews and support tickets, 44% cited onboarding setup confusion, 31% cited delayed integration setup, 15% cited the 10-seat minimum, and 10% cited other reasons.",
+          "locator": { "lineStart": 38, "lineEnd": 38 }
+        }
+      ]
+    },
+    {
+      "id": "analysis-early-retention-decline",
+      "taskType": "analysis",
+      "question": "Analyze why early retention declined and separate strong evidence from directional signals.",
+      "expectedOutcome": "supported",
+      "expectedDocuments": [
+        "asteria-retention-q2-2026",
+        "asteria-relayos-release-notes-v3-8",
+        "asteria-onboarding-experiment-2026-06"
+      ],
+      "expectedAnswerPoints": [
+        "Activation and retention declined in the same period.",
+        "Setup confusion was the largest coded churn reason and non-activation was associated with 3.2x cancellation risk.",
+        "The mandatory role-mapping step and support language provide a plausible mechanism, not sole-cause proof.",
+        "The controlled onboarding experiment improved the leading indicator but is not mature enough for a retention claim."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-retention-q2-2026",
+          "sectionPath": [
+            "Asteria Workcloud — Q2 2026 Customer Retention Review",
+            "Churn evidence",
+            "Coded reasons"
+          ],
+          "quote": "Among 126 coded churn interviews and support tickets, 44% cited onboarding setup confusion, 31% cited delayed integration setup, 15% cited the 10-seat minimum, and 10% cited other reasons.",
+          "locator": { "lineStart": 38, "lineEnd": 38 }
+        },
+        {
+          "documentFixtureId": "asteria-retention-q2-2026",
+          "sectionPath": [
+            "Asteria Workcloud — Q2 2026 Customer Retention Review",
+            "Churn evidence",
+            "Segment pattern"
+          ],
+          "quote": "Trial workspaces that did not publish a first workflow within 48 hours were 3.2 times more likely to cancel within 90 days than workspaces that did.",
+          "locator": { "lineStart": 44, "lineEnd": 44 }
+        },
+        {
+          "documentFixtureId": "asteria-relayos-release-notes-v3-8",
+          "sectionPath": [
+            "RelayOS Product Release Notes: v3.8 and v3.8.2",
+            "v3.8 — 2026-04-08",
+            "Role mapping change"
+          ],
+          "quote": "RelayOS v3.8 made role mapping mandatory before a workspace could publish its first workflow. The change was introduced to ensure that the workflow owner had least-privilege access before execution.",
+          "locator": { "lineStart": 22, "lineEnd": 22 }
+        },
+        {
+          "documentFixtureId": "asteria-relayos-release-notes-v3-8",
+          "sectionPath": [
+            "RelayOS Product Release Notes: v3.8 and v3.8.2",
+            "v3.8 — 2026-04-08",
+            "Early support signal"
+          ],
+          "quote": "The most common exact customer wording in the coded sample was: “I don't know which role to choose.”",
+          "locator": { "lineStart": 30, "lineEnd": 30 }
+        },
+        {
+          "documentFixtureId": "asteria-onboarding-experiment-2026-06",
+          "sectionPath": [
+            "Asteria Workcloud — Guided Onboarding Experiment Brief",
+            "Observed results"
+          ],
+          "quote": "The guided flow increased first-workflow publication within 48 hours from 51% in control to 67% in treatment, a 16 percentage-point lift.",
+          "locator": { "lineStart": 28, "lineEnd": 28 }
+        },
+        {
+          "documentFixtureId": "asteria-onboarding-experiment-2026-06",
+          "sectionPath": [
+            "Asteria Workcloud — Guided Onboarding Experiment Brief",
+            "Observed results"
+          ],
+          "quote": "The sample is not mature enough to claim a 30-day or 90-day retention effect. Retention should remain a follow-up metric after the cohort completes the observation window.",
+          "locator": { "lineStart": 34, "lineEnd": 34 }
+        }
+      ]
+    },
+    {
+      "id": "compare-permissions-integrations",
+      "taskType": "compare",
+      "question": "Compare RelayOS, Kiteframe, and Copperlane on permissions and integration options.",
+      "expectedOutcome": "supported",
+      "expectedDocuments": ["asteria-competitor-brief-2026-07"],
+      "expectedAnswerPoints": [
+        "RelayOS offers custom roles on Enterprise, 14 native integrations, webhooks, and a public API.",
+        "Kiteframe has fixed roles only and 27 native integrations, but no public write API was found in the notes.",
+        "Copperlane has custom role templates, scoped integration permissions, 9 native integrations, and a public API.",
+        "The comparison is directional and excludes cost, uptime, implementation effort, and security certification."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-competitor-brief-2026-07",
+          "sectionPath": [
+            "Fictional Competitor Brief: RelayOS, Kiteframe, and Copperlane",
+            "Permissions and integrations",
+            "RelayOS (Asteria Workcloud)"
+          ],
+          "quote": "RelayOS provides fixed workspace roles on every plan and custom roles on the fictional Enterprise plan. SAML SSO is available on Business and Enterprise plans. The catalog lists 14 native integrations, plus webhooks and a public API. The audit log retains events for 365 days on Enterprise.",
+          "locator": { "lineStart": 26, "lineEnd": 26 }
+        },
+        {
+          "documentFixtureId": "asteria-competitor-brief-2026-07",
+          "sectionPath": [
+            "Fictional Competitor Brief: RelayOS, Kiteframe, and Copperlane",
+            "Permissions and integrations",
+            "Kiteframe"
+          ],
+          "quote": "Kiteframe provides fixed roles only. SAML SSO is listed on its fictional Enterprise plan. The catalog lists 27 native integrations and webhooks, but the notes did not find a public write API. The audit log retention listed in the notes is 90 days.",
+          "locator": { "lineStart": 30, "lineEnd": 30 }
+        },
+        {
+          "documentFixtureId": "asteria-competitor-brief-2026-07",
+          "sectionPath": [
+            "Fictional Competitor Brief: RelayOS, Kiteframe, and Copperlane",
+            "Permissions and integrations",
+            "Copperlane"
+          ],
+          "quote": "Copperlane provides custom role templates and scoped integration permissions. SAML SSO is listed on all paid plans. The catalog lists 9 native integrations plus a public API. The audit log retention listed in the notes is 365 days.",
+          "locator": { "lineStart": 34, "lineEnd": 34 }
+        },
+        {
+          "documentFixtureId": "asteria-competitor-brief-2026-07",
+          "sectionPath": [
+            "Fictional Competitor Brief: RelayOS, Kiteframe, and Copperlane",
+            "Comparison interpretation"
+          ],
+          "quote": "Kiteframe has the broadest native connector count in this snapshot, while RelayOS and Copperlane expose a public API for bespoke integrations.",
+          "locator": { "lineStart": 38, "lineEnd": 38 }
+        }
+      ]
+    },
+    {
+      "id": "recommend-trial-activation",
+      "taskType": "recommend",
+      "question": "What should Asteria prioritize next to improve trial activation without overstating the evidence?",
+      "expectedOutcome": "supported",
+      "expectedDocuments": [
+        "asteria-onboarding-experiment-2026-06",
+        "asteria-relayos-release-notes-v3-8",
+        "asteria-retention-q2-2026"
+      ],
+      "expectedAnswerPoints": [
+        "Use the 50% guided-flow rollout with a retained control holdout.",
+        "Keep the clearer role label, examples, Back action, and sandbox integration skip path.",
+        "Monitor activation weekly and wait for mature retention data before claiming a retention effect.",
+        "Pause rollout if conversion, integration errors, or support-volume guardrails regress."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-onboarding-experiment-2026-06",
+          "sectionPath": [
+            "Asteria Workcloud — Guided Onboarding Experiment Brief",
+            "Rollout recommendation"
+          ],
+          "quote": "Roll out the guided flow to 50% of new trials starting July 15, 2026, while retaining a control holdout. Review first-workflow publication weekly and review 30-day retention after the cohort matures.",
+          "locator": { "lineStart": 38, "lineEnd": 38 }
+        },
+        {
+          "documentFixtureId": "asteria-relayos-release-notes-v3-8",
+          "sectionPath": [
+            "RelayOS Product Release Notes: v3.8 and v3.8.2",
+            "v3.8.2 — 2026-07-02",
+            "Clarity fixes"
+          ],
+          "quote": "Version 3.8.2 changed the label “Execution principal” to “Connection role,” added one example for each role, and restored a Back action from the selector to the workflow setup step.",
+          "locator": { "lineStart": 36, "lineEnd": 36 }
+        },
+        {
+          "documentFixtureId": "asteria-retention-q2-2026",
+          "sectionPath": [
+            "Asteria Workcloud — Q2 2026 Customer Retention Review",
+            "Churn evidence",
+            "Segment pattern"
+          ],
+          "quote": "Trial workspaces that did not publish a first workflow within 48 hours were 3.2 times more likely to cancel within 90 days than workspaces that did.",
+          "locator": { "lineStart": 44, "lineEnd": 44 }
+        }
+      ]
+    },
+    {
+      "id": "qa-support-s1-response",
+      "taskType": "qa",
+      "question": "What is the S1 initial response target, and what does that target promise?",
+      "expectedOutcome": "supported",
+      "expectedDocuments": ["asteria-support-escalation-sop-2026"],
+      "expectedAnswerPoints": [
+        "S1 must be acknowledged within 15 minutes, 24 hours a day.",
+        "The target is an initial human acknowledgement, not a resolution commitment."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-support-escalation-sop-2026",
+          "sectionPath": [
+            "RelayOS Support Escalation SOP",
+            "Severity and response targets",
+            "Initial response targets"
+          ],
+          "quote": "- S1: acknowledge within 15 minutes, 24 hours a day.",
+          "locator": { "lineStart": 29, "lineEnd": 29 }
+        },
+        {
+          "documentFixtureId": "asteria-support-escalation-sop-2026",
+          "sectionPath": [
+            "RelayOS Support Escalation SOP",
+            "Severity and response targets",
+            "Initial response targets"
+          ],
+          "quote": "The target is an initial human acknowledgement, not a promise to resolve the issue within that interval. The on-call lead may reclassify severity when impact changes.",
+          "locator": { "lineStart": 34, "lineEnd": 34 }
+        }
+      ]
+    },
+    {
+      "id": "qa-knowledge-insight-policy",
+      "taskType": "qa",
+      "question": "When should the support team create a Knowledge Insight Log entry, and does the log automatically train the system?",
+      "expectedOutcome": "supported",
+      "expectedDocuments": ["asteria-support-escalation-sop-2026"],
+      "expectedAnswerPoints": [
+        "Log recurring questions, unsupported questions, and low-confidence QA answers.",
+        "The log is evidence capture only and does not automatically edit documents, embeddings, or generation inputs."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-support-escalation-sop-2026",
+          "sectionPath": [
+            "RelayOS Support Escalation SOP",
+            "Knowledge insight logging"
+          ],
+          "quote": "Create a Knowledge Insight Log entry when a user asks a recurring question, when the knowledge base cannot support an answer, or when a QA answer receives a low-confidence score. Record the question, affected workflow, source documents consulted, confidence or missing evidence, and a proposed documentation owner.",
+          "locator": { "lineStart": 44, "lineEnd": 44 }
+        },
+        {
+          "documentFixtureId": "asteria-support-escalation-sop-2026",
+          "sectionPath": [
+            "RelayOS Support Escalation SOP",
+            "Knowledge insight logging"
+          ],
+          "quote": "Insight logging is evidence capture only. It does not automatically edit documents, change embeddings, or feed an unreviewed answer back into generation.",
+          "locator": { "lineStart": 46, "lineEnd": 46 }
+        }
+      ]
+    },
+    {
+      "id": "qa-experiment-sample",
+      "taskType": "qa",
+      "question": "How was the guided onboarding experiment assigned, and how large was each group?",
+      "expectedOutcome": "supported",
+      "expectedDocuments": ["asteria-onboarding-experiment-2026-06"],
+      "expectedAnswerPoints": [
+        "The experiment ran from June 10 through June 24, 2026.",
+        "420 eligible trial workspaces were randomly assigned.",
+        "Control and guided onboarding each had 210 workspaces."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-onboarding-experiment-2026-06",
+          "sectionPath": [
+            "Asteria Workcloud — Guided Onboarding Experiment Brief",
+            "Experiment design"
+          ],
+          "quote": "Between June 10 and June 24, 2026, 420 eligible trial workspaces were randomly assigned to a control group or a guided onboarding group, 210 workspaces per group.",
+          "locator": { "lineStart": 20, "lineEnd": 20 }
+        }
+      ]
+    },
+    {
+      "id": "qa-release-role-tickets",
+      "taskType": "qa",
+      "question": "What support signal followed the v3.8 role-mapping change?",
+      "expectedOutcome": "supported",
+      "expectedDocuments": ["asteria-relayos-release-notes-v3-8"],
+      "expectedAnswerPoints": [
+        "Customer Success tagged 73 role-mapping onboarding tickets.",
+        "41 tickets asked which role to choose.",
+        "The most common wording was that the user did not know which role to choose."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-relayos-release-notes-v3-8",
+          "sectionPath": [
+            "RelayOS Product Release Notes: v3.8 and v3.8.2",
+            "v3.8 — 2026-04-08",
+            "Early support signal"
+          ],
+          "quote": "From April 9 through May 31, Customer Success tagged 73 onboarding tickets as role-mapping related. Forty-one of those tickets asked which role to choose; the remaining tickets asked how to return to the prior setup step.",
+          "locator": { "lineStart": 28, "lineEnd": 28 }
+        },
+        {
+          "documentFixtureId": "asteria-relayos-release-notes-v3-8",
+          "sectionPath": [
+            "RelayOS Product Release Notes: v3.8 and v3.8.2",
+            "v3.8 — 2026-04-08",
+            "Early support signal"
+          ],
+          "quote": "The most common exact customer wording in the coded sample was: “I don't know which role to choose.”",
+          "locator": { "lineStart": 30, "lineEnd": 30 }
+        }
+      ]
+    },
+    {
+      "id": "qa-escalation-evidence",
+      "taskType": "qa",
+      "question": "What evidence is required for an S1–S3 escalation, and how should uncertainty be recorded?",
+      "expectedOutcome": "supported",
+      "expectedDocuments": ["asteria-support-escalation-sop-2026"],
+      "expectedAnswerPoints": [
+        "Capture workspace ID, workflow, impact, UTC timestamps, reproduction steps, last known good behavior, and relevant screenshots or request IDs.",
+        "Redact access tokens, customer secrets, and personal data.",
+        "Record exact uncertainty when an issue cannot be reproduced."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-support-escalation-sop-2026",
+          "sectionPath": [
+            "RelayOS Support Escalation SOP",
+            "Required evidence capture"
+          ],
+          "quote": "Every S1–S3 escalation must include the workspace ID, affected workflow, user impact, UTC timestamps, reproduction steps, last known good behavior, and relevant screenshots or request IDs. Redact access tokens, customer secrets, and personal data before adding an attachment.",
+          "locator": { "lineStart": 38, "lineEnd": 38 }
+        },
+        {
+          "documentFixtureId": "asteria-support-escalation-sop-2026",
+          "sectionPath": [
+            "RelayOS Support Escalation SOP",
+            "Required evidence capture"
+          ],
+          "quote": "The escalation owner must link the related release version and identify whether the issue is reproducible in a sandbox workspace. If the issue cannot be reproduced, record the exact uncertainty instead of filling the field with an assumption.",
+          "locator": { "lineStart": 40, "lineEnd": 40 }
+        }
+      ]
+    },
+    {
+      "id": "analysis-v382-signal-strength",
+      "taskType": "analysis",
+      "question": "Did v3.8.2 resolve the onboarding problem, and how strong is the evidence?",
+      "expectedOutcome": "supported",
+      "expectedDocuments": [
+        "asteria-relayos-release-notes-v3-8",
+        "asteria-onboarding-experiment-2026-06"
+      ],
+      "expectedAnswerPoints": [
+        "v3.8.2 clarified role language, restored navigation, and added a sandbox skip path.",
+        "Role-mapping abandonment fell from 34% to 19% in the first seven days.",
+        "That release observation is directional, while the experiment is controlled but not mature enough for a retention claim."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-relayos-release-notes-v3-8",
+          "sectionPath": [
+            "RelayOS Product Release Notes: v3.8 and v3.8.2",
+            "v3.8.2 — 2026-07-02",
+            "Clarity fixes"
+          ],
+          "quote": "Version 3.8.2 changed the label “Execution principal” to “Connection role,” added one example for each role, and restored a Back action from the selector to the workflow setup step.",
+          "locator": { "lineStart": 36, "lineEnd": 36 }
+        },
+        {
+          "documentFixtureId": "asteria-relayos-release-notes-v3-8",
+          "sectionPath": [
+            "RelayOS Product Release Notes: v3.8 and v3.8.2",
+            "v3.8.2 — 2026-07-02",
+            "Clarity fixes"
+          ],
+          "quote": "During the first seven days after release, abandonment at the role-mapping step moved from 34% to 19%. This is an early directional signal, not a controlled experiment.",
+          "locator": { "lineStart": 40, "lineEnd": 40 }
+        },
+        {
+          "documentFixtureId": "asteria-onboarding-experiment-2026-06",
+          "sectionPath": [
+            "Asteria Workcloud — Guided Onboarding Experiment Brief",
+            "Observed results"
+          ],
+          "quote": "The sample is not mature enough to claim a 30-day or 90-day retention effect. Retention should remain a follow-up metric after the cohort completes the observation window.",
+          "locator": { "lineStart": 34, "lineEnd": 34 }
+        }
+      ]
+    },
+    {
+      "id": "compare-sso-audit-retention",
+      "taskType": "compare",
+      "question": "Compare RelayOS, Kiteframe, and Copperlane on SAML SSO and audit-log retention.",
+      "expectedOutcome": "supported",
+      "expectedDocuments": ["asteria-competitor-brief-2026-07"],
+      "expectedAnswerPoints": [
+        "RelayOS lists SAML on Business and Enterprise and 365-day audit retention on Enterprise.",
+        "Kiteframe lists SAML on Enterprise and 90-day audit retention.",
+        "Copperlane lists SAML on all paid plans and 365-day audit retention."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-competitor-brief-2026-07",
+          "sectionPath": [
+            "Fictional Competitor Brief: RelayOS, Kiteframe, and Copperlane",
+            "Permissions and integrations",
+            "RelayOS (Asteria Workcloud)"
+          ],
+          "quote": "RelayOS provides fixed workspace roles on every plan and custom roles on the fictional Enterprise plan. SAML SSO is available on Business and Enterprise plans. The catalog lists 14 native integrations, plus webhooks and a public API. The audit log retains events for 365 days on Enterprise.",
+          "locator": { "lineStart": 26, "lineEnd": 26 }
+        },
+        {
+          "documentFixtureId": "asteria-competitor-brief-2026-07",
+          "sectionPath": [
+            "Fictional Competitor Brief: RelayOS, Kiteframe, and Copperlane",
+            "Permissions and integrations",
+            "Kiteframe"
+          ],
+          "quote": "Kiteframe provides fixed roles only. SAML SSO is listed on its fictional Enterprise plan. The catalog lists 27 native integrations and webhooks, but the notes did not find a public write API. The audit log retention listed in the notes is 90 days.",
+          "locator": { "lineStart": 30, "lineEnd": 30 }
+        },
+        {
+          "documentFixtureId": "asteria-competitor-brief-2026-07",
+          "sectionPath": [
+            "Fictional Competitor Brief: RelayOS, Kiteframe, and Copperlane",
+            "Permissions and integrations",
+            "Copperlane"
+          ],
+          "quote": "Copperlane provides custom role templates and scoped integration permissions. SAML SSO is listed on all paid plans. The catalog lists 9 native integrations plus a public API. The audit log retention listed in the notes is 365 days.",
+          "locator": { "lineStart": 34, "lineEnd": 34 }
+        }
+      ]
+    },
+    {
+      "id": "recommend-onboarding-monitoring",
+      "taskType": "recommend",
+      "question": "Which onboarding signals should Product monitor, and what operational evidence should Support attach when a regression appears?",
+      "expectedOutcome": "supported",
+      "expectedDocuments": [
+        "asteria-relayos-release-notes-v3-8",
+        "asteria-support-escalation-sop-2026"
+      ],
+      "expectedAnswerPoints": [
+        "Monitor first-workflow publication, role-mapping abandonment, integration errors, and onboarding help requests.",
+        "Attach impact, timestamps, reproduction steps, last known good behavior, screenshots or request IDs.",
+        "Redact secrets and personal data."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-relayos-release-notes-v3-8",
+          "sectionPath": [
+            "RelayOS Product Release Notes: v3.8 and v3.8.2",
+            "Follow-up measurement"
+          ],
+          "quote": "Product Analytics will monitor first-workflow publication within 48 hours, role-mapping abandonment, integration errors, and onboarding help requests. The guided onboarding experiment is the controlled source for treatment-versus-control results.",
+          "locator": { "lineStart": 44, "lineEnd": 44 }
+        },
+        {
+          "documentFixtureId": "asteria-support-escalation-sop-2026",
+          "sectionPath": [
+            "RelayOS Support Escalation SOP",
+            "Required evidence capture"
+          ],
+          "quote": "Every S1–S3 escalation must include the workspace ID, affected workflow, user impact, UTC timestamps, reproduction steps, last known good behavior, and relevant screenshots or request IDs. Redact access tokens, customer secrets, and personal data before adding an attachment.",
+          "locator": { "lineStart": 38, "lineEnd": 38 }
+        }
+      ]
+    },
+    {
+      "id": "summary-competitor-boundaries",
+      "taskType": "summary",
+      "question": "Summarize the competitor brief's decision boundaries and missing comparison areas.",
+      "expectedOutcome": "supported",
+      "expectedDocuments": ["asteria-competitor-brief-2026-07"],
+      "expectedAnswerPoints": [
+        "The research is directional and is not an independent security audit.",
+        "It should not be used as a pricing or procurement commitment.",
+        "Implementation effort, uptime, certifications, and total cost require separate verified sources."
+      ],
+      "expectedEvidence": [
+        {
+          "documentFixtureId": "asteria-competitor-brief-2026-07",
+          "sectionPath": [
+            "Fictional Competitor Brief: RelayOS, Kiteframe, and Copperlane",
+            "Research note"
+          ],
+          "quote": "This internal brief uses fictional desk-research notes collected on July 18, 2026. Kiteframe and Copperlane are invented competitors. The notes are directional, are not an independent security audit, and should not be used as a pricing or procurement commitment.",
+          "locator": { "lineStart": 16, "lineEnd": 16 }
+        },
+        {
+          "documentFixtureId": "asteria-competitor-brief-2026-07",
+          "sectionPath": [
+            "Fictional Competitor Brief: RelayOS, Kiteframe, and Copperlane",
+            "Comparison interpretation"
+          ],
+          "quote": "The brief does not compare implementation effort, uptime, security certifications, or total cost of ownership. Those topics require separate verified sources.",
+          "locator": { "lineStart": 42, "lineEnd": 42 }
+        }
+      ]
+    }
+  ],
+  "knowledgeGapCases": [
+    {
+      "id": "gap-july-2026-arr",
+      "taskType": "qa",
+      "question": "What was Asteria Workcloud's ARR in July 2026?",
+      "expectedOutcome": "insufficient_evidence",
+      "expectedDocuments": [],
+      "expectedEvidence": [],
+      "expectedAnswerPoints": [
+        "Do not invent an ARR value.",
+        "State that the uploaded sources do not contain ARR or equivalent revenue evidence.",
+        "Surface a knowledge-gap or unanswered-question signal for later documentation."
+      ],
+      "knowledgeGapCategory": "financial-metric-not-in-corpus"
+    },
+    {
+      "id": "gap-individual-customer",
+      "taskType": "qa",
+      "question": "Which named customer had the highest contract value and who was its account owner?",
+      "expectedOutcome": "insufficient_evidence",
+      "expectedDocuments": [],
+      "expectedEvidence": [],
+      "expectedAnswerPoints": [
+        "Do not invent a customer, contract value, or account owner.",
+        "State that account-level personal and commercial data is absent.",
+        "Return an insufficient-evidence result."
+      ],
+      "knowledgeGapCategory": "customer-account-data-not-in-corpus"
+    },
+    {
+      "id": "gap-competitor-total-cost",
+      "taskType": "compare",
+      "question": "What is the verified three-year total cost of ownership for RelayOS, Kiteframe, and Copperlane?",
+      "expectedOutcome": "insufficient_evidence",
+      "expectedDocuments": [],
+      "expectedEvidence": [],
+      "expectedAnswerPoints": [
+        "Do not invent pricing or total-cost figures.",
+        "State that the competitor brief explicitly excludes total cost of ownership.",
+        "Request separate verified commercial sources."
+      ],
+      "knowledgeGapCategory": "commercial-comparison-not-in-corpus"
+    },
+    {
+      "id": "gap-retention-causal-effect",
+      "taskType": "analysis",
+      "question": "By exactly how many percentage points did guided onboarding improve 90-day retention?",
+      "expectedOutcome": "insufficient_evidence",
+      "expectedDocuments": [],
+      "expectedEvidence": [],
+      "expectedAnswerPoints": [
+        "Do not infer a 90-day retention lift from the activation result.",
+        "State that the cohort was not mature enough for a retention claim.",
+        "Return an insufficient-evidence result."
+      ],
+      "knowledgeGapCategory": "causal-retention-effect-not-yet-observed"
+    }
+  ]
+}

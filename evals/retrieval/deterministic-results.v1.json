@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "1.0",
+  "datasetId": "novera-retrieval-golden-v1",
+  "generatedAt": "2026-08-03T00:00:00.000Z",
+  "cases": [
+    {
+      "caseId": "qa-cancellation-reason",
+      "results": [
+        {
+          "chunkId": "fixture-chunk-feedback-cancellation",
+          "documentId": "fixture-doc-customer-feedback-h1",
+          "documentName": "客户反馈汇总 2026-H1",
+          "similarityScore": 0.93,
+          "sectionPath": "4. 取消订阅反馈 > 主要原因",
+          "locator": { "pageStart": 12, "pageEnd": 12 }
+        },
+        {
+          "chunkId": "fixture-chunk-support-escalation",
+          "documentId": "fixture-doc-support-sop",
+          "documentName": "客户升级处理 SOP v2.1",
+          "similarityScore": 0.61,
+          "sectionPath": "2. 升级条件"
+        }
+      ]
+    },
+    {
+      "caseId": "summary-q2-retention",
+      "results": [
+        {
+          "chunkId": "fixture-chunk-retention-executive-summary",
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告",
+          "similarityScore": 0.94,
+          "sectionPath": "1. 执行摘要",
+          "locator": { "pageStart": 1, "pageEnd": 2 }
+        },
+        {
+          "chunkId": "fixture-chunk-retention-drivers",
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告",
+          "similarityScore": 0.9,
+          "sectionPath": "3. 流失驱动因素 > 新用户激活",
+          "locator": { "pageStart": 7, "pageEnd": 8 }
+        }
+      ]
+    },
+    {
+      "caseId": "analysis-first-week-churn",
+      "results": [
+        {
+          "chunkId": "fixture-chunk-retention-drivers",
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告",
+          "similarityScore": 0.92,
+          "sectionPath": "3. 流失驱动因素 > 新用户激活",
+          "locator": { "pageStart": 7, "pageEnd": 8 }
+        },
+        {
+          "chunkId": "fixture-chunk-feedback-onboarding",
+          "documentId": "fixture-doc-customer-feedback-h1",
+          "documentName": "客户反馈汇总 2026-H1",
+          "similarityScore": 0.87,
+          "sectionPath": "2. 新用户反馈 > 首次使用",
+          "locator": { "pageStart": 4, "pageEnd": 5 }
+        },
+        {
+          "chunkId": "fixture-chunk-adoption-priorities",
+          "documentId": "fixture-doc-adoption-strategy",
+          "documentName": "产品采用策略备忘录",
+          "similarityScore": 0.69,
+          "sectionPath": "2. 优先行动 > 试用期激活"
+        }
+      ]
+    },
+    {
+      "caseId": "compare-atlas-novadesk",
+      "results": [
+        {
+          "chunkId": "fixture-chunk-competitor-comparison-matrix",
+          "documentId": "fixture-doc-competitor-atlas-novadesk",
+          "documentName": "竞品分析：Atlas vs NovaDesk",
+          "similarityScore": 0.95,
+          "sectionPath": "3. 能力对比 > 权限与集成矩阵",
+          "locator": { "pageStart": 9, "pageEnd": 10 }
+        },
+        {
+          "chunkId": "fixture-chunk-competitor-pricing",
+          "documentId": "fixture-doc-competitor-atlas-novadesk",
+          "documentName": "竞品分析：Atlas vs NovaDesk",
+          "similarityScore": 0.72,
+          "sectionPath": "4. 价格对比"
+        }
+      ]
+    },
+    {
+      "caseId": "recommend-trial-activation",
+      "results": [
+        {
+          "chunkId": "fixture-chunk-adoption-priorities",
+          "documentId": "fixture-doc-adoption-strategy",
+          "documentName": "产品采用策略备忘录",
+          "similarityScore": 0.91,
+          "sectionPath": "2. 优先行动 > 试用期激活",
+          "locator": { "pageStart": 3, "pageEnd": 4 }
+        },
+        {
+          "chunkId": "fixture-chunk-retention-drivers",
+          "documentId": "fixture-doc-retention-q2",
+          "documentName": "Q2 用户留存分析报告",
+          "similarityScore": 0.86,
+          "sectionPath": "3. 流失驱动因素 > 新用户激活",
+          "locator": { "pageStart": 7, "pageEnd": 8 }
+        },
+        {
+          "chunkId": "fixture-chunk-feedback-onboarding",
+          "documentId": "fixture-doc-customer-feedback-h1",
+          "documentName": "客户反馈汇总 2026-H1",
+          "similarityScore": 0.75,
+          "sectionPath": "2. 新用户反馈 > 首次使用"
+        }
+      ]
+    }
+  ]
+}
