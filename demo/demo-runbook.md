@@ -15,7 +15,15 @@ The internal staging path validates temporary real upload → processing → emb
 
 ## 2. Build READY knowledge
 
-Before the timed demonstration, upload these five files from the **Add document** action, in manifest order:
+The following live-upload steps require an independently configured protected
+Preview or Validation environment, a matching Supabase project, configured
+model providers, and the internal validation evidence described above. These
+services, credentials, and records are not supplied by the public checkout.
+Without that environment, stop after the local fixture check and present the
+fictional corpus as a Demo; do not treat this section as a zero-configuration
+local workflow.
+
+When those prerequisites are available, upload these five files from the **Add document** action, in manifest order:
 
 1. `demo/corpus/01-q2-retention-review.md`
 2. `demo/corpus/02-onboarding-experiment-brief.md`

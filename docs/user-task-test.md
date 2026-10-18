@@ -1,5 +1,9 @@
 # Novera AI User Task Test
 
+> This document is a user-test protocol and results template, not a completed
+> user-test report. Blank result rows are intentional until valid live sessions
+> are conducted and recorded.
+
 ## Purpose
 
 Validate whether 3–5 product or operations participants can complete the narrow RAG workflow without coaching. Do not record names, customer data, or confidential documents. Use the fictional Asteria Workcloud corpus only.

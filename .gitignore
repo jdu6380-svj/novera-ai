@@ -20,6 +20,12 @@
 # production
 /build
 
+# local database snapshots and dumps
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+
 # misc
 .DS_Store
 *.pem

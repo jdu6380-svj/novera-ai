@@ -50,6 +50,15 @@ This repository does not currently include a `LICENSE` file. Public visibility
 does not grant an open-source license or other permission to reuse the code;
 please obtain the necessary authorization before reusing it.
 
+## Portfolio presentation
+
+Novera AI is maintained here as a personal portfolio artifact for demonstrating
+AI product and implementation work. It is not presented as an open-source
+project, and the owner has not granted general permission to copy, modify, or
+redistribute the source or bundled demo materials. The public candidate
+documents local tests and offline fixtures; it does not claim production
+readiness, verified deployment isolation, or completed human-user research.
+
 ## Phase 4: Agent + Evidence Intelligence
 
 The QA pipeline is deliberately structured around the trust chain:
@@ -88,11 +97,13 @@ clearly labelled demo snapshot when the environment is disconnected.
 
 ## Phase 6: Portfolio Demo & Production Readiness
 
-The checked-in `demo/` corpus describes the fictional company Asteria
-Workcloud and includes five Markdown source documents, 14 supported questions,
-four intentional knowledge-gap cases, and 36 exact expected Evidence quotes.
-Validate its hashes, source text, headings, section paths, and line locators
-before a demonstration:
+The checked-in `demo/` corpus is intended to describe the fictional company
+Asteria Workcloud and includes five Markdown source documents, 14 supported
+questions, four intentional knowledge-gap cases, and 36 exact expected
+Evidence quotes. The fictional framing is part of the product demo design; the
+project owner must still confirm authorship or redistribution rights for the
+corpus and icon assets before publishing them. Validate its hashes, source
+text, headings, section paths, and line locators before a demonstration:
 
 ```bash
 npm run demo:validate
@@ -131,6 +142,11 @@ Start and reset local Supabase so all checked-in migrations run:
 npm run supabase:start
 npm run supabase:reset
 ```
+
+These commands operate on the local Docker-backed Supabase instance only.
+`supabase:reset` is destructive to that local database: it drops and recreates
+local data from the checked-in migrations and seed file. It does not validate
+or modify a hosted Supabase project.
 
 Copy the local Supabase URL, browser-safe anon/publishable key, and server-only
 service-role key into `.env.local`. Configure `EMBEDDING_API_KEY` (or the
@@ -180,12 +196,13 @@ npm run eval:retrieval
 The commands above are the reproducible checks included in the first public file
 set. They do not call deployed services.
 
-The following commands are internal validation materials and are not included in
-the first public file set: `npm run eval:portfolio`,
-`npm run eval:retrieval:live`, and all `npm run smoke:*:staging` commands. They
-call configured deployed services and may create or remove test records; use an
-isolated staging deployment, never Production, when running them from the full
-working repository. Cleanup is best effort and is not a rollback guarantee.
+The full working repository may contain additional portfolio, live-retrieval,
+and staging-smoke commands, but those scripts are internal validation materials
+and are not included in the first public file set. They are not part of the
+public checkout reproduction path. When run from the full working repository,
+they call configured deployed services and may create or remove test records;
+use an isolated staging deployment, never Production. Cleanup is best effort
+and is not a rollback guarantee.
 
 The retrieval API is `POST /api/v1/retrieval/query`. It returns Task
 Understanding output, Top-K chunks with similarity/metadata/locator fields, and
@@ -212,7 +229,12 @@ publication-preparation pass. The current local verification record is:
 - `npm test`: **174 tests across 39 files**;
 - `npm run typecheck`: passed;
 - `npm run lint`: passed; and
-- `npm run build`: passed with Next.js 16.2.12.
+- `npm run build -- --webpack`: passed with Next.js 16.2.12 in the available
+  local environment.
+
+The default Turbopack build was not confirmed in this environment because its
+worker process could not bind a local port (`Operation not permitted`). This is
+an environment limitation, not a production-build acceptance claim.
 
 The Phase 6 staging smoke is currently **skipped**, not passed, because this
 environment does not define `QA_SMOKE_URL` and cannot reach the protected

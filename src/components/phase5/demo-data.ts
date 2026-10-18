@@ -1,5 +1,11 @@
 import type { KnowledgeWorkspaceData } from "./types";
 
+// Portfolio-only fictional UI fixture. Every document title, user feedback,
+// QA result, Evidence item, confidence score, metric, and other displayed
+// result below is invented for the demo. It does not represent real users or
+// customers, user research, collected feedback, Production database records,
+// online model calls, live retrieval results, or real runtime metrics. This
+// data is used only for portfolio presentation and UI fallback states.
 export const demoWorkspaceData: KnowledgeWorkspaceData = {
   knowledgeBaseId: "00000000-0000-4000-8000-000000000001",
   knowledgeBaseName: "企业知识智能库",

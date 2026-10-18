@@ -516,33 +516,19 @@ local validation pass.
 
 ## 14. Staging status
 
-The repository includes:
-
-```bash
-npm run smoke:retrieval:staging
-npm run smoke:qa:staging
-npm run smoke:phase5:staging
-npm run smoke:phase6:staging
-```
-
-The Phase 6 smoke uses the production upload APIs and a browser-equivalent anon
-Supabase client with a short-lived signed token. It then verifies processing to
-READY, Chunk/Embedding provenance, retrieval, QA, Claims, exact Evidence,
-Sources, all four metrics, persistence, and cleanup.
+The deployed-environment staging validation flow is an internal process. Its
+commands, scripts, and evaluation reports are not included in the first public
+file set and are not steps that can be run from the public checkout. The
+internal flow covers temporary upload, processing to READY, embedding
+provenance, retrieval, QA, Claims, exact Evidence, Sources, metrics,
+persistence, and cleanup in a separately configured environment.
 
 No successful live staging result is currently claimed.
 
-The current environment is missing:
-
-- `QA_SMOKE_URL`;
-- `NEXT_PUBLIC_SUPABASE_URL`;
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`;
-- `SUPABASE_SERVICE_ROLE_KEY`; and
-- `OPENAI_API_KEY`.
-
-The safe result is `PHASE6_STAGING_SMOKE_SKIPPED`. A portfolio demo can use the
-clearly labelled local dataset, but live provider/database verification remains
-a release gate.
+The recorded safe result is `PHASE6_STAGING_SMOKE_SKIPPED` because the required
+staging configuration and protected deployment were not available to the
+runner. A portfolio demo can use the clearly labelled local dataset, but live
+provider/database verification remains a release gate.
 
 ## 15. Key product and technical trade-offs
 
