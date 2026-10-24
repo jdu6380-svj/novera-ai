@@ -109,6 +109,20 @@ export function workspaceDataFromHttp(value: unknown): KnowledgeWorkspaceData {
           createdAt: typeof document.created_at === "string" ? document.created_at : null,
           size: string(document.size, "0 B"),
           chunks: number(document.chunks),
+          quality: string(document.quality, "unavailable") as KnowledgeWorkspaceData["documents"][number]["quality"],
+          warnings: Array.isArray(document.warnings)
+            ? document.warnings.filter(isRecord).map((warning) => ({
+                code: string(warning.code, "DOCUMENT_NOT_READY"),
+                message: string(warning.message),
+                ...(warning.severity === "notice" || warning.severity === "review_required"
+                  ? { severity: warning.severity }
+                  : {}),
+                ...(typeof warning.location === "string" ? { location: warning.location } : {}),
+                ...(typeof warning.remediation === "string" ? { remediation: warning.remediation } : {}),
+              }))
+            : [],
+          qaEligible: document.qa_eligible !== false,
+          remediation: typeof document.remediation === "string" ? document.remediation : undefined,
           ...(document.progress === null ? {} : { progress: number(document.progress) }),
         }))
       : [],

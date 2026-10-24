@@ -145,7 +145,13 @@ function documentTitle(name: string) {
   return name;
 }
 
-function statusLabel(status: WorkspaceDocument["status"]) {
+function statusLabel(document: WorkspaceDocument) {
+  if (document.quality === "review_required") {
+    return document.qaEligible ? "部分可问答 · 需复核" : "需要复核";
+  }
+  if (document.quality === "unavailable" && document.status === "failed") return "无法问答";
+  if (document.quality === "complete" && document.warnings?.some((warning) => warning.severity === "notice")) return "可问答 · 有提示";
+  const status = document.status;
   switch (status) {
     case "ready":
       return "已就绪";
@@ -164,9 +170,10 @@ function statusLabel(status: WorkspaceDocument["status"]) {
   }
 }
 
-function statusTone(status: WorkspaceDocument["status"]) {
-  if (status === "ready") return "good";
-  if (status === "failed") return "danger";
+function statusTone(document: WorkspaceDocument) {
+  if (document.quality === "review_required") return "warn";
+  if (document.quality === "unavailable" || document.status === "failed") return "danger";
+  if (document.status === "ready") return "good";
   return "progress";
 }
 
@@ -479,8 +486,10 @@ export function Phase75Workspace({
   const selectedEvidence = selectedClaim
     ? answer.evidence.filter((evidence) => selectedClaim.evidenceIds.includes(evidence.id))
     : [];
-  const readyDocuments = workspace.documents.filter((document) => document.status === "ready");
-  const indexedChunks = workspace.documents.reduce((total, document) => total + document.chunks, 0);
+  const readyDocuments = workspace.documents.filter(
+    (document) => document.status === "ready" && document.qaEligible !== false,
+  );
+  const indexedChunks = readyDocuments.reduce((total, document) => total + document.chunks, 0);
 
   async function openDocument(document: WorkspaceDocument) {
     setSelectedDocument(document);
@@ -661,11 +670,11 @@ export function Phase75Workspace({
         {uploadActivity ? <UploadStatus activity={uploadActivity} /> : null}
 
         <main id="phase75-main" className="phase75-main">
-          {isPublicDemo ? null : <input ref={fileInputRef} className="phase75-visually-hidden" type="file" accept=".pdf,.md,.txt,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={handleFileChange} />}
+          {isPublicDemo ? null : <input ref={fileInputRef} className="phase75-visually-hidden" type="file" accept=".pdf,.md,.txt,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,application/pdf,text/markdown,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/png,image/jpeg" onChange={handleFileChange} />}
           {page === "dashboard" ? <DashboardPage workspace={workspace} readyDocuments={readyDocuments} indexedChunks={indexedChunks} demoMode={isPublicDemo} onUpload={() => fileInputRef.current?.click()} onNavigate={navigate} onDemoScenario={handleDemoScenario} onOpenDocument={openDocument} /> : null}
           {page === "assistant" ? <AssistantPage answer={answer} query={query} isRunning={isRunning} queryStage={queryStage} selectedClaim={selectedClaim} demoMode={isPublicDemo} isLoadingDemoScenario={isLoadingDemoScenario} onDemoScenario={handleDemoScenario} onQueryChange={setQuery} onSubmit={handleQuerySubmit} onSelectClaim={(claim) => { setSelectedClaimId(claim.id); navigate("evidence"); }} onNavigate={navigate} /> : null}
           {page === "evidence" ? <EvidencePage answer={answer} claim={selectedClaim} evidence={selectedEvidence} demoMode={isPublicDemo} onBack={() => navigate("assistant")} onSelectClaim={setSelectedClaimId} /> : null}
-          {page === "documents" ? <DocumentsPage documents={readyDocuments} isLoading={isLoading} onUpload={() => fileInputRef.current?.click()} onOpen={openDocument} onDelete={requestDocumentDelete} deletingDocumentId={deletingDocumentId} /> : null}
+          {page === "documents" ? <DocumentsPage documents={workspace.documents} isLoading={isLoading} onUpload={() => fileInputRef.current?.click()} onOpen={openDocument} onDelete={requestDocumentDelete} deletingDocumentId={deletingDocumentId} /> : null}
         </main>
       </div>
       {selectedDocument ? <dialog ref={previewDialogRef} className="phase75-document-dialog" aria-labelledby="document-dialog-title" onCancel={(event) => { event.preventDefault(); closeDocumentPreview(); }}>
@@ -726,8 +735,8 @@ function DashboardPage({ workspace, readyDocuments, indexedChunks, demoMode, onU
 }
 
 function DocumentListItem({ document, onClick }: { document: WorkspaceDocument; onClick?: () => void }) {
-  const tone = statusTone(document.status);
-  const content = <><FileBadge type={document.type} /><div className="phase75-document-copy"><strong>{documentTitle(document.name)}</strong><span>{document.name} · {document.size}</span></div><div className={cx("phase75-document-status", `phase75-document-status-${tone}`)}><span />{statusLabel(document.status)}</div><Phase5Icon name="chevron-right" className="phase75-row-chevron" /></>;
+  const tone = statusTone(document);
+  const content = <><FileBadge type={document.type} /><div className="phase75-document-copy"><strong>{documentTitle(document.name)}</strong><span>{document.name} · {document.size}</span>{document.warnings?.[0] ? <small>{document.warnings[0].location ? `${document.warnings[0].location}: ` : ""}{document.warnings[0].message}</small> : null}</div><div className={cx("phase75-document-status", `phase75-document-status-${tone}`)}><span />{statusLabel(document)}</div><Phase5Icon name="chevron-right" className="phase75-row-chevron" /></>;
   return onClick ? <button className="phase75-document-item phase75-document-item-button" type="button" onClick={onClick} aria-label={`查看文档 ${document.name}`}>{content}</button> : <div className="phase75-document-item">{content}</div>;
 }
 
@@ -742,13 +751,13 @@ function documentUploadTime(document: WorkspaceDocument): string {
 
 function DocumentsPage({ documents, isLoading, onUpload, onOpen, onDelete, deletingDocumentId }: { documents: WorkspaceDocument[]; isLoading: boolean; onUpload: () => void; onOpen: (document: WorkspaceDocument) => void; onDelete: (document: WorkspaceDocument) => void; deletingDocumentId: string | null }) {
   return <div className="phase75-page phase75-documents-page">
-    <section className="phase75-documents-heading"><div><span className="phase75-overline"><span className="phase75-overline-dot" />个人知识空间</span><h1>我的文档</h1><p>仅显示已上传并处理成功、可检索的文档。</p></div><button className="phase75-button phase75-button-primary" type="button" onClick={onUpload}><Phase5Icon name="upload" />上传文档</button></section>
+    <section className="phase75-documents-heading"><div><span className="phase75-overline"><span className="phase75-overline-dot" />个人知识空间</span><h1>我的文档</h1><p>查看文档处理状态、解析提示、问答准入和补救建议。</p></div><button className="phase75-button phase75-button-primary" type="button" onClick={onUpload}><Phase5Icon name="upload" />上传文档</button></section>
     <section className="phase75-documents-table" aria-labelledby="documents-list-heading">
       <div className="phase75-documents-table-heading"><div><h2 id="documents-list-heading">文档列表</h2><span>{documents.length} 份文档 · 仅此账号可访问</span></div><span>上传时间</span></div>
-      {isLoading ? <div className="phase75-documents-empty" role="status">正在加载你的文档…</div> : documents.length === 0 ? <div className="phase75-documents-empty"><Phase5Icon name="document" /><strong>还没有处理成功的文档</strong><span>上传 PDF、Markdown 或 TXT，处理成功后会显示在这里。</span><button className="phase75-button phase75-button-secondary" type="button" onClick={onUpload}><Phase5Icon name="plus" />选择文档</button></div> : <div className="phase75-documents-rows">{documents.map((document) => <article className="phase75-managed-document" key={document.id}>
+      {isLoading ? <div className="phase75-documents-empty" role="status">正在加载你的文档…</div> : documents.length === 0 ? <div className="phase75-documents-empty"><Phase5Icon name="document" /><strong>还没有上传文档</strong><span>支持 PDF、DOCX、XLSX、PPTX、Markdown、TXT、PNG 和 JPEG。</span><button className="phase75-button phase75-button-secondary" type="button" onClick={onUpload}><Phase5Icon name="plus" />选择文档</button></div> : <div className="phase75-documents-rows">{documents.map((document) => <article className="phase75-managed-document" key={document.id}>
         <FileBadge type={document.type} />
         <div className="phase75-managed-document-copy"><strong title={document.name}>{document.name}</strong><span>{document.size} · {document.chunks ? `${document.chunks} 个知识片段` : "尚无知识片段"}</span></div>
-        <span className={cx("phase75-document-status", `phase75-document-status-${statusTone(document.status)}`)}><i />{statusLabel(document.status)}</span>
+        <div className="phase75-managed-document-quality"><span className={cx("phase75-document-status", `phase75-document-status-${statusTone(document)}`)}><i />{statusLabel(document)}</span>{document.warnings?.[0] ? <small>{document.warnings[0].location ? `${document.warnings[0].location}: ` : ""}{document.warnings[0].message} {document.warnings[0].remediation ?? document.remediation ?? ""}</small> : null}</div>
         <time className="phase75-managed-document-time" dateTime={document.uploadedAt ?? document.createdAt ?? undefined}>{documentUploadTime(document)}</time>
         <div className="phase75-managed-document-actions"><button type="button" title="查看文档" aria-label={`查看文档 ${document.name}`} onClick={() => onOpen(document)}><Phase5Icon name="document" /><span>查看</span></button><button type="button" title="删除文档" aria-label={`删除文档 ${document.name}`} disabled={deletingDocumentId === document.id} onClick={() => onDelete(document)}><Phase5Icon name="trash" /><span>{deletingDocumentId === document.id ? "删除中" : "删除"}</span></button></div>
       </article>)}</div>}

@@ -28,6 +28,33 @@ describe("Phase 7.5 product experience", () => {
     expect(markup).toContain("phase75-sidebar-email");
   });
 
+  it("shows ready documents with parser notices as QA-eligible but visibly qualified", () => {
+    const document = {
+      ...demoWorkspaceData.documents[0]!,
+      status: "ready" as const,
+      quality: "complete" as const,
+      qaEligible: true,
+      warnings: [{
+        code: "XLSX_MERGED_CELLS_PRESENT",
+        severity: "notice" as const,
+        message: "Merged cell labels should be checked.",
+        location: "Sheet Revenue",
+        remediation: "Check the merged labels.",
+      }],
+    };
+    const markup = renderToStaticMarkup(
+      <Phase75Workspace
+        data={{ ...demoWorkspaceData, documents: [document] }}
+        connectionMode="live"
+        isLoading={false}
+      />,
+    );
+
+    expect(markup).toContain("可问答 · 有提示");
+    expect(markup).toContain("phase75-document-status-good");
+    expect(markup).toContain("Sheet Revenue: Merged cell labels should be checked.");
+  });
+
   it("places sign out inside the top-right account menu", () => {
     const markup = renderToStaticMarkup(
       <Phase75Workspace userEmail="account@example.com" onSignOut={() => undefined} />,

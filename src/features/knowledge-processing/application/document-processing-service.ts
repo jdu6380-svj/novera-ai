@@ -14,6 +14,11 @@ import {
   DocumentParsingError,
   ParserLayer,
 } from "@/features/knowledge-processing/content/parser";
+import {
+  extractionWarningRemediation,
+  reviewRequiredExtractionWarnings,
+  reviewWarningsForSources,
+} from "@/features/knowledge-processing/content/extraction-warnings";
 import { EmbeddingProviderError } from "@/infrastructure/ai";
 import type { StorageAdapter } from "@/infrastructure/storage/storage-adapter";
 import { StorageError } from "@/infrastructure/storage/storage-error";
@@ -236,6 +241,7 @@ function evidenceMetadata(chunk: KnowledgeChunk): JsonObject {
         sourceBlockText: segment.sourceBlockText,
         normalizedStartChar: segment.normalizedStartChar,
         normalizedEndChar: segment.normalizedEndChar,
+        metadata: segment.metadata,
         locator: {
           pageStart: segment.locator.pageStart,
           pageEnd: segment.locator.pageEnd,
@@ -377,17 +383,49 @@ export class DocumentProcessingService {
         content: storedObject.data,
       });
 
+      const reviewWarnings = reviewRequiredExtractionWarnings(parsed.metadata);
       await this.repository.updateProgress(jobId, "chunk", 35);
       const normalized = this.normalizerLayer.normalize(parsed);
       const chunks = this.chunker.chunk(normalized);
+      const chunkWarnings = new Map<number, ReturnType<typeof reviewRequiredExtractionWarnings>>();
+      const eligibleChunks = chunks.filter((chunk, index) => {
+        const warnings = reviewWarningsForSources(reviewWarnings, chunk.sourceSegments.map((segment) => ({
+            pageStart: segment.locator.pageStart,
+            pageEnd: segment.locator.pageEnd,
+            metadata: segment.metadata,
+          })));
+        chunkWarnings.set(index, warnings);
+        return warnings.length === 0;
+      });
+      if (eligibleChunks.length === 0) {
+        const reviewPages = [...new Set(reviewWarnings.flatMap((warning) =>
+          warning.pageNumber === undefined ? [] : [warning.pageNumber],
+        ))];
+        const reviewLocations = [...new Set(reviewWarnings.flatMap((warning) =>
+          warning.location ? [warning.location] : [],
+        ))];
+        const location = reviewPages.length > 0
+          ? ` on page${reviewPages.length === 1 ? "" : "s"} ${reviewPages.join(", ")}`
+          : reviewLocations.length > 0
+            ? ` at ${reviewLocations.join(", ")}`
+            : "";
+        const missingContent = [...new Set(reviewWarnings.map((warning) => warning.message))].join(" ");
+        const remediation = [...new Set(reviewWarnings.map((warning) => extractionWarningRemediation(warning.code)))].join(" ");
+        throw new DocumentProcessingError(
+          `Review required${location}. ${missingContent} ${remediation} No verified content remains available for question answering.`,
+          "PARSER_REVIEW_REQUIRED",
+          422,
+          { reviewPages, reviewLocations, warnings: reviewWarnings, eligibleChunkCount: 0 },
+        );
+      }
 
       await this.repository.updateProgress(jobId, "embed", 55);
       const embeddingBatch = await this.embeddingProvider.embed(
-        chunks.map((chunk) => chunk.text),
+        eligibleChunks.map((chunk) => chunk.text),
       );
 
       if (
-        embeddingBatch.vectors.length !== chunks.length ||
+        embeddingBatch.vectors.length !== eligibleChunks.length ||
         embeddingBatch.dimensions !== EMBEDDING_DIMENSION
       ) {
         throw new DocumentProcessingError(
@@ -395,7 +433,7 @@ export class DocumentProcessingService {
           "EMBEDDING_FAILED",
           503,
           {
-            expectedVectors: chunks.length,
+            expectedVectors: eligibleChunks.length,
             actualVectors: embeddingBatch.vectors.length,
             expectedDimensions: EMBEDDING_DIMENSION,
             actualDimensions: embeddingBatch.dimensions,
@@ -405,7 +443,7 @@ export class DocumentProcessingService {
 
       await this.repository.updateProgress(jobId, "finalize", 95);
 
-      const persistedChunks: PersistedProcessingChunk[] = chunks.map((chunk, index) => {
+      const persistedChunks: PersistedProcessingChunk[] = eligibleChunks.map((chunk, index) => {
         const embedding = embeddingBatch.vectors[index];
 
         if (!embedding) {
@@ -427,7 +465,10 @@ export class DocumentProcessingService {
           startChar: chunk.locator.startChar,
           endChar: chunk.locator.endChar,
           sectionPath: chunk.sectionPath.join(" > "),
-          metadata: evidenceMetadata(chunk),
+          metadata: {
+            ...evidenceMetadata(chunk),
+            qaEligibility: { status: "eligible", reviewWarnings: [] },
+          },
           embedding,
           embeddingProvider: embeddingBatch.provider,
           embeddingModel: embeddingBatch.model,
@@ -450,6 +491,15 @@ export class DocumentProcessingService {
           parser: normalized.parser,
           normalizer: normalized.normalizer,
           chunker: chunks[0]?.metadata.chunker ?? null,
+          qaEligibility: {
+            status: reviewWarnings.length === 0 && eligibleChunks.length === chunks.length ? "complete" : "partial",
+            eligibleChunkCount: eligibleChunks.length,
+            excludedChunkCount: chunks.length - eligibleChunks.length,
+            excludedChunkIndexes: [...chunkWarnings.entries()]
+              .filter(([, warnings]) => warnings.length > 0)
+              .map(([index]) => index),
+            warnings: reviewWarnings.map((warning) => ({ ...warning })),
+          },
         },
         chunks: persistedChunks,
         completedAt: this.now().toISOString(),

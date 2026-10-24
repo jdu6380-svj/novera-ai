@@ -22,6 +22,7 @@ export interface KnowledgeChunkSourceSegment {
   normalizedStartChar: number;
   normalizedEndChar: number;
   locator: SourceLocator;
+  metadata: JsonObject;
 }
 
 export interface KnowledgeChunk {
@@ -194,6 +195,7 @@ function sourceSegmentsForWindow(
       normalizedStartChar: Math.max(0, intersectionStart - span.start),
       normalizedEndChar: Math.min(span.block.text.length, intersectionEnd - span.start),
       locator: { ...span.block.locator },
+      metadata: span.block.metadata,
     });
   }
 
@@ -228,6 +230,7 @@ function headingOnlySegment(section: NormalizedSection): KnowledgeChunkSourceSeg
       normalizedStartChar: 0,
       normalizedEndChar: section.title.length,
       locator: { ...section.headingLocator },
+      metadata: {},
     },
   ];
 }

@@ -1,0 +1,245 @@
+{
+  "schema_version": "1.0.0",
+  "mode": "smoke",
+  "generated_at": "2026-10-23T14:49:58.909Z",
+  "execution_boundary": "Model endpoints were called; embeddings and answers were stored only in process memory and this local report. No Supabase or business database was called.",
+  "local_vector_records": 1,
+  "documents": [
+    {
+      "document_id": "doc-013",
+      "file_name": "13_warehouse_capacity.txt",
+      "file_format": "txt",
+      "sha256": "bd7254ff07dde3b2a2b09fe36c4a864abac689fc06e2ec987b419d4b4f6b32e6",
+      "parser": {
+        "name": "plain-text",
+        "version": "1.0.0"
+      },
+      "parse_status": "PASS",
+      "extracted_text": [
+        {
+          "block_id": "block-0000",
+          "kind": "paragraph",
+          "text": "仓库产能周报",
+          "locator": {
+            "pageStart": null,
+            "pageEnd": null,
+            "lineStart": 1,
+            "lineEnd": 1,
+            "startChar": 0,
+            "endChar": 6
+          },
+          "metadata": {}
+        },
+        {
+          "block_id": "block-0001",
+          "kind": "paragraph",
+          "text": "2025 年第 40 周，日均处理量为 5,180 件。\n设计日处理能力为 5,600 件。",
+          "locator": {
+            "pageStart": null,
+            "pageEnd": null,
+            "lineStart": 3,
+            "lineEnd": 4,
+            "startChar": 8,
+            "endChar": 54
+          },
+          "metadata": {}
+        },
+        {
+          "block_id": "block-0002",
+          "kind": "paragraph",
+          "text": "周报未列出夜班单独产量。",
+          "locator": {
+            "pageStart": null,
+            "pageEnd": null,
+            "lineStart": 6,
+            "lineEnd": 6,
+            "startChar": 56,
+            "endChar": 68
+          },
+          "metadata": {}
+        }
+      ],
+      "warnings": [],
+      "review_required": false,
+      "chunks": [
+        {
+          "chunk_id": "bdda4514-cf8d-5013-8bdc-08d568a5fbb1",
+          "chunk_index": 0,
+          "text": "13_warehouse_capacity.txt\n\n仓库产能周报\n\n2025 年第 40 周,日均处理量为 5,180 件。 设计日处理能力为 5,600 件。\n\n周报未列出夜班单独产量。",
+          "text_sha256": "a26a1df143e67f705c023fbf1fd8c30a7cc60c3e9996b9efd269f0c021e826c9",
+          "token_count_estimate": 51,
+          "locator": {
+            "pageStart": null,
+            "pageEnd": null,
+            "lineStart": 1,
+            "lineEnd": 6,
+            "startChar": 0,
+            "endChar": 68,
+            "sectionPath": "13_warehouse_capacity.txt",
+            "sourceSegments": [
+              {
+                "sourceBlockId": "block-0000",
+                "pageStart": null,
+                "pageEnd": null,
+                "lineStart": 1,
+                "lineEnd": 1,
+                "startChar": 0,
+                "endChar": 6
+              },
+              {
+                "sourceBlockId": "block-0001",
+                "pageStart": null,
+                "pageEnd": null,
+                "lineStart": 3,
+                "lineEnd": 4,
+                "startChar": 8,
+                "endChar": 54
+              },
+              {
+                "sourceBlockId": "block-0002",
+                "pageStart": null,
+                "pageEnd": null,
+                "lineStart": 6,
+                "lineEnd": 6,
+                "startChar": 56,
+                "endChar": 68
+              }
+            ]
+          },
+          "embedded": true,
+          "stored_in": "process-local in-memory vector index",
+          "retrieval_eligible": true,
+          "exclusion_reason": null
+        }
+      ],
+      "embedding": {
+        "executed": true,
+        "provider": "dashscope",
+        "model": "text-embedding-v2",
+        "dimensions": 1536,
+        "chunk_count": 1
+      }
+    }
+  ],
+  "providers": {
+    "embedding": {
+      "provider": "dashscope",
+      "model": "text-embedding-v2",
+      "dimensions": 1536
+    },
+    "generation": {
+      "provider": "deepseek",
+      "model": "deepseek-flash"
+    }
+  },
+  "requests": {
+    "document_embedding_requests_upper_bound": 1,
+    "query_embedding_requests_upper_bound": 1,
+    "query_embedding_requests_attempted": 1,
+    "generation_requests_actual": 0,
+    "generation_requests_attempted": 1,
+    "retry_policy": "OpenAI SDK maxRetries=0; timeout=60 seconds",
+    "document_embedding_tokens_reported": 55,
+    "query_embedding_tokens_reported": 0,
+    "generation_input_tokens_reported": 0,
+    "generation_output_tokens_reported": 0
+  },
+  "estimated_cost_from_reported_usage": {
+    "dashscope_estimated_cny_from_reported_tokens": 0.0000385,
+    "deepseek_estimated_peak_usd_from_reported_tokens": 0,
+    "pricing_note": "Estimated from provider-reported token usage at public list/peak rates; this is not an account billing record and excludes any provider-side cache pricing or credits."
+  },
+  "approved_cost_caps": {
+    "approvedUsd": 0.003,
+    "approvedCny": 0.001
+  },
+  "preflight": {
+    "schema_version": "1.0.0",
+    "mode": "smoke",
+    "generated_at": "2026-10-23T14:49:57.337Z",
+    "execution_boundary": "Local parser and in-memory vector store only; no Supabase, Storage, auth, database, or business API calls.",
+    "real_model_calls_executed": false,
+    "corpus": {
+      "fixture_count": 1,
+      "question_count": 1,
+      "manifest_sha256": "ab1b8325408a0fa0fd8490b04fd0aaaf8d9a62e7170a3b2f5ecd5527441d9f06",
+      "corpus_spec_sha256": "7443bd05600f32514632016027fbfd325b14b58e2964d6a43013797daed0d861",
+      "documents": [
+        {
+          "document_id": "doc-013",
+          "file_name": "13_warehouse_capacity.txt",
+          "sha256": "bd7254ff07dde3b2a2b09fe36c4a864abac689fc06e2ec987b419d4b4f6b32e6",
+          "parser": {
+            "name": "plain-text",
+            "version": "1.0.0"
+          },
+          "status": "PASS",
+          "warning_count": 0,
+          "warnings": [],
+          "extracted_char_count": 69,
+          "chunk_count": 1,
+          "qa_eligible_chunk_count": 1,
+          "excluded_chunk_indexes": [],
+          "chunk_tokens_estimate": 51,
+          "qa_eligible": true
+        }
+      ],
+      "parser_status_counts": {
+        "PASS": 1
+      },
+      "total_chunks": 1,
+      "qa_eligible_chunks": 1
+    },
+    "configured_model_identity": {
+      "embedding_provider": "dashscope",
+      "embedding_model": "text-embedding-v2",
+      "embedding_dimensions": 1536,
+      "generation_provider": "deepseek",
+      "generation_model": "deepseek-flash"
+    },
+    "cost_estimate": {
+      "chunk_count": 1,
+      "document_embedding_tokens_estimate": 51,
+      "query_embedding_tokens_estimate": 12,
+      "embedding_request_upper_bound": 2,
+      "document_embedding_request_upper_bound": 1,
+      "query_embedding_request_upper_bound": 1,
+      "deepseek_generation_request_upper_bound": 1,
+      "deepseek_input_tokens_upper_bound": 4000,
+      "deepseek_output_tokens_upper_bound": 512,
+      "dashscope_price_cny_per_1k_tokens": 0.0007,
+      "dashscope_estimated_upper_bound_cny": 0.000044,
+      "deepseek_peak_price_usd_per_1m_input_tokens": 0.3,
+      "deepseek_peak_price_usd_per_1m_output_tokens": 1.2,
+      "deepseek_estimated_peak_upper_bound_usd": 0.001814,
+      "pricing_note": "Uses full list rates, DeepSeek peak rates, no free quota, and a 4,000-token input/512-token output cap per case."
+    },
+    "unresolved_product_boundary": "Only chunks without applicable review-required warnings enter retrieval. Omitted content remains unavailable until verified; cases requiring it may fail their original criteria."
+  },
+  "aggregate": {
+    "total_cases": 1,
+    "passed": 0,
+    "failed": 1,
+    "not_verified": 1,
+    "status": "PARTIAL"
+  },
+  "cases": [
+    {
+      "case_id": "case-025",
+      "query": "第 40 周日均处理量是多少？",
+      "status": "FAILED",
+      "failed_stage": "answer_generation",
+      "latency_ms": 734,
+      "error": {
+        "name": "AnswerGenerationError",
+        "code": "MODEL_GENERATION_FAILED",
+        "http_status": null,
+        "provider_code": null,
+        "detail": "Raw provider messages and request headers are intentionally omitted."
+      },
+      "evaluation": {
+        "status": "UNVERIFIED"
+      }
+    }
+  ]
+}

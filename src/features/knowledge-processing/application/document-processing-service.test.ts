@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
 
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -30,6 +31,8 @@ import type {
 import { DocumentProcessingRepositoryError } from "./document-processing-repository";
 import { DocumentProcessingService } from "./document-processing-service";
 import type { EmbeddingBatch } from "@/providers";
+import { ImageDocumentParser, ParserLayer, PdfDocumentParser } from "@/features/knowledge-processing/content/parser";
+import type { ImageOcrProvider } from "@/features/knowledge-processing/content/image-ocr";
 
 const DOCUMENT_ID = "00000000-0000-4000-8000-000000000020";
 const KNOWLEDGE_BASE_ID = "00000000-0000-4000-8000-000000000001";
@@ -102,8 +105,10 @@ class FakeEmbeddingProvider {
   readonly model = "fake-embedding-3-small";
   readonly modelVersion = "test-2026-08-02";
   readonly dimensions = 1536;
+  calls = 0;
 
   async embed(inputs: readonly string[]): Promise<EmbeddingBatch> {
+    this.calls += 1;
     return {
       provider: this.provider,
       model: this.model,
@@ -263,20 +268,21 @@ class MemoryProcessingRepository implements DocumentProcessingRepository {
   }
 }
 
-function createService(content: string | Uint8Array) {
+function createService(content: string | Uint8Array, parserLayer = new ParserLayer()) {
   const bytes = typeof content === "string" ? new TextEncoder().encode(content) : content;
   const repository = new MemoryProcessingRepository(createDocument(bytes));
+  const embeddingProvider = new FakeEmbeddingProvider();
   const service = new DocumentProcessingService(
     repository,
     new MemoryStorageAdapter(bytes),
-    new FakeEmbeddingProvider(),
+    embeddingProvider,
     { maxAttempts: 2, chunkMaxTokens: 24, chunkOverlapTokens: 3 },
-    undefined,
+    parserLayer,
     undefined,
     undefined,
     () => new Date(NOW),
   );
-  return { repository, service };
+  return { repository, service, embeddingProvider };
 }
 
 describe("DocumentProcessingService", () => {
@@ -325,5 +331,135 @@ describe("DocumentProcessingService", () => {
     const retried = await service.retry(enqueued.job.id);
     expect(retried.job.status).toBe("pending");
     expect(retried.job.attempt).toBe(2);
+  });
+
+  it("embeds only the readable page of a mixed scan PDF and marks the document partial", async () => {
+    const pdfParser = new PdfDocumentParser(async () => ({
+      pageCount: 2,
+      title: null,
+      metadata: {},
+      pages: [
+        { pageNumber: 1, text: "Readable page" },
+        { pageNumber: 2, text: "   " },
+      ],
+    }));
+    const { repository, service, embeddingProvider } = createService(
+      "# mixed scan",
+      new ParserLayer([pdfParser]),
+    );
+    repository.document.mimeType = "application/pdf";
+    repository.document.fileExtension = "pdf";
+    repository.document.originalFilename = "mixed-scan.pdf";
+
+    const enqueued = await service.enqueue(DOCUMENT_ID);
+    await expect(service.run(enqueued.job.id)).resolves.toMatchObject({ executed: true });
+
+    expect(embeddingProvider.calls).toBe(1);
+    expect(repository.persistedChunks.get(enqueued.job.id)).toHaveLength(1);
+    expect(repository.persistedChunks.get(enqueued.job.id)?.[0]?.text).toContain("Readable page");
+    expect(repository.document.status).toBe("ready");
+    expect(repository.document.metadata.processing).toMatchObject({
+      qaEligibility: { status: "partial", eligibleChunkCount: 1, warnings: [{ pageNumber: 2 }] },
+    });
+  });
+
+  it("allows high-confidence printed OCR into the index while preserving a review notice", async () => {
+    const ocrProvider: ImageOcrProvider = {
+      recognize: async () => ({
+        lines: [{
+          text: "库存准确率 98.7%",
+          confidence: 96,
+          minimumWordConfidence: 96,
+          bounds: { left: 20, top: 10, right: 200, bottom: 40 },
+          words: [{
+            text: "98.7%",
+            confidence: 96,
+            bounds: { left: 150, top: 10, right: 200, bottom: 40 },
+          }],
+        }],
+        averageConfidence: 96,
+        minimumWordConfidence: 96,
+        wordCount: 1,
+      }),
+    };
+    const { repository, service, embeddingProvider } = createService(
+      new Uint8Array([1, 2, 3]),
+      new ParserLayer([new ImageDocumentParser(ocrProvider)]),
+    );
+    repository.document.mimeType = "image/png";
+    repository.document.fileExtension = "png";
+    repository.document.originalFilename = "inspection.png";
+    const enqueued = await service.enqueue(DOCUMENT_ID);
+
+    await expect(service.run(enqueued.job.id)).resolves.toMatchObject({ executed: true });
+    expect(embeddingProvider.calls).toBe(1);
+    expect(repository.persistedChunks.get(enqueued.job.id)?.[0]?.text).toContain("库存准确率 98.7%");
+    expect(repository.document.status).toBe("ready");
+    expect(repository.document.metadata.processing).toMatchObject({
+      normalizedMetadata: { extracted: { extractionWarnings: [expect.objectContaining({
+        code: "OCR_VISUAL_REVIEW_REQUIRED",
+        severity: "notice",
+      })] } },
+      qaEligibility: { status: "complete", eligibleChunkCount: 1 },
+    });
+  });
+
+  it("blocks low-confidence OCR output from embedding and keeps the source-specific remediation", async () => {
+    const ocrProvider: ImageOcrProvider = {
+      recognize: async () => ({
+        lines: [{
+          text: "库存准确率 98.7%",
+          confidence: 42,
+          minimumWordConfidence: 42,
+          bounds: { left: 20, top: 10, right: 200, bottom: 40 },
+          words: [{
+            text: "98.7%",
+            confidence: 42,
+            bounds: { left: 150, top: 10, right: 200, bottom: 40 },
+          }],
+        }],
+        averageConfidence: 42,
+        minimumWordConfidence: 42,
+        wordCount: 1,
+      }),
+    };
+    const { repository, service, embeddingProvider } = createService(
+      new Uint8Array([1, 2, 3]),
+      new ParserLayer([new ImageDocumentParser(ocrProvider)]),
+    );
+    repository.document.mimeType = "image/png";
+    repository.document.fileExtension = "png";
+    repository.document.originalFilename = "inspection.png";
+    const enqueued = await service.enqueue(DOCUMENT_ID);
+
+    await expect(service.run(enqueued.job.id)).rejects.toMatchObject({
+      code: "PARSER_REVIEW_REQUIRED",
+    });
+    expect(embeddingProvider.calls).toBe(0);
+    expect(repository.persistedChunks.has(enqueued.job.id)).toBe(false);
+    expect(repository.document.errorMessage).toContain("OCR confidence is below the acceptance threshold");
+  });
+
+  it("excludes PPTX chart-cache chunks but retains independently extracted slide text", async () => {
+    const content = new Uint8Array(await readFile(new URL(
+      "../../../../evals/document-reliability/fixtures/18_quarterly_strategy.pptx",
+      import.meta.url,
+    )));
+    const { repository, service, embeddingProvider } = createService(content);
+    repository.document.mimeType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+    repository.document.fileExtension = "pptx";
+    repository.document.originalFilename = "18_quarterly_strategy.pptx";
+    repository.document.displayName = "18_quarterly_strategy.pptx";
+    const enqueued = await service.enqueue(DOCUMENT_ID);
+
+    await expect(service.run(enqueued.job.id)).resolves.toMatchObject({ executed: true });
+    expect(embeddingProvider.calls).toBe(1);
+    const persisted = repository.persistedChunks.get(enqueued.job.id) ?? [];
+    expect(persisted.length).toBeGreaterThan(0);
+    expect(persisted.every((chunk) => !chunk.text.includes("Chart ("))).toBe(true);
+    expect(repository.document.status).toBe("ready");
+    expect(repository.document.metadata.processing).toMatchObject({
+      qaEligibility: { status: "partial", excludedChunkCount: expect.any(Number) },
+    });
   });
 });

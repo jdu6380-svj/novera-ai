@@ -18,7 +18,19 @@ describe("workspace HTTP contract", () => {
         knowledgeBaseName: "Product knowledge",
         knowledgeBaseDescription: "Verified product context",
         healthScore: 82,
-        documents: [],
+        documents: [{
+          id: "doc-1",
+          name: "Mixed scan.pdf",
+          type: "PDF",
+          status: "failed",
+          updatedAt: "recently",
+          size: "2 KB",
+          chunks: 0,
+          quality: "review_required",
+          warnings: [{ code: "PARSER_REVIEW_REQUIRED", message: "Page 2 needs OCR.", location: "Page 2", remediation: "Upload an OCR-processed PDF." }],
+          qaEligible: false,
+          remediation: "Upload an OCR-processed PDF.",
+        }],
         qaRuns: [],
         insights: [],
         answer: emptyWorkspaceAnswer(),
@@ -31,6 +43,11 @@ describe("workspace HTTP contract", () => {
       health_score: 82,
     });
     expect(body.latest_answer).toMatchObject({ run_id: null, confidence: 0 });
+    expect(body.documents[0]).toMatchObject({
+      quality: "review_required",
+      qa_eligible: false,
+      warnings: [{ location: "Page 2" }],
+    });
     expect(body.trace_id).toBe("trace-1");
     expect(body.data_mode).toBe("live");
   });

@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "mode": "smoke",
+  "generated_at": "2026-10-23T14:45:52.348Z",
+  "execution_boundary": "Local parser and in-memory vector store only; no Supabase, Storage, auth, database, or business API calls.",
+  "real_model_calls_executed": false,
+  "corpus": {
+    "fixture_count": 1,
+    "question_count": 1,
+    "manifest_sha256": "ab1b8325408a0fa0fd8490b04fd0aaaf8d9a62e7170a3b2f5ecd5527441d9f06",
+    "corpus_spec_sha256": "7443bd05600f32514632016027fbfd325b14b58e2964d6a43013797daed0d861",
+    "documents": [
+      {
+        "document_id": "doc-013",
+        "file_name": "13_warehouse_capacity.txt",
+        "sha256": "bd7254ff07dde3b2a2b09fe36c4a864abac689fc06e2ec987b419d4b4f6b32e6",
+        "parser": {
+          "name": "plain-text",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 69,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 51,
+        "qa_eligible": true
+      }
+    ],
+    "parser_status_counts": {
+      "PASS": 1
+    },
+    "total_chunks": 1,
+    "qa_eligible_chunks": 1
+  },
+  "configured_model_identity": {
+    "embedding_provider": "dashscope",
+    "embedding_model": "text-embedding-v2",
+    "embedding_dimensions": 1536,
+    "generation_provider": "deepseek",
+    "generation_model": "deepseek-flash"
+  },
+  "cost_estimate": {
+    "chunk_count": 1,
+    "document_embedding_tokens_estimate": 51,
+    "query_embedding_tokens_estimate": 12,
+    "embedding_request_upper_bound": 2,
+    "document_embedding_request_upper_bound": 1,
+    "query_embedding_request_upper_bound": 1,
+    "deepseek_generation_request_upper_bound": 1,
+    "deepseek_input_tokens_upper_bound": 4000,
+    "deepseek_output_tokens_upper_bound": 512,
+    "dashscope_price_cny_per_1k_tokens": 0.0007,
+    "dashscope_estimated_upper_bound_cny": 0.000044,
+    "deepseek_peak_price_usd_per_1m_input_tokens": 0.3,
+    "deepseek_peak_price_usd_per_1m_output_tokens": 1.2,
+    "deepseek_estimated_peak_upper_bound_usd": 0.001814,
+    "pricing_note": "Uses full list rates, DeepSeek peak rates, no free quota, and a 4,000-token input/512-token output cap per case."
+  },
+  "unresolved_product_boundary": "Only chunks without applicable review-required warnings enter retrieval. Omitted content remains unavailable until verified; cases requiring it may fail their original criteria."
+}

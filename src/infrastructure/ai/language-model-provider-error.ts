@@ -9,6 +9,11 @@ export interface LanguageModelProviderDiagnostics {
   providerCode?: string;
   providerType?: string;
   requestId?: string;
+  responseFinishReason?: string;
+  responseContentLength?: number;
+  responseOutputTokens?: number;
+  responseRefusal?: boolean;
+  responseParseFailureReason?: string;
 }
 
 export class LanguageModelProviderError extends Error {

@@ -6,10 +6,20 @@ export type WorkspaceDocumentStatus =
   | "failed"
   | "deleting";
 
+export type WorkspaceDocumentQuality = "complete" | "review_required" | "unavailable";
+
+export interface WorkspaceDocumentWarning {
+  code: string;
+  message: string;
+  severity?: "notice" | "review_required";
+  location?: string;
+  remediation?: string;
+}
+
 export interface WorkspaceDocument {
   id: string;
   name: string;
-  type: "PDF" | "MD" | "TXT" | "DOCX";
+  type: "PDF" | "MD" | "TXT" | "DOCX" | "XLSX" | "PPTX" | "PNG" | "JPG";
   status: WorkspaceDocumentStatus;
   updatedAt: string;
   /** ISO timestamp for the upload event when the live workspace provides it. */
@@ -19,6 +29,11 @@ export interface WorkspaceDocument {
   size: string;
   chunks: number;
   progress?: number;
+  quality?: WorkspaceDocumentQuality;
+  warnings?: WorkspaceDocumentWarning[];
+  qaEligible?: boolean;
+  qaEligibleChunkCount?: number;
+  remediation?: string;
 }
 
 export type ClaimSupportStatus = "full" | "partial" | "unsupported" | "conflict";

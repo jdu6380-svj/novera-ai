@@ -247,6 +247,24 @@ describe("DocumentUploadService", () => {
     );
   });
 
+  it.each([
+    ["financials.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
+    ["strategy.pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"],
+    ["chart.png", "image/png"],
+    ["scan.jpg", "image/jpeg"],
+    ["scan.jpeg", "image/jpeg"],
+  ])("accepts supported document upload %s", async (filename, mimeType) => {
+    const { service } = createService();
+    const result = await service.initialize({
+      ...validInitializeInput(),
+      filename,
+      mimeType,
+    });
+
+    expect(result.document.fileExtension).toBe(filename.split(".").pop());
+    expect(result.document.mimeType).toBe(mimeType);
+  });
+
   it("rejects unsupported file types before creating a database record", async () => {
     const { repository, service } = createService();
 
@@ -261,6 +279,20 @@ describe("DocumentUploadService", () => {
     );
 
     expect(repository.records.size).toBe(0);
+  });
+
+  it("accepts PNG uploads for the OCR review-gated processing path", async () => {
+    const { repository, service } = createService();
+
+    const result = await service.initialize({
+      ...validInitializeInput(),
+      filename: "handwritten-notes.png",
+      mimeType: "image/png",
+    });
+
+    expect(result.document.fileExtension).toBe("png");
+    expect(result.document.mimeType).toBe("image/png");
+    expect(repository.records.size).toBe(1);
   });
 
   it("marks the document failed when Storage cannot create a signed upload", async () => {

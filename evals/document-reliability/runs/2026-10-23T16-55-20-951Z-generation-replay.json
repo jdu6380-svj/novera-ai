@@ -1,0 +1,257 @@
+{
+  "schema_version": "1.0.0",
+  "mode": "generation-replay",
+  "generated_at": "2026-10-23T16:55:20.950Z",
+  "source_run_artifact": "evals/document-reliability/runs/2026-10-23T16-15-05-495Z-full.json",
+  "execution_boundary": "Reused the previously recorded retrieval result. This run made no Embedding, retrieval, Supabase, database, or Storage calls.",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "endpoint_host": "api.deepseek.com",
+  "case_id": "case-001",
+  "query": "青屿精工 2025 年营业收入是多少？",
+  "retrieval": {
+    "executed": true,
+    "storage": "process-local in-memory vector index",
+    "algorithm": "cosine similarity over returned provider vectors",
+    "query_embedding": {
+      "provider": "dashscope",
+      "model": "text-embedding-v2",
+      "dimensions": 1536,
+      "usage_tokens": 10
+    },
+    "chunks": [
+      {
+        "chunk_id": "39c30996-c02b-548b-b490-0881f72f7b31",
+        "document_id": "doc-001",
+        "source_file": "01_qingyu_annual_summary.pdf",
+        "rank": 1,
+        "similarity": 0.47493909526381334,
+        "text": "Page 1\n\nQingyu Precision 2025 Operating Summary 2025 revenue was 128.4 million yuan. Year over year growth was 9.2%. Growth came mainly from East China industrial connector orders.",
+        "locator": {
+          "pageStart": 1,
+          "pageEnd": 1,
+          "lineStart": 1,
+          "lineEnd": 4,
+          "startChar": 0,
+          "endChar": 172,
+          "sectionPath": "Page 1",
+          "sourceSegments": [
+            {
+              "sourceBlockId": "block-0000",
+              "pageStart": 1,
+              "pageEnd": 1,
+              "lineStart": 1,
+              "lineEnd": 4,
+              "startChar": 0,
+              "endChar": 172
+            }
+          ]
+        }
+      },
+      {
+        "chunk_id": "23cdd43f-c7a5-5982-87a3-6fe0b78dec90",
+        "document_id": "doc-016",
+        "source_file": "16_revenue_by_region.xlsx",
+        "rank": 2,
+        "similarity": 0.40034908809903724,
+        "text": "Worksheet: 数据 > Headers: A3=区域 | B3=年份 | C3=营业收入(百万元)\n\nRow 4: 区域=华东 | 年份=2025 | 营业收入(百万元)=42.6\n\nRow 5: 区域=华南 | 年份=2025 | 营业收入(百万元)=31.8\n\nRow 6: 区域=华北 | 年份=2025 | 营业收入(百万元)=27.4",
+        "locator": {
+          "pageStart": null,
+          "pageEnd": null,
+          "lineStart": 4,
+          "lineEnd": 6,
+          "startChar": 70,
+          "endChar": 189,
+          "sectionPath": "Worksheet: 数据 > Headers: A3=区域 | B3=年份 | C3=营业收入(百万元)",
+          "sourceSegments": [
+            {
+              "sourceBlockId": "block-0003",
+              "pageStart": null,
+              "pageEnd": null,
+              "lineStart": 4,
+              "lineEnd": 4,
+              "startChar": 70,
+              "endChar": 109
+            },
+            {
+              "sourceBlockId": "block-0004",
+              "pageStart": null,
+              "pageEnd": null,
+              "lineStart": 5,
+              "lineEnd": 5,
+              "startChar": 110,
+              "endChar": 149
+            },
+            {
+              "sourceBlockId": "block-0005",
+              "pageStart": null,
+              "pageEnd": null,
+              "lineStart": 6,
+              "lineEnd": 6,
+              "startChar": 150,
+              "endChar": 189
+            }
+          ]
+        }
+      },
+      {
+        "chunk_id": "b9508b82-6f99-56e1-a709-7b2ebcfe74c2",
+        "document_id": "doc-011",
+        "source_file": "11_annual_metric_table.md",
+        "rank": 3,
+        "similarity": 0.3658886242394837,
+        "text": "年度经营指标表\n\n单位:百万元,人数为年末在岗人数。\n\n| 指标 | 2024 | 2025 | | --- | ---: | ---: | | 营业收入 | 117.6 | 128.4 | | 研发人员 | 84 | 92 |\n\n2025 年末研发人员为 92 人。",
+        "locator": {
+          "pageStart": null,
+          "pageEnd": null,
+          "lineStart": 3,
+          "lineEnd": 10,
+          "startChar": 11,
+          "endChar": 136,
+          "sectionPath": "年度经营指标表",
+          "sourceSegments": [
+            {
+              "sourceBlockId": "block-0001",
+              "pageStart": null,
+              "pageEnd": null,
+              "lineStart": 3,
+              "lineEnd": 3,
+              "startChar": 11,
+              "endChar": 28
+            },
+            {
+              "sourceBlockId": "block-0002",
+              "pageStart": null,
+              "pageEnd": null,
+              "lineStart": 5,
+              "lineEnd": 8,
+              "startChar": 30,
+              "endChar": 116
+            },
+            {
+              "sourceBlockId": "block-0003",
+              "pageStart": null,
+              "pageEnd": null,
+              "lineStart": 10,
+              "lineEnd": 10,
+              "startChar": 118,
+              "endChar": 136
+            }
+          ]
+        }
+      },
+      {
+        "chunk_id": "c99793fe-a2e7-5f13-9709-55d340596461",
+        "document_id": "doc-001",
+        "source_file": "01_qingyu_annual_summary.pdf",
+        "rank": 4,
+        "similarity": 0.3541124094679441,
+        "text": "Page 2\n\n2025 operating review The company added two automated production lines. Net profit amount was not disclosed.",
+        "locator": {
+          "pageStart": 2,
+          "pageEnd": 2,
+          "lineStart": 6,
+          "lineEnd": 8,
+          "startChar": 174,
+          "endChar": 282,
+          "sectionPath": "Page 2",
+          "sourceSegments": [
+            {
+              "sourceBlockId": "block-0001",
+              "pageStart": 2,
+              "pageEnd": 2,
+              "lineStart": 6,
+              "lineEnd": 8,
+              "startChar": 174,
+              "endChar": 282
+            }
+          ]
+        }
+      },
+      {
+        "chunk_id": "923a6f3b-0703-57fb-a4ef-c59082ee9701",
+        "document_id": "doc-012",
+        "source_file": "12_information_gap_policy.md",
+        "rank": 5,
+        "similarity": 0.3504260951608931,
+        "text": "经营数据披露范围 > 已披露\n\n2025 年付费企业客户数为 1,240 家。",
+        "locator": {
+          "pageStart": null,
+          "pageEnd": null,
+          "lineStart": 5,
+          "lineEnd": 5,
+          "startChar": 20,
+          "endChar": 43,
+          "sectionPath": "经营数据披露范围 > 已披露",
+          "sourceSegments": [
+            {
+              "sourceBlockId": "block-0002",
+              "pageStart": null,
+              "pageEnd": null,
+              "lineStart": 5,
+              "lineEnd": 5,
+              "startChar": 20,
+              "endChar": 43
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "generation": {
+    "attempted": true,
+    "http_status": 200,
+    "succeeded": true,
+    "non_empty": true,
+    "answer": {
+      "answer": "青屿精工2025年营业收入为128.4百万元。",
+      "claims": [
+        {
+          "claimText": "青屿精工2025年营业收入为128.4百万元。",
+          "claimType": "fact",
+          "weight": 10,
+          "evidence": [
+            {
+              "citationLabel": "[S1]",
+              "quote": "2025 revenue was 128.4 million yuan"
+            },
+            {
+              "citationLabel": "[S3]",
+              "quote": "| 营业收入 | 117.6 | 128.4 |"
+            }
+          ]
+        },
+        {
+          "claimText": "2025年营业收入同比增长9.2%。",
+          "claimType": "fact",
+          "weight": 6,
+          "evidence": [
+            {
+              "citationLabel": "[S1]",
+              "quote": "Year over year growth was 9.2%"
+            }
+          ]
+        }
+      ],
+      "limitations": [],
+      "insufficientEvidence": false
+    },
+    "input_tokens": 1255,
+    "output_tokens": 162,
+    "prompt_version": "phase4-v1"
+  },
+  "requests": {
+    "document_embedding": 0,
+    "query_embedding": 0,
+    "vector_retrieval": 0,
+    "generation_attempted": 1,
+    "max_retries": 0
+  },
+  "approved_cost_caps": {
+    "approvedUsd": 0.001814,
+    "approvedCny": 0
+  },
+  "status": "PASS",
+  "started_at": "2026-10-23T16:55:18.415Z",
+  "source_case_status": "FAILED"
+}

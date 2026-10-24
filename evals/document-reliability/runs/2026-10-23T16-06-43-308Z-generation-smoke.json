@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0.0",
+  "mode": "generation-smoke-replay",
+  "generated_at": "2026-10-23T16:06:43.307Z",
+  "source_run_artifact": "evals/document-reliability/runs/2026-10-23T15-40-53-826Z-smoke.json",
+  "execution_boundary": "Reused the previously recorded retrieval result. This run made no Embedding, retrieval, Supabase, database, or Storage calls.",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "endpoint_host": "api.deepseek.com",
+  "case_id": "case-025",
+  "query": "第 40 周日均处理量是多少？",
+  "retrieval": {
+    "executed": true,
+    "storage": "process-local in-memory vector index",
+    "algorithm": "cosine similarity over returned provider vectors",
+    "query_embedding": {
+      "provider": "dashscope",
+      "model": "text-embedding-v2",
+      "dimensions": 1536,
+      "usage_tokens": 9
+    },
+    "chunks": [
+      {
+        "chunk_id": "bdda4514-cf8d-5013-8bdc-08d568a5fbb1",
+        "document_id": "doc-013",
+        "source_file": "13_warehouse_capacity.txt",
+        "rank": 1,
+        "similarity": 0.5162492428669707,
+        "text": "13_warehouse_capacity.txt\n\n仓库产能周报\n\n2025 年第 40 周,日均处理量为 5,180 件。 设计日处理能力为 5,600 件。\n\n周报未列出夜班单独产量。",
+        "locator": {
+          "pageStart": null,
+          "pageEnd": null,
+          "lineStart": 1,
+          "lineEnd": 6,
+          "startChar": 0,
+          "endChar": 68,
+          "sectionPath": "13_warehouse_capacity.txt",
+          "sourceSegments": [
+            {
+              "sourceBlockId": "block-0000",
+              "pageStart": null,
+              "pageEnd": null,
+              "lineStart": 1,
+              "lineEnd": 1,
+              "startChar": 0,
+              "endChar": 6
+            },
+            {
+              "sourceBlockId": "block-0001",
+              "pageStart": null,
+              "pageEnd": null,
+              "lineStart": 3,
+              "lineEnd": 4,
+              "startChar": 8,
+              "endChar": 54
+            },
+            {
+              "sourceBlockId": "block-0002",
+              "pageStart": null,
+              "pageEnd": null,
+              "lineStart": 6,
+              "lineEnd": 6,
+              "startChar": 56,
+              "endChar": 68
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "generation": {
+    "attempted": true,
+    "http_status": 200,
+    "succeeded": true,
+    "non_empty": true,
+    "answer": {
+      "answer": "2025 年第 40 周的日均处理量为 5,180 件。",
+      "claims": [
+        {
+          "claimText": "2025 年第 40 周的日均处理量为 5,180 件。",
+          "claimType": "fact",
+          "weight": 9,
+          "evidence": [
+            {
+              "citationLabel": "[S1]",
+              "quote": "2025 年第 40 周,日均处理量为 5,180 件。"
+            }
+          ]
+        }
+      ],
+      "limitations": [],
+      "insufficientEvidence": false
+    },
+    "input_tokens": 625,
+    "output_tokens": 403,
+    "prompt_version": "phase4-v1"
+  },
+  "requests": {
+    "document_embedding": 0,
+    "query_embedding": 0,
+    "vector_retrieval": 0,
+    "generation_attempted": 1,
+    "max_retries": 0
+  },
+  "approved_cost_caps": {
+    "approvedUsd": 0.003,
+    "approvedCny": 0.001
+  },
+  "status": "PASS",
+  "started_at": "2026-10-23T16:06:36.468Z"
+}

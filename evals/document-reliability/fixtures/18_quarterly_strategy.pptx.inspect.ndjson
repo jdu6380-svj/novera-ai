@@ -1,0 +1,20 @@
+{"kind":"deck","id":"pr/ghhysp","name":"Deck"}
+{"kind":"layout","id":"ly/5wbepsna","editable":false,"name":"Master","type":"master"}
+{"kind":"layout","id":"ly/a9g721c3","editable":false,"name":"Title Slide","type":"title","placeholders":[{"name":"title","type":"title"},{"name":"subtitle","type":"subtitle"}]}
+{"kind":"layout","id":"ly/kz2hgn6t","editable":false,"name":"Section Header","type":"sectionHeader","placeholders":[{"name":"title","type":"title"}]}
+{"kind":"layout","id":"ly/jalgn6hc","editable":false,"name":"Title and Body","type":"tx","placeholders":[{"name":"title","type":"title"},{"name":"body","type":"body"}]}
+{"kind":"layout","id":"ly/lo329sjy","editable":false,"name":"Title and Two Column","type":"twoColTx","placeholders":[{"name":"title","type":"title"},{"name":"Left column","type":"body"},{"name":"Right column","type":"body"}]}
+{"kind":"layout","id":"ly/gb2ho369","editable":false,"name":"Title and One Column","type":"tx","placeholders":[{"name":"title","type":"title"},{"name":"body","type":"body"}]}
+{"kind":"layout","id":"ly/byh8jy58","editable":false,"name":"Blank","type":"blank"}
+{"kind":"slide","id":"sl/v0fkyz","slideIndex":0,"layout":{"id":"ly/byh8jy58","name":"Blank"},"title":"第四季度产品计划","textShapes":3,"backgroundColor":"rgba(248,250,252,1)"}
+{"kind":"textbox","id":"sh/0nyhkve5","slideIndex":0,"position":{"left":72,"top":62,"width":1060,"height":62},"text":"第四季度产品计划","geometry":"rect","lineWidth":0,"style":{"fontSize":34,"typeface":"Arial","color":"#1D2939","bold":true,"alignment":"left"}}
+{"kind":"textbox","id":"sh/z2pgbqxk","slideIndex":0,"position":{"left":88,"top":168,"width":520,"height":300},"text":"目标：缩短知识库处理失败后的恢复时间\n重试成功率目标：85%","geometry":"rect","lineWidth":0,"style":{"fontSize":22,"typeface":"Arial","color":"#344054","alignment":"left"}}
+{"kind":"textbox","id":"sh/9srih0fm","slideIndex":0,"position":{"left":88,"top":620,"width":600,"height":30},"text":"Synthetic test document. Values are fictional.","geometry":"rect","lineWidth":0,"style":{"fontSize":14,"typeface":"Arial","color":"#667085","alignment":"left"}}
+{"kind":"chart","id":"ch/2doripgv","slideIndex":0,"position":{"left":720,"top":168,"width":420,"height":280},"name":"","chartType":"bar"}
+{"kind":"notes","id":"nt/v0fkyz","slideIndex":0,"text":""}
+{"kind":"slide","id":"sl/p8670d","slideIndex":1,"layout":{"id":"ly/byh8jy58","name":"Blank"},"title":"衡量方式","textShapes":3,"backgroundColor":"rgba(248,250,252,1)"}
+{"kind":"textbox","id":"sh/nu5wvypg","slideIndex":1,"position":{"left":72,"top":62,"width":1060,"height":62},"text":"衡量方式","geometry":"rect","lineWidth":0,"style":{"fontSize":34,"typeface":"Arial","color":"#1D2939","bold":true,"alignment":"left"}}
+{"kind":"textbox","id":"sh/ovedo361","slideIndex":1,"position":{"left":88,"top":168,"width":520,"height":300},"text":"观察处理失败到重新进入队列的时间\n不将目标值描述为已实现结果","geometry":"rect","lineWidth":0,"style":{"fontSize":22,"typeface":"Arial","color":"#344054","alignment":"left"}}
+{"kind":"textbox","id":"sh/e5cvi9oj","slideIndex":1,"position":{"left":88,"top":620,"width":600,"height":30},"text":"Synthetic test document. Values are fictional.","geometry":"rect","lineWidth":0,"style":{"fontSize":14,"typeface":"Arial","color":"#667085","alignment":"left"}}
+{"kind":"chart","id":"ch/1cjudkrq","slideIndex":1,"position":{"left":720,"top":168,"width":420,"height":280},"name":"","chartType":"bar"}
+{"kind":"notes","id":"nt/p8670d","slideIndex":1,"text":""}

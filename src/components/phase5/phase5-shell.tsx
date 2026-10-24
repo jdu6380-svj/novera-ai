@@ -456,7 +456,7 @@ export function Phase5Workspace({
               <p className="hero-description">Ask a business question and inspect how Novera moves from retrieved knowledge to a verified answer.</p>
             </div>
             <div className="hero-actions">
-              <input ref={fileInputRef} className="visually-hidden" type="file" accept=".pdf,.md,.txt,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={handleFileChange} />
+              <input ref={fileInputRef} className="visually-hidden" type="file" accept=".pdf,.md,.txt,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,application/pdf,text/markdown,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/png,image/jpeg" onChange={handleFileChange} />
               <button className="button button-secondary" type="button" onClick={() => fileInputRef.current?.click()}><Phase5Icon name="upload" />Add knowledge</button>
               <button className="button button-primary" type="button" onClick={() => handleNavClick("qa-composer")}><Phase5Icon name="spark" />Run a QA check</button>
             </div>
@@ -606,7 +606,7 @@ function SourceDocuments({ evidence, documents, onNotice }: { evidence: Workspac
 }
 
 function DocumentsPanel({ documents, onAdd, onNotice }: { documents: WorkspaceDocument[]; onAdd: () => void; onNotice: (message: string) => void }) {
-  return <section className="documents-panel panel"><SectionHeading eyebrow="Knowledge workspace" title="Documents" detail={`${documents.length} sources · ${documents.filter((item) => item.status === "ready").length} evidence-ready`} action={<button className="button button-small button-secondary" type="button" onClick={onAdd}><Phase5Icon name="plus" />Add document</button>} /><div className="document-list">{documents.length ? documents.map((document) => <DocumentRow key={document.id} document={document} onNotice={onNotice} />) : <div className="empty-state">Upload a PDF, Markdown, or TXT file to begin building READY knowledge.</div>}</div></section>;
+  return <section className="documents-panel panel"><SectionHeading eyebrow="Knowledge workspace" title="Documents" detail={`${documents.length} sources · ${documents.filter((item) => item.status === "ready").length} evidence-ready`} action={<button className="button button-small button-secondary" type="button" onClick={onAdd}><Phase5Icon name="plus" />Add document</button>} /><div className="document-list">{documents.length ? documents.map((document) => <DocumentRow key={document.id} document={document} onNotice={onNotice} />) : <div className="empty-state">Supported: PDF, DOCX, XLSX, PPTX, Markdown, TXT, PNG, JPEG.</div>}</div></section>;
 }
 
 function DocumentRow({ document, onNotice }: { document: WorkspaceDocument; onNotice: (message: string) => void }) {

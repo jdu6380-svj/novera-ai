@@ -42,6 +42,22 @@ export interface DeepSeekLanguageModelClient {
   };
 }
 
+function deepSeekResponseDiagnostics(
+  response: ChatCompletion,
+  parseFailureReason: string,
+): LanguageModelProviderDiagnostics {
+  const choice = response.choices[0];
+  const content = choice?.message?.content;
+  return {
+    requestId: response.id,
+    responseFinishReason: choice?.finish_reason ?? "missing_choice",
+    responseContentLength: typeof content === "string" ? content.length : 0,
+    responseOutputTokens: response.usage?.completion_tokens ?? undefined,
+    responseRefusal: Boolean(choice?.message?.refusal),
+    responseParseFailureReason: parseFailureReason,
+  };
+}
+
 export interface OpenAILanguageModelProviderDependencies {
   client?: OpenAILanguageModelClient;
 }
@@ -252,7 +268,9 @@ export class DeepSeekLanguageModelProvider implements LanguageModelProvider {
       "Return one valid JSON object and no markdown.",
       `The JSON object must conform to this JSON Schema: ${JSON.stringify(request.jsonSchema)}`,
     ].join("\n");
-    const body: ChatCompletionCreateParamsNonStreaming = {
+    const body: ChatCompletionCreateParamsNonStreaming & {
+      thinking: { type: "disabled" };
+    } = {
       model: this.model,
       messages: [
         { role: "system", content: systemPrompt },
@@ -260,6 +278,7 @@ export class DeepSeekLanguageModelProvider implements LanguageModelProvider {
       ],
       max_tokens: request.maxOutputTokens ?? this.maxOutputTokens,
       response_format: { type: "json_object" },
+      thinking: { type: "disabled" },
       ...(request.temperature === undefined ? {} : { temperature: request.temperature }),
     };
 
@@ -276,11 +295,14 @@ export class DeepSeekLanguageModelProvider implements LanguageModelProvider {
       );
     }
 
-    const content = response.choices[0]?.message?.content;
+    const choice = response.choices[0];
+    const content = choice?.message?.content;
     if (typeof content !== "string" || !content.trim()) {
       throw new LanguageModelProviderError(
         "The language model returned an empty response.",
         "INVALID_PROVIDER_RESPONSE",
+        undefined,
+        deepSeekResponseDiagnostics(response, "empty_content"),
       );
     }
 
@@ -292,6 +314,7 @@ export class DeepSeekLanguageModelProvider implements LanguageModelProvider {
         "The language model did not return valid JSON.",
         "INVALID_PROVIDER_RESPONSE",
         { cause: error },
+        deepSeekResponseDiagnostics(response, "invalid_json"),
       );
     }
 
@@ -299,6 +322,8 @@ export class DeepSeekLanguageModelProvider implements LanguageModelProvider {
       throw new LanguageModelProviderError(
         "The language model returned a JSON value instead of an object.",
         "INVALID_PROVIDER_RESPONSE",
+        undefined,
+        deepSeekResponseDiagnostics(response, "non_object_json"),
       );
     }
 

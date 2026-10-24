@@ -1,0 +1,370 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_name": "Novera synthetic document reliability corpus",
+  "source_type": "synthetic",
+  "notice": "All organizations, figures, and documents in this corpus are fictional and created for controlled parser-boundary tests.",
+  "documents": [
+    {
+      "document_id": "doc-001",
+      "file_name": "01_qingyu_annual_summary.pdf",
+      "file_format": "pdf",
+      "source_type": "synthetic",
+      "company_name": "青屿精工",
+      "document_title": "2025 年经营摘要",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取电子文本并保留 PDF 页码定位",
+      "known_limitations": ["本次仅验证解析与证据文本保留，不验证线上检索或模型回答。"],
+      "content": {
+        "pages": [
+          "Qingyu Precision 2025 Operating Summary\n2025 revenue was 128.4 million yuan.\nYear over year growth was 9.2%.\nGrowth came mainly from East China industrial connector orders.",
+          "2025 operating review\nThe company added two automated production lines.\nNet profit amount was not disclosed."
+        ]
+      },
+      "questions": [
+        {
+          "case_id": "case-001",
+          "question": "青屿精工 2025 年营业收入是多少？",
+          "question_type": "single_document_fact",
+          "expected_answer": "128.4 百万元",
+          "evidence": [{"document_id": "doc-001", "evidence_text": "2025 revenue was 128.4 million yuan.", "evidence_location": "PDF page 1"}],
+          "answerability": "answerable",
+          "expected_behavior": "返回数值、单位及来源页码"
+        },
+        {
+          "case_id": "case-002",
+          "question": "与 2024 年相比，青屿精工 2025 年收入增加了多少？",
+          "question_type": "cross_document_comparison",
+          "expected_answer": "增加 10.8 百万元",
+          "evidence": [{"document_id": "doc-001", "evidence_text": "2025 revenue was 128.4 million yuan.", "evidence_location": "PDF page 1"}, {"document_id": "doc-002", "evidence_text": "2024 revenue was 117.6 million yuan.", "evidence_location": "PDF page 1"}],
+          "related_document_ids": ["doc-002"],
+          "answerability": "answerable",
+          "expected_behavior": "综合两份文档证据并保留相同单位"
+        }
+      ]
+    },
+    {
+      "document_id": "doc-002",
+      "file_name": "02_qingyu_kpi_detail.pdf",
+      "file_format": "pdf",
+      "source_type": "synthetic",
+      "company_name": "青屿精工",
+      "document_title": "年度指标补充表",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取电子文本中的指标、年份及单位",
+      "known_limitations": ["PDF 表格按提取顺序保留文本，本测试不判断复杂表格单元格结构。"],
+      "content": {"pages": ["Annual metric supplement\n2024 revenue was 117.6 million yuan.\n2025 on-time delivery rate was 97.3%.\n2025 first-pass yield was 98.6%."]},
+      "questions": [
+        {"case_id": "case-003", "question": "青屿精工 2025 年准时交付率是多少？", "question_type": "metric_with_period", "expected_answer": "97.3%", "evidence": [{"document_id": "doc-002", "evidence_text": "2025 on-time delivery rate was 97.3%.", "evidence_location": "PDF page 1"}], "answerability": "answerable", "expected_behavior": "同时返回年份和百分比"},
+        {"case_id": "case-004", "question": "2025 年一次检验合格率是多少？", "question_type": "metric_retrieval", "expected_answer": "98.6%", "evidence": [{"document_id": "doc-002", "evidence_text": "2025 first-pass yield was 98.6%.", "evidence_location": "PDF page 1"}], "answerability": "answerable", "expected_behavior": "从指标文本中返回原值"}
+      ]
+    },
+    {
+      "document_id": "doc-003",
+      "file_name": "03_yunhai_mixed_scan_appendix.pdf",
+      "file_format": "pdf",
+      "source_type": "synthetic",
+      "company_name": "云海物流",
+      "document_title": "2025 年配送运营附录",
+      "document_version": "v1",
+      "expected_capability": "supported_parser_with_review_boundary",
+      "expected_behavior": "保留可提取页面，并标记没有提取到文本的页面供人工复核",
+      "known_limitations": ["第 2 页为图片扫描页；项目没有 OCR 能力，不能读取其中的指标。"],
+      "content": {"pages": [{"kind": "text", "text": "Yunhai Logistics delivery appendix\n2025 on-time delivery rate was 96.2%."}, {"kind": "image", "text": "2025 customer return rate was 1.6%."}, {"kind": "text", "text": "Operating scope\nThe figures cover direct sites in East and South China."}]},
+      "questions": [
+        {"case_id": "case-005", "question": "云海物流 2025 年准时送达率是多少？", "question_type": "single_document_metric", "expected_answer": "96.2%", "evidence": [{"document_id": "doc-003", "evidence_text": "2025 on-time delivery rate was 96.2%.", "evidence_location": "PDF page 1"}], "answerability": "answerable", "expected_behavior": "使用可提取页面内容回答"},
+        {"case_id": "case-006", "question": "扫描页记录的 2025 年客户退货率是多少？", "question_type": "scanned_page_boundary", "expected_answer": "1.6%（仅存在于扫描图像，当前解析器无法读取）", "evidence": [{"document_id": "doc-003", "evidence_text": "2025 年客户退货率为 1.6%。", "evidence_location": "PDF 第 2 页的图像"}], "answerability": "requires_ocr_or_review", "expected_behavior": "不得把扫描图像内容当成已解析证据；提示第 2 页需要 OCR 或人工核对"}
+      ]
+    },
+    {
+      "document_id": "doc-004",
+      "file_name": "04_board_capacity_minutes.pdf",
+      "file_format": "pdf",
+      "source_type": "synthetic",
+      "company_name": "云海物流",
+      "document_title": "产能评审会议纪要",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "保留会议纪要事实、阈值及页面定位",
+      "known_limitations": ["文档只记录讨论结论，不验证后续执行情况。"],
+      "content": {"pages": ["Capacity review meeting notes\n18 September 2025\nThe meeting set the daily sorting target at 5,400 units.\nWhen on-time delivery stays below 95% for two weeks, operations must submit a review.\nThe notes do not provide an equipment purchase budget."]},
+      "questions": [
+        {"case_id": "case-007", "question": "会议决定的日均分拣目标是多少？", "question_type": "numeric_threshold", "expected_answer": "5,400 units", "evidence": [{"document_id": "doc-004", "evidence_text": "The meeting set the daily sorting target at 5,400 units.", "evidence_location": "PDF page 1"}], "answerability": "answerable", "expected_behavior": "保留数值与单位"},
+        {"case_id": "case-008", "question": "设备采购预算是多少？", "question_type": "knowledge_gap", "expected_answer": "The notes do not provide an equipment purchase budget.", "evidence": [{"document_id": "doc-004", "evidence_text": "The notes do not provide an equipment purchase budget.", "evidence_location": "PDF page 1"}], "answerability": "unanswerable", "expected_behavior": "说明缺少预算证据，不猜测金额"}
+      ]
+    },
+    {
+      "document_id": "doc-005",
+      "file_name": "05_scanned_only_inspection.pdf",
+      "file_format": "pdf",
+      "source_type": "synthetic",
+      "company_name": "澄禾设备",
+      "document_title": "仓储抽检记录扫描件",
+      "document_version": "v1",
+      "expected_capability": "supported_parser_with_ocr_limit",
+      "expected_behavior": "无可提取文本时明确失败，不将图像文字当成成功解析",
+      "known_limitations": ["整份 PDF 只有扫描图像；OCR 未实现。"],
+      "content": {"pages": [{"kind": "image", "text": "2025 年 10 月仓储抽检记录\n库存准确率为 98.7%。\n抽检样本为 620 件。"}]},
+      "questions": [
+        {"case_id": "case-009", "question": "扫描件中的库存准确率是多少？", "question_type": "scanned_document_boundary", "expected_answer": "98.7%（当前无法从图像中提取）", "evidence": [{"document_id": "doc-005", "evidence_text": "库存准确率为 98.7%。", "evidence_location": "PDF 第 1 页的图像"}], "answerability": "requires_ocr_or_review", "expected_behavior": "解析失败并说明扫描内容需要 OCR 或人工录入"},
+        {"case_id": "case-010", "question": "扫描件的抽检样本量是多少？", "question_type": "scanned_document_boundary", "expected_answer": "620 件（当前无法从图像中提取）", "evidence": [{"document_id": "doc-005", "evidence_text": "抽检样本为 620 件。", "evidence_location": "PDF 第 1 页的图像"}], "answerability": "requires_ocr_or_review", "expected_behavior": "不得声称已读取扫描图像"}
+      ]
+    },
+    {
+      "document_id": "doc-006",
+      "file_name": "06_supplier_quality_review.docx",
+      "file_format": "docx",
+      "source_type": "synthetic",
+      "company_name": "澄海零部件",
+      "document_title": "供应商质量月报",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取 DOCX 标题与段落文本",
+      "known_limitations": ["不评估复杂表格、嵌入对象或图表的结构化解析。"],
+      "content": {"paragraphs": ["供应商质量月报", "2025 年 8 月来料一次检验合格率为 99.1%。", "同月退货批次为 7 批，较 7 月减少 2 批。"]},
+      "questions": [
+        {"case_id": "case-011", "question": "2025 年 8 月来料一次检验合格率是多少？", "question_type": "metric_with_period", "expected_answer": "99.1%", "evidence": [{"document_id": "doc-006", "evidence_text": "2025 年 8 月来料一次检验合格率为 99.1%。", "evidence_location": "DOCX 第 2 段"}], "answerability": "answerable", "expected_behavior": "返回月份与指标值"},
+        {"case_id": "case-012", "question": "8 月退货批次比 7 月少多少？", "question_type": "comparison", "expected_answer": "少 2 批", "evidence": [{"document_id": "doc-006", "evidence_text": "同月退货批次为 7 批，较 7 月减少 2 批。", "evidence_location": "DOCX 第 3 段"}], "answerability": "answerable", "expected_behavior": "保留比较基准和单位"}
+      ]
+    },
+    {
+      "document_id": "doc-007",
+      "file_name": "07_regional_sales_table.docx",
+      "file_format": "docx",
+      "source_type": "synthetic",
+      "company_name": "青屿精工",
+      "document_title": "区域销售补充说明",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "保留段落和表格单元格中的文本；不承诺表格行列关系",
+      "known_limitations": ["当前 DOCX 解析会扁平化表格单元格，行列关系未建模。"],
+      "content": {"paragraphs": ["区域销售补充说明", "2025 年华东区销售收入为 42.6 百万元。", "表格字段按区域、年份和收入排列。"], "table": [["区域", "年份", "收入（百万元）"], ["华东", "2025", "42.6"], ["华南", "2025", "31.8"]]},
+      "questions": [
+        {"case_id": "case-013", "question": "华东区 2025 年销售收入是多少？", "question_type": "table_metric", "expected_answer": "42.6 百万元", "evidence": [{"document_id": "doc-007", "evidence_text": "2025 年华东区销售收入为 42.6 百万元。", "evidence_location": "DOCX 第 2 段"}], "answerability": "answerable", "expected_behavior": "答案以可核验段落为准；不依赖表格关系推断"},
+        {"case_id": "case-014", "question": "华南区的 2025 年收入是多少？", "question_type": "table_row_context", "expected_answer": "31.8 百万元；当前 parser 只保留扁平单元格文本", "evidence": [{"document_id": "doc-007", "evidence_text": "31.8", "evidence_location": "DOCX 表格第 3 行"}], "answerability": "answerable_with_structure_limit", "expected_behavior": "原文值存在，但行列关联需要人工核对"}
+      ]
+    },
+    {
+      "document_id": "doc-008",
+      "file_name": "08_compliance_action_list.docx",
+      "file_format": "docx",
+      "source_type": "synthetic",
+      "company_name": "北辰医疗器械",
+      "document_title": "质量整改跟踪清单",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取标题、段落与列表内容",
+      "known_limitations": ["清单内容可提取，但本次不运行检索排序。"],
+      "content": {"paragraphs": ["质量整改跟踪清单", "1. 供应商需在 10 月 12 日前补交校准证书。", "2. 质量团队需在 10 月 18 日前完成复检。", "3. 采购需冻结批次 QH-204。"]},
+      "questions": [
+        {"case_id": "case-015", "question": "供应商补交校准证书的截止日期是什么？", "question_type": "list_item", "expected_answer": "10 月 12 日", "evidence": [{"document_id": "doc-008", "evidence_text": "供应商需在 10 月 12 日前补交校准证书。", "evidence_location": "DOCX 第 2 段"}], "answerability": "answerable", "expected_behavior": "返回可执行日期与事项"},
+        {"case_id": "case-016", "question": "需要冻结的批次编号是什么？", "question_type": "identifier_lookup", "expected_answer": "QH-204", "evidence": [{"document_id": "doc-008", "evidence_text": "采购需冻结批次 QH-204。", "evidence_location": "DOCX 第 4 段"}], "answerability": "answerable", "expected_behavior": "逐字保留批次编号"}
+      ]
+    },
+    {
+      "document_id": "doc-009",
+      "file_name": "09_rnd_budget_summary.docx",
+      "file_format": "docx",
+      "source_type": "synthetic",
+      "company_name": "澄海零部件",
+      "document_title": "研发项目进度摘要",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取已披露项目进度，并保留明确的缺失信息说明",
+      "known_limitations": ["本次只评估原文是否保留，不执行生成模型拒答测试。"],
+      "content": {"paragraphs": ["研发项目进度摘要", "轻量化连接器项目已完成设计验证，预计 2026 年 1 月进入试产。", "本摘要未列出研发预算金额。"]},
+      "questions": [
+        {"case_id": "case-017", "question": "轻量化连接器预计何时进入试产？", "question_type": "date_retrieval", "expected_answer": "2026 年 1 月", "evidence": [{"document_id": "doc-009", "evidence_text": "预计 2026 年 1 月进入试产。", "evidence_location": "DOCX 第 2 段"}], "answerability": "answerable", "expected_behavior": "保留预计时间属性"},
+        {"case_id": "case-018", "question": "研发预算金额是多少？", "question_type": "knowledge_gap", "expected_answer": "文档未提供研发预算金额。", "evidence": [{"document_id": "doc-009", "evidence_text": "本摘要未列出研发预算金额。", "evidence_location": "DOCX 第 3 段"}], "answerability": "unanswerable", "expected_behavior": "指出原文没有金额，不推断预算"}
+      ]
+    },
+    {
+      "document_id": "doc-010",
+      "file_name": "10_product_release_notes.md",
+      "file_format": "markdown",
+      "source_type": "synthetic",
+      "company_name": "栖木软件",
+      "document_title": "知识库 2.4 发布说明",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "保留 Markdown 标题层级、列表与正文",
+      "known_limitations": ["不评估代码块内容的语义检索。"],
+      "content": {"text": "---\ncompany: 栖木软件\nversion: 2.4\n---\n# 知识库 2.4 发布说明\n\n## 处理改进\n\n2025 年 9 月平均解析耗时降至 42 秒。\n\n## 变更项\n\n- 新增处理失败后的重试入口\n- 文档状态展示当前处理阶段\n"},
+      "questions": [
+        {"case_id": "case-019", "question": "2025 年 9 月平均解析耗时是多少？", "question_type": "metric_retrieval", "expected_answer": "42 秒", "evidence": [{"document_id": "doc-010", "evidence_text": "2025 年 9 月平均解析耗时降至 42 秒。", "evidence_location": "Markdown 第 7 行"}], "answerability": "answerable", "expected_behavior": "保留标题上下文与单位"},
+        {"case_id": "case-020", "question": "发布说明新增了哪个失败恢复入口？", "question_type": "list_retrieval", "expected_answer": "处理失败后的重试入口", "evidence": [{"document_id": "doc-010", "evidence_text": "新增处理失败后的重试入口", "evidence_location": "Markdown 第 11 行"}], "answerability": "answerable", "expected_behavior": "从列表内容返回功能"}
+      ]
+    },
+    {
+      "document_id": "doc-011",
+      "file_name": "11_annual_metric_table.md",
+      "file_format": "markdown",
+      "source_type": "synthetic",
+      "company_name": "青屿精工",
+      "document_title": "年度经营指标表",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "保留 Markdown 表格原文和数值单位",
+      "known_limitations": ["当前 parser 将 Markdown 表格作为文本块，不构造行列对象。"],
+      "content": {"text": "# 年度经营指标表\n\n单位：百万元，人数为年末在岗人数。\n\n| 指标 | 2024 | 2025 |\n| --- | ---: | ---: |\n| 营业收入 | 117.6 | 128.4 |\n| 研发人员 | 84 | 92 |\n\n2025 年末研发人员为 92 人。\n"},
+      "questions": [
+        {"case_id": "case-021", "question": "2025 年营业收入是多少？", "question_type": "table_metric_with_unit", "expected_answer": "128.4 百万元", "evidence": [{"document_id": "doc-011", "evidence_text": "| 营业收入 | 117.6 | 128.4 |", "evidence_location": "Markdown 表格第 7 行"}, {"document_id": "doc-011", "evidence_text": "单位：百万元", "evidence_location": "Markdown 第 3 行"}], "answerability": "answerable", "expected_behavior": "年份、指标和单位一并核对"},
+        {"case_id": "case-022", "question": "2025 年末研发人员有多少人？", "question_type": "metric_retrieval", "expected_answer": "92 人", "evidence": [{"document_id": "doc-011", "evidence_text": "2025 年末研发人员为 92 人。", "evidence_location": "Markdown 第 10 行"}], "answerability": "answerable", "expected_behavior": "返回明确段落证据"}
+      ]
+    },
+    {
+      "document_id": "doc-012",
+      "file_name": "12_information_gap_policy.md",
+      "file_format": "markdown",
+      "source_type": "synthetic",
+      "company_name": "栖木软件",
+      "document_title": "经营数据披露范围",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "保留已披露事实和知识缺口说明",
+      "known_limitations": ["不调用问答生成器，不能据此证明模型拒答率。"],
+      "content": {"text": "# 经营数据披露范围\n\n## 已披露\n\n2025 年付费企业客户数为 1,240 家。\n\n## 未披露\n\n本文件未提供客户续费率或净收入留存率。\n"},
+      "questions": [
+        {"case_id": "case-023", "question": "2025 年付费企业客户数是多少？", "question_type": "metric_retrieval", "expected_answer": "1,240 家", "evidence": [{"document_id": "doc-012", "evidence_text": "2025 年付费企业客户数为 1,240 家。", "evidence_location": "Markdown 第 5 行"}], "answerability": "answerable", "expected_behavior": "返回客户数量与单位"},
+        {"case_id": "case-024", "question": "2025 年净收入留存率是多少？", "question_type": "knowledge_gap", "expected_answer": "文件未提供净收入留存率。", "evidence": [{"document_id": "doc-012", "evidence_text": "本文件未提供客户续费率或净收入留存率。", "evidence_location": "Markdown 第 9 行"}], "answerability": "unanswerable", "expected_behavior": "明确缺少该指标证据"}
+      ]
+    },
+    {
+      "document_id": "doc-013",
+      "file_name": "13_warehouse_capacity.txt",
+      "file_format": "txt",
+      "source_type": "synthetic",
+      "company_name": "云海物流",
+      "document_title": "仓库产能周报",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取纯文本段落和容量单位",
+      "known_limitations": ["纯文本不包含表格单元格或字体结构。"],
+      "content": {"text": "仓库产能周报\n\n2025 年第 40 周，日均处理量为 5,180 件。\n设计日处理能力为 5,600 件。\n\n周报未列出夜班单独产量。\n"},
+      "questions": [
+        {"case_id": "case-025", "question": "第 40 周日均处理量是多少？", "question_type": "metric_with_period", "expected_answer": "5,180 件", "evidence": [{"document_id": "doc-013", "evidence_text": "2025 年第 40 周，日均处理量为 5,180 件。", "evidence_location": "TXT 第 3 行"}], "answerability": "answerable", "expected_behavior": "保留周次和单位"},
+        {"case_id": "case-026", "question": "夜班单独产量是多少？", "question_type": "knowledge_gap", "expected_answer": "周报未列出夜班单独产量。", "evidence": [{"document_id": "doc-013", "evidence_text": "周报未列出夜班单独产量。", "evidence_location": "TXT 第 7 行"}], "answerability": "unanswerable", "expected_behavior": "不要把日均总量当成夜班数据"}
+      ]
+    },
+    {
+      "document_id": "doc-014",
+      "file_name": "14_support_policy.txt",
+      "file_format": "txt",
+      "source_type": "synthetic",
+      "company_name": "栖木软件",
+      "document_title": "客户支持响应规范",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "处理 UTF-8 中文、空行与 CRLF 换行",
+      "known_limitations": ["未测试非 UTF-8 编码文件的上传流程。"],
+      "content": {"text": "客户支持响应规范\r\n\r\n工作日 09:00 至 18:00，一级故障首次响应目标为 30 分钟。\r\n\r\n二级问题首次响应目标为 4 小时。\r\n"},
+      "questions": [
+        {"case_id": "case-027", "question": "一级故障的首次响应目标是多少？", "question_type": "service_level", "expected_answer": "30 分钟", "evidence": [{"document_id": "doc-014", "evidence_text": "一级故障首次响应目标为 30 分钟。", "evidence_location": "TXT 第 3 行"}], "answerability": "answerable", "expected_behavior": "按严重级别返回响应时限"},
+        {"case_id": "case-028", "question": "二级问题的首次响应目标是多少？", "question_type": "service_level", "expected_answer": "4 小时", "evidence": [{"document_id": "doc-014", "evidence_text": "二级问题首次响应目标为 4 小时。", "evidence_location": "TXT 第 5 行"}], "answerability": "answerable", "expected_behavior": "不与一级故障时限混淆"}
+      ]
+    },
+    {
+      "document_id": "doc-015",
+      "file_name": "15_forecast_snapshot.txt",
+      "file_format": "txt",
+      "source_type": "synthetic",
+      "company_name": "北辰医疗器械",
+      "document_title": "2026 年销售预测快照",
+      "document_version": "v1",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "在 UTF-8 文本中保留多段落、数字和特殊空格",
+      "known_limitations": ["不验证业务数据的真实性；所有数值均为合成值。"],
+      "content": {"text": "2026 年销售预测快照\n\n一季度预计出货 18,400 台。\n全年目标为 76,000 台。\n\n该预测不包含海外经销商订单。\n"},
+      "questions": [
+        {"case_id": "case-029", "question": "一季度预计出货多少台？", "question_type": "numeric_fact", "expected_answer": "18,400 台", "evidence": [{"document_id": "doc-015", "evidence_text": "一季度预计出货 18,400 台。", "evidence_location": "TXT 第 3 行"}], "answerability": "answerable", "expected_behavior": "将预测值标为预计，不描述为实际出货"},
+        {"case_id": "case-030", "question": "全年目标是否包含海外经销商订单？", "question_type": "scope_boundary", "expected_answer": "不包含海外经销商订单。", "evidence": [{"document_id": "doc-015", "evidence_text": "该预测不包含海外经销商订单。", "evidence_location": "TXT 第 7 行"}], "answerability": "answerable", "expected_behavior": "保留预测口径限制"}
+      ]
+    },
+    {
+      "document_id": "doc-016",
+      "file_name": "16_revenue_by_region.xlsx",
+      "file_format": "xlsx",
+      "source_type": "synthetic",
+      "company_name": "青屿精工",
+      "document_title": "区域收入工作簿",
+      "document_version": "v1",
+      "expected_capability": "unsupported_parser",
+      "expected_behavior": "当前解析层拒绝 XLSX，不把表格数据标记为已处理",
+      "known_limitations": ["工作簿由真实 XLSX 文件生成；当前应用白名单和 ParserLayer 没有 XLSX parser。"],
+      "content": {"sheets": [{"name": "收入", "headers": ["区域", "年份", "营业收入（百万元）"], "rows": [["华东", 2025, 42.6], ["华南", 2025, 31.8], ["华北", 2025, 27.4]]}], "canonical_text": "华东区 2025 年收入为 42.6 百万元。\n华南区 2025 年收入为 31.8 百万元。"},
+      "questions": [
+        {"case_id": "case-031", "question": "华东区 2025 年收入是多少？", "question_type": "spreadsheet_table", "expected_answer": "42.6 百万元", "evidence": [{"document_id": "doc-016", "evidence_text": "华东区 2025 年收入为 42.6 百万元。", "evidence_location": "XLSX 收入工作表第 2 行"}], "answerability": "answerable_in_source_format", "expected_behavior": "当前版本应拒绝 XLSX，并提示导出为支持格式"},
+        {"case_id": "case-032", "question": "华南区 2025 年收入是多少？", "question_type": "spreadsheet_table", "expected_answer": "31.8 百万元", "evidence": [{"document_id": "doc-016", "evidence_text": "华南区 2025 年收入为 31.8 百万元。", "evidence_location": "XLSX 收入工作表第 3 行"}], "answerability": "answerable_in_source_format", "expected_behavior": "拒绝不支持格式，不伪造已检索答案"}
+      ]
+    },
+    {
+      "document_id": "doc-017",
+      "file_name": "17_risk_register.xlsx",
+      "file_format": "xlsx",
+      "source_type": "synthetic",
+      "company_name": "云海物流",
+      "document_title": "运输风险台账",
+      "document_version": "v1",
+      "expected_capability": "unsupported_parser",
+      "expected_behavior": "明确拒绝未支持的 XLSX 格式",
+      "known_limitations": ["不评估公式、隐藏表、批注、图表或多工作表引用。"],
+      "content": {"sheets": [{"name": "风险", "headers": ["风险", "概率", "负责人", "措施"], "rows": [["极端天气延误", "中", "运输运营", "增加备用路线"], ["扫描件识别缺失", "高", "知识平台主管", "接入 OCR 前人工复核"]]}], "canonical_text": "扫描件识别缺失风险等级为高，措施为接入 OCR 前人工复核。"},
+      "questions": [
+        {"case_id": "case-033", "question": "扫描件识别缺失风险等级是什么？", "question_type": "spreadsheet_record", "expected_answer": "高", "evidence": [{"document_id": "doc-017", "evidence_text": "扫描件识别缺失风险等级为高，措施为接入 OCR 前人工复核。", "evidence_location": "XLSX 风险工作表第 3 行"}], "answerability": "answerable_in_source_format", "expected_behavior": "当前版本拒绝 XLSX；要求转成支持格式"},
+        {"case_id": "case-034", "question": "扫描件识别风险的处理措施是什么？", "question_type": "spreadsheet_record", "expected_answer": "接入 OCR 前人工复核", "evidence": [{"document_id": "doc-017", "evidence_text": "扫描件识别缺失风险等级为高，措施为接入 OCR 前人工复核。", "evidence_location": "XLSX 风险工作表第 3 行"}], "answerability": "answerable_in_source_format", "expected_behavior": "拒绝不支持格式，不将工作簿内容当成已解析证据"}
+      ]
+    },
+    {
+      "document_id": "doc-018",
+      "file_name": "18_quarterly_strategy.pptx",
+      "file_format": "pptx",
+      "source_type": "synthetic",
+      "company_name": "栖木软件",
+      "document_title": "2025 年第四季度产品计划",
+      "document_version": "v1",
+      "expected_capability": "unsupported_parser",
+      "expected_behavior": "当前解析层拒绝 PPTX，要求另存为支持格式",
+      "known_limitations": ["由 Artifact Tool 生成的真实 PPTX；解析层不处理幻灯片、备注或图形文本。"],
+      "content": {"slides": [{"title": "第四季度产品计划", "body": ["目标：缩短知识库处理失败后的恢复时间", "重试成功率目标：85%"]}, {"title": "衡量方式", "body": ["观察处理失败到重新进入队列的时间", "不将目标值描述为已实现结果"]}]},
+      "questions": [
+        {"case_id": "case-035", "question": "第四季度产品计划中的重试成功率目标是多少？", "question_type": "slide_fact", "expected_answer": "85%", "evidence": [{"document_id": "doc-018", "evidence_text": "重试成功率目标：85%", "evidence_location": "PPTX 第 1 页"}], "answerability": "answerable_in_source_format", "expected_behavior": "当前版本明确拒绝 PPTX"},
+        {"case_id": "case-036", "question": "计划如何衡量恢复时间？", "question_type": "slide_fact", "expected_answer": "观察处理失败到重新进入队列的时间", "evidence": [{"document_id": "doc-018", "evidence_text": "观察处理失败到重新进入队列的时间", "evidence_location": "PPTX 第 2 页"}], "answerability": "answerable_in_source_format", "expected_behavior": "提示导出为 PDF 或复制文本后再上传"}
+      ]
+    },
+    {
+      "document_id": "doc-019",
+      "file_name": "19_capacity_review.pptx",
+      "file_format": "pptx",
+      "source_type": "synthetic",
+      "company_name": "云海物流",
+      "document_title": "分拣中心产能复盘",
+      "document_version": "v1",
+      "expected_capability": "unsupported_parser",
+      "expected_behavior": "以明确不支持替代静默空结果",
+      "known_limitations": ["图表数据、演讲者备注和布局语义均不在本轮支持范围。"],
+      "content": {"slides": [{"title": "产能复盘", "body": ["日均处理量：5,180 件", "设计能力：5,600 件"]}, {"title": "下一步", "body": ["增加周末抽检", "扫描页指标进入人工核对队列"]}]},
+      "questions": [
+        {"case_id": "case-037", "question": "日均处理量是多少？", "question_type": "slide_metric", "expected_answer": "5,180 件", "evidence": [{"document_id": "doc-019", "evidence_text": "日均处理量：5,180 件", "evidence_location": "PPTX 第 1 页"}], "answerability": "answerable_in_source_format", "expected_behavior": "当前版本拒绝 PPTX，不进入问答"},
+        {"case_id": "case-038", "question": "扫描页指标的处理方式是什么？", "question_type": "slide_process", "expected_answer": "进入人工核对队列", "evidence": [{"document_id": "doc-019", "evidence_text": "扫描页指标进入人工核对队列", "evidence_location": "PPTX 第 2 页"}], "answerability": "answerable_in_source_format", "expected_behavior": "不给出基于未解析幻灯片的回答"}
+      ]
+    },
+    {
+      "document_id": "doc-020",
+      "file_name": "20_factory_quality_chart.png",
+      "file_format": "png",
+      "source_type": "synthetic",
+      "company_name": "澄海零部件",
+      "document_title": "一次检验合格率图表",
+      "document_version": "v1",
+      "expected_capability": "unsupported_parser",
+      "expected_behavior": "明确拒绝图片格式；不宣称 OCR 或图表理解",
+      "known_limitations": ["PNG 中的标签和数值均以像素绘制，当前解析器不包含 OCR。"],
+      "content": {"title": "一次检验合格率", "lines": ["2025 年 7 月：98.4%", "2025 年 8 月：99.1%", "合成测试图表"]},
+      "questions": [
+        {"case_id": "case-039", "question": "图表显示 2025 年 8 月的一次检验合格率是多少？", "question_type": "image_chart_metric", "expected_answer": "99.1%（图片 OCR 未支持）", "evidence": [{"document_id": "doc-020", "evidence_text": "2025 年 8 月：99.1%", "evidence_location": "PNG 图像"}], "answerability": "answerable_in_source_format", "expected_behavior": "明确提示图片格式未支持，要求 OCR 或手动录入"},
+        {"case_id": "case-040", "question": "7 月到 8 月的合格率变化是多少？", "question_type": "image_chart_comparison", "expected_answer": "上升 0.7 个百分点（图片 OCR 未支持）", "evidence": [{"document_id": "doc-020", "evidence_text": "2025 年 7 月：98.4%", "evidence_location": "PNG 图像"}, {"document_id": "doc-020", "evidence_text": "2025 年 8 月：99.1%", "evidence_location": "PNG 图像"}], "answerability": "answerable_in_source_format", "expected_behavior": "在当前版本不得声称读懂图表"}
+      ]
+    }
+  ]
+}

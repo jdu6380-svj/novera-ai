@@ -140,11 +140,14 @@ function validateInitializeInput(
   }
 
   if (!isSupportedDocumentType(extension, mimeType)) {
+    const imageNeedsOcr = ["png", "jpg", "jpeg", "tif", "tiff", "webp"].includes(extension);
     throw new DocumentUploadError(
-      "The file type is not supported in this phase.",
+      imageNeedsOcr
+        ? "This image format is not supported. Use PNG or JPEG; handwritten text requires a verified text transcription."
+        : "The supported file types are PDF, Markdown, TXT, DOCX, XLSX, PPTX, PNG, and JPEG.",
       "UNSUPPORTED_FILE_TYPE",
       415,
-      { allowedExtensions: ["pdf", "md", "txt", "docx"] },
+      { allowedExtensions: ["pdf", "md", "txt", "docx", "xlsx", "pptx", "png", "jpg", "jpeg"] },
     );
   }
 

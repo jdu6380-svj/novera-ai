@@ -63,7 +63,7 @@ function deepSeekClientWith(
   return { chat: { completions: { create } } };
 }
 
-function chatResponse(content: string): ChatCompletion {
+function chatResponse(content: string, finishReason: "stop" | "length" = "stop"): ChatCompletion {
   return {
     id: "chatcmpl_test_123",
     object: "chat.completion",
@@ -71,7 +71,7 @@ function chatResponse(content: string): ChatCompletion {
     model: "deepseek-flash",
     choices: [{
       index: 0,
-      finish_reason: "stop",
+      finish_reason: finishReason,
       logprobs: null,
       message: { role: "assistant", content, refusal: null, annotations: [] },
     }],
@@ -221,6 +221,7 @@ describe("DeepSeekLanguageModelProvider", () => {
       model: "deepseek-flash",
       max_tokens: 400,
       response_format: { type: "json_object" },
+      thinking: { type: "disabled" },
       messages: [
         { role: "system", content: expect.stringContaining('"additionalProperties":false') },
         { role: "user", content: "Question" },
@@ -246,5 +247,28 @@ describe("DeepSeekLanguageModelProvider", () => {
       schemaName: "schema",
       jsonSchema: { type: "object" },
     })).rejects.toMatchObject({ code: "INVALID_PROVIDER_RESPONSE" });
+  });
+
+  it("records safe response shape diagnostics without exposing generated content", async () => {
+    const provider = new DeepSeekLanguageModelProvider(
+      { ...NOW_CONFIG, provider: "deepseek" },
+      { client: deepSeekClientWith(vi.fn().mockResolvedValue(chatResponse("", "length"))) },
+    );
+    await expect(provider.generateStructured({
+      systemPrompt: "system",
+      userPrompt: "user",
+      schemaName: "schema",
+      jsonSchema: { type: "object" },
+    })).rejects.toMatchObject({
+      code: "INVALID_PROVIDER_RESPONSE",
+      diagnostics: {
+        requestId: "chatcmpl_test_123",
+        responseFinishReason: "length",
+        responseContentLength: 0,
+        responseOutputTokens: 8,
+        responseRefusal: false,
+        responseParseFailureReason: "empty_content",
+      },
+    });
   });
 });

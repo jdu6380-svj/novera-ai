@@ -10,6 +10,11 @@ export const SUPPORTED_DOCUMENT_TYPES = {
   markdown: ["text/markdown", "text/plain"],
   txt: ["text/plain"],
   docx: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
+  xlsx: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
+  pptx: ["application/vnd.openxmlformats-officedocument.presentationml.presentation"],
+  png: ["image/png"],
+  jpg: ["image/jpeg"],
+  jpeg: ["image/jpeg"],
 } as const satisfies Record<string, readonly string[]>;
 
 export type SupportedDocumentExtension = keyof typeof SUPPORTED_DOCUMENT_TYPES;

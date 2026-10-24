@@ -48,6 +48,10 @@ function documentToHttp(document: KnowledgeWorkspaceData["documents"][number]) {
     size: document.size,
     chunks: document.chunks,
     progress: document.progress ?? null,
+    quality: document.quality ?? "complete",
+    warnings: document.warnings ?? [],
+    qa_eligible: document.qaEligible ?? document.status === "ready",
+    remediation: document.remediation ?? null,
   };
 }
 

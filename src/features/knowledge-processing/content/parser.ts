@@ -1,5 +1,10 @@
 import type { JsonObject, JsonValue, UUID } from "@/domain";
 import { inflateRawSync } from "node:zlib";
+import {
+  TesseractChineseOcrProvider,
+  type ImageOcrProvider,
+  type OcrResult,
+} from "./image-ocr";
 
 export const PARSED_BLOCK_KINDS = [
   "heading",
@@ -67,7 +72,11 @@ export type DocumentParsingErrorCode =
   | "INVALID_TEXT_ENCODING"
   | "EMPTY_DOCUMENT"
   | "PDF_PARSE_FAILED"
-  | "DOCX_PARSE_FAILED";
+  | "DOCX_PARSE_FAILED"
+  | "XLSX_PARSE_FAILED"
+  | "PPTX_PARSE_FAILED"
+  | "IMAGE_PARSE_FAILED"
+  | "OCR_FAILED";
 
 export class DocumentParsingError extends Error {
   readonly cause: unknown;
@@ -241,6 +250,75 @@ function plainTextBlocks(
 
   flushParagraph(lines.length - 1);
   return blocks;
+}
+
+const MIN_OCR_AVERAGE_CONFIDENCE = 85;
+const MIN_OCR_WORD_CONFIDENCE = 60;
+
+function ocrBlocks(
+  result: OcrResult,
+  options: { pageNumber: number; charOffset: number },
+): UnnumberedBlock[] {
+  let charOffset = options.charOffset;
+  return result.lines.map((line, index) => {
+    const startChar = charOffset;
+    charOffset += line.text.length + 1;
+    return {
+      kind: "paragraph",
+      text: line.text,
+      headingLevel: null,
+      locator: {
+        pageStart: options.pageNumber,
+        pageEnd: options.pageNumber,
+        lineStart: index + 1,
+        lineEnd: index + 1,
+        startChar,
+        endChar: startChar + line.text.length,
+      },
+      metadata: {
+        extractionMethod: "tesseract-ocr",
+        rawText: line.rawText ?? line.text,
+        confidence: line.confidence,
+        minimumWordConfidence: line.minimumWordConfidence,
+        ...(line.verificationMethod ? { verificationMethod: line.verificationMethod } : {}),
+        bounds: toJsonValue(line.bounds),
+        words: toJsonValue(line.words.map((word) => ({
+          text: word.text,
+          confidence: word.confidence,
+          effectiveConfidence: word.effectiveConfidence ?? word.confidence,
+          ...(word.secondaryConfidence === undefined ? {} : { secondaryConfidence: word.secondaryConfidence }),
+          ...(word.verificationMethod ? { verificationMethod: word.verificationMethod } : {}),
+          bounds: word.bounds,
+        }))),
+      },
+    };
+  });
+}
+
+function ocrReviewWarning(result: OcrResult, location: string): JsonObject {
+  return {
+    code: "OCR_VISUAL_REVIEW_REQUIRED",
+    severity: "notice",
+    location,
+    message: `OCR was applied with average raw word confidence ${Math.round(result.averageConfidence)}%. Handwritten content is not supported.`,
+  };
+}
+
+function ocrConfidenceWarning(result: OcrResult, location: string): JsonObject | null {
+  const effectiveAverageConfidence = result.effectiveAverageConfidence ?? result.averageConfidence;
+  const effectiveMinimumWordConfidence = result.effectiveMinimumWordConfidence ?? result.minimumWordConfidence;
+  if (
+    effectiveAverageConfidence >= MIN_OCR_AVERAGE_CONFIDENCE &&
+    effectiveMinimumWordConfidence >= MIN_OCR_WORD_CONFIDENCE
+  ) {
+    return null;
+  }
+  return {
+    code: "OCR_LOW_CONFIDENCE",
+    severity: "review_required",
+    location,
+    message: `OCR confidence is below the acceptance threshold (effective average ${Math.round(effectiveAverageConfidence)}%, raw minimum word ${Math.round(result.minimumWordConfidence)}%). Verify the affected values against the original.`,
+  };
 }
 
 function assertHasContent(blocks: readonly UnnumberedBlock[]): void {
@@ -708,6 +786,60 @@ function parseDocxParagraphs(xml: string): Array<{ text: string; kind: ParsedBlo
   return paragraphs;
 }
 
+interface DocxBlockInput {
+  text: string;
+  kind: ParsedBlockKind;
+  headingLevel: number | null;
+  metadata?: JsonObject;
+}
+
+function parseDocxBodyBlocks(xml: string): { blocks: DocxBlockInput[]; hasUnreliableTables: boolean } {
+  const body = xml.match(/<w:body\b[^>]*>([\s\S]*?)<\/w:body>/i)?.[1] ?? xml;
+  const blocks: DocxBlockInput[] = [];
+  let tableNumber = 0;
+  let hasUnreliableTables = false;
+
+  for (const match of body.matchAll(/<w:p(?:\s[^>]*)?>[\s\S]*?<\/w:p>|<w:tbl(?:\s[^>]*)?>[\s\S]*?<\/w:tbl>/gi)) {
+    const element = match[0];
+    if (/^<w:p(?:\s|>)/i.test(element)) {
+      blocks.push(...parseDocxParagraphs(element));
+      continue;
+    }
+
+    tableNumber += 1;
+    const rows = Array.from(element.matchAll(/<w:tr(?:\s[^>]*)?>([\s\S]*?)<\/w:tr>/gi), (row) =>
+      Array.from(row[1]?.matchAll(/<w:tc(?:\s[^>]*)?>([\s\S]*?)<\/w:tc>/gi) ?? [], (cell) =>
+        parseDocxParagraphs(cell[1] ?? "").map((paragraph) => paragraph.text).join(" ").trim(),
+      ),
+    ).filter((row) => row.some(Boolean));
+    const firstRow = rows[0] ?? [];
+    const hasHeader = firstRow.length >= 2 && firstRow.every((cell) =>
+      cell.length > 0 && !Number.isFinite(Number(cell)),
+    );
+    const headers = hasHeader ? firstRow : [];
+    const rowWidths = new Set(rows.map((row) => row.length));
+    if (/<w:(?:gridSpan|vMerge)(?:\s|>)/i.test(element) || rowWidths.size > 1) {
+      hasUnreliableTables = true;
+    }
+
+    rows.forEach((cells, rowIndex) => {
+      const headerRow = hasHeader && rowIndex === 0;
+      const text = cells.map((cell, columnIndex) => {
+        const label = headers[columnIndex] || `Column ${columnIndex + 1}`;
+        return headerRow ? `Column ${columnIndex + 1}=${cell}` : `${label}=${cell}`;
+      }).join(" | ");
+      blocks.push({
+        text: `${headerRow ? `Table ${tableNumber} headers` : `Table ${tableNumber} row ${rowIndex + 1}`}: ${text}`,
+        kind: headerRow ? "heading" : "paragraph",
+        headingLevel: headerRow ? 2 : null,
+        metadata: { tableNumber, rowNumber: rowIndex + 1, cells, headerRow },
+      });
+    });
+  }
+
+  return { blocks, hasUnreliableTables };
+}
+
 export class DocxDocumentParser implements ContentParser {
   readonly name = "docx";
   readonly version = "1.0.0";
@@ -725,11 +857,34 @@ export class DocxDocumentParser implements ContentParser {
       const documentXml = new TextDecoder("utf-8", { fatal: true }).decode(
         zipEntry(source.content, "word/document.xml"),
       );
-      const paragraphs = parseDocxParagraphs(documentXml);
-      assertHasContent(paragraphs.map((paragraph) => ({
-        kind: paragraph.kind,
-        text: paragraph.text,
-        headingLevel: paragraph.headingLevel,
+      const parsedBody = parseDocxBodyBlocks(documentXml);
+      const extractionWarnings = [
+        ...(parsedBody.hasUnreliableTables
+          ? [{
+              code: "DOCX_TABLE_STRUCTURE_NOT_PRESERVED",
+              severity: "review_required",
+              message: "A merged, nested, or irregular table could not be mapped to reliable row and column relationships.",
+            }]
+          : []),
+        ...( /<w:drawing(?:\s|>)/i.test(documentXml) || /<w:object(?:\s|>)/i.test(documentXml)
+          ? [{
+              code: "DOCX_EMBEDDED_CONTENT_NOT_EXTRACTED",
+              severity: "review_required",
+              message: "An image or embedded object was not inspected for text or data.",
+            }]
+          : []),
+        ...( /<w:chart(?:\s|>)/i.test(documentXml)
+          ? [{
+              code: "DOCX_CHART_NOT_EXTRACTED",
+              severity: "review_required",
+              message: "An embedded chart was not converted to verified data points.",
+            }]
+          : []),
+      ];
+      assertHasContent(parsedBody.blocks.map((block) => ({
+        kind: block.kind,
+        text: block.text,
+        headingLevel: block.headingLevel,
         locator: {
           pageStart: null,
           pageEnd: null,
@@ -742,30 +897,33 @@ export class DocxDocumentParser implements ContentParser {
       })));
 
       let charOffset = 0;
-      const blocks = paragraphs.map((paragraph, index) => {
+      const blocks = parsedBody.blocks.map((block, index) => {
         const startChar = charOffset;
-        charOffset += paragraph.text.length + 1;
+        charOffset += block.text.length + 1;
         return {
           id: `block-${String(index).padStart(4, "0")}`,
-          kind: paragraph.kind,
-          text: paragraph.text,
-          headingLevel: paragraph.headingLevel,
+          kind: block.kind,
+          text: block.text,
+          headingLevel: block.headingLevel,
           locator: {
             pageStart: null,
             pageEnd: null,
             lineStart: index + 1,
             lineEnd: index + 1,
             startChar,
-            endChar: startChar + paragraph.text.length,
+            endChar: startChar + block.text.length,
           },
-          metadata: {},
+          metadata: block.metadata ?? {},
         } satisfies ParsedContentBlock;
       });
 
       return {
         source: sourceDescriptor(source),
-        title: paragraphs.find((paragraph) => paragraph.headingLevel === 1)?.text ?? null,
-        metadata: { format: "Office Open XML" },
+        title: parsedBody.blocks.find((block) => block.headingLevel === 1)?.text ?? null,
+        metadata: {
+          format: "Office Open XML",
+          ...(extractionWarnings.length > 0 ? { extractionWarnings } : {}),
+        },
         parser: { name: this.name, version: this.version },
         blocks,
         pageCount: null,
@@ -781,6 +939,7 @@ export class DocxDocumentParser implements ContentParser {
 export interface PdfExtractedPage {
   pageNumber: number;
   text: string;
+  ocrImage?: Uint8Array;
 }
 
 export interface PdfExtractionResult {
@@ -788,6 +947,7 @@ export interface PdfExtractionResult {
   title: string | null;
   metadata: JsonObject;
   pages: PdfExtractedPage[];
+  ocrSkippedPages?: number[];
 }
 
 export type PdfTextExtractor = (content: Uint8Array) => Promise<PdfExtractionResult>;
@@ -869,6 +1029,31 @@ async function extractPdfText(content: Uint8Array): Promise<PdfExtractionResult>
   try {
     const infoResult = await parser.getInfo();
     const textResult = await parser.getText();
+    const textPages = textResult.pages.map((page) => ({
+      pageNumber: page.num,
+      text: page.text,
+    }));
+    const pagesWithoutText = textPages.filter((page) => !page.text.trim());
+    const ocrTargets = pagesWithoutText.slice(0, 10);
+    let screenshotPages: Array<{ pageNumber: number; data: Uint8Array }> = [];
+
+    if (ocrTargets.length > 0) {
+      try {
+        const screenshots = await parser.getScreenshot({
+          partial: ocrTargets.map((page) => page.pageNumber),
+          desiredWidth: 1800,
+          imageBuffer: true,
+          imageDataUrl: false,
+        });
+        screenshotPages = screenshots.pages.map((page) => ({
+          pageNumber: page.pageNumber,
+          data: page.data,
+        }));
+      } catch {
+        screenshotPages = [];
+      }
+    }
+    const screenshotByPage = new Map(screenshotPages.map((page) => [page.pageNumber, page.data]));
     const xmpMetadata = infoResult.metadata
       ? Object.fromEntries(
           Array.from(infoResult.metadata as Iterable<[string, unknown]>),
@@ -885,10 +1070,13 @@ async function extractPdfText(content: Uint8Array): Promise<PdfExtractionResult>
         fingerprints: toJsonValue(infoResult.fingerprints ?? []),
         permissions: toJsonValue(infoResult.permission ?? null),
       },
-      pages: textResult.pages.map((page) => ({
-        pageNumber: page.num,
-        text: page.text,
+      pages: textPages.map((page) => ({
+        ...page,
+        ...(screenshotByPage.has(page.pageNumber)
+          ? { ocrImage: screenshotByPage.get(page.pageNumber) }
+          : {}),
       })),
+      ocrSkippedPages: pagesWithoutText.slice(10).map((page) => page.pageNumber),
     };
   } finally {
     await parser.destroy();
@@ -899,7 +1087,10 @@ export class PdfDocumentParser implements ContentParser {
   readonly name = "pdf-parse";
   readonly version = "2.4.5";
 
-  constructor(private readonly extractor: PdfTextExtractor = extractPdfText) {}
+  constructor(
+    private readonly extractor: PdfTextExtractor = extractPdfText,
+    private readonly ocrProvider: ImageOcrProvider = new TesseractChineseOcrProvider(),
+  ) {}
 
   supports(source: DocumentProcessingSource): boolean {
     return (
@@ -926,31 +1117,172 @@ export class PdfDocumentParser implements ContentParser {
     }
 
     const blocks: UnnumberedBlock[] = [];
+    const extractionWarnings: JsonObject[] = [];
+    const ocrPages: JsonObject[] = [];
     let charOffset = 0;
     let lineOffset = 0;
 
     for (const page of extraction.pages) {
-      blocks.push(
-        ...plainTextBlocks(page.text, {
+      if (page.text.trim()) {
+        blocks.push(
+          ...plainTextBlocks(page.text, {
+            pageNumber: page.pageNumber,
+            charOffset,
+            lineOffset,
+          }),
+        );
+        charOffset += page.text.length + 2;
+        lineOffset += scanLines(page.text).length + 1;
+        continue;
+      }
+
+      if (!page.ocrImage) {
+        extractionWarnings.push({
+          code: "PAGE_HAS_NO_EXTRACTABLE_TEXT",
           pageNumber: page.pageNumber,
-          charOffset,
-          lineOffset,
-        }),
-      );
-      charOffset += page.text.length + 2;
-      lineOffset += scanLines(page.text).length + 1;
+          severity: "review_required",
+          message: "This page has no extractable text and OCR could not render it. Upload a text-based or OCR-processed PDF.",
+        });
+        continue;
+      }
+
+      try {
+        const result = await this.ocrProvider.recognize(page.ocrImage);
+        if (result.lines.length === 0) {
+          extractionWarnings.push({
+            code: "OCR_NO_TEXT",
+            pageNumber: page.pageNumber,
+            severity: "review_required",
+            message: "OCR found no readable text on this page. Upload a clearer scan or provide a verified text transcription.",
+          });
+          continue;
+        }
+
+        const pageBlocks = ocrBlocks(result, { pageNumber: page.pageNumber, charOffset });
+        blocks.push(...pageBlocks);
+        charOffset += pageBlocks.reduce((total, block) => total + block.text.length + 1, 0);
+        extractionWarnings.push(ocrReviewWarning(result, `Page ${page.pageNumber}`));
+        const confidenceWarning = ocrConfidenceWarning(result, `Page ${page.pageNumber}`);
+        if (confidenceWarning) extractionWarnings.push(confidenceWarning);
+        ocrPages.push({
+          pageNumber: page.pageNumber,
+          averageConfidence: result.averageConfidence,
+          minimumWordConfidence: result.minimumWordConfidence,
+          effectiveAverageConfidence: result.effectiveAverageConfidence ?? result.averageConfidence,
+          effectiveMinimumWordConfidence: result.effectiveMinimumWordConfidence ?? result.minimumWordConfidence,
+          wordCount: result.wordCount,
+          languagesUsed: result.languagesUsed ?? ["chi_sim"],
+        });
+      } catch {
+        extractionWarnings.push({
+          code: "OCR_FAILED",
+          pageNumber: page.pageNumber,
+          severity: "review_required",
+          message: "OCR could not process this page. Upload a clearer scan or provide a verified text transcription.",
+        });
+      }
     }
 
+    for (const pageNumber of extraction.ocrSkippedPages ?? []) {
+      extractionWarnings.push({
+        code: "OCR_PAGE_LIMIT_EXCEEDED",
+        pageNumber,
+        severity: "review_required",
+        message: "OCR was limited to 10 scanned pages per document. Split the file or upload a verified text-based PDF.",
+      });
+    }
+
+    if (blocks.length === 0) {
+      throw new DocumentParsingError(
+        "EMPTY_DOCUMENT",
+        "No readable text was extracted from this PDF. Use OCR with a supported tool or provide a verified text transcription.",
+      );
+    }
     assertHasContent(blocks);
+    const languagesUsed = [...new Set(ocrPages.flatMap((page) =>
+      Array.isArray(page.languagesUsed)
+        ? page.languagesUsed.filter((language): language is string => typeof language === "string")
+        : [],
+    ))];
 
     return {
       source: sourceDescriptor(source),
       title: extraction.title,
-      metadata: extraction.metadata,
+      metadata: {
+        ...extraction.metadata,
+        ...(ocrPages.length > 0
+          ? { ocr: { engine: "tesseract.js", languagesUsed, pages: ocrPages } }
+          : {}),
+        ...(extractionWarnings.length > 0 ? { extractionWarnings } : {}),
+      },
       parser: { name: this.name, version: this.version },
       blocks: numberBlocks(blocks),
       pageCount: extraction.pageCount,
       charCount: Math.max(0, charOffset - 2),
+    };
+  }
+}
+
+export class ImageDocumentParser implements ContentParser {
+  readonly name = "image-ocr";
+  readonly version = "1.0.0";
+
+  constructor(private readonly ocrProvider: ImageOcrProvider = new TesseractChineseOcrProvider()) {}
+
+  supports(source: DocumentProcessingSource): boolean {
+    const extension = normalizeExtension(source.fileExtension);
+    const mimeType = normalizeMimeType(source.mimeType);
+    return ["png", "jpg", "jpeg"].includes(extension) || ["image/png", "image/jpeg"].includes(mimeType);
+  }
+
+  async parse(source: DocumentProcessingSource): Promise<ParsedDocument> {
+    let result: OcrResult;
+    try {
+      result = await this.ocrProvider.recognize(source.content);
+    } catch (error) {
+      throw new DocumentParsingError(
+        "OCR_FAILED",
+        "Image OCR failed. Verify the image and upload a clearer scan or a verified text transcription.",
+        error,
+      );
+    }
+    if (result.lines.length === 0) {
+      throw new DocumentParsingError(
+        "EMPTY_DOCUMENT",
+        "OCR found no readable printed text. Handwriting is not supported; provide a verified text transcription.",
+      );
+    }
+
+    const blocks = ocrBlocks(result, { pageNumber: 1, charOffset: 0 }).map((block, index) => ({
+      ...block,
+      id: `block-${String(index).padStart(4, "0")}`,
+    }));
+    const extractionWarnings = [
+      ocrReviewWarning(result, "Image page 1"),
+      ...(ocrConfidenceWarning(result, "Image page 1") ? [ocrConfidenceWarning(result, "Image page 1")!] : []),
+    ];
+
+    return {
+      source: sourceDescriptor(source),
+      title: blocks[0]?.text ?? null,
+      metadata: {
+        format: "image",
+        ocr: {
+          engine: "tesseract.js",
+          language: result.languagesUsed?.join("+") ?? "chi_sim",
+          averageConfidence: result.averageConfidence,
+          minimumWordConfidence: result.minimumWordConfidence,
+          effectiveAverageConfidence: result.effectiveAverageConfidence ?? result.averageConfidence,
+          effectiveMinimumWordConfidence: result.effectiveMinimumWordConfidence ?? result.minimumWordConfidence,
+          wordCount: result.wordCount,
+          languagesUsed: result.languagesUsed ?? ["chi_sim"],
+        },
+        extractionWarnings,
+      },
+      parser: { name: this.name, version: this.version },
+      blocks,
+      pageCount: 1,
+      charCount: Math.max(0, blocks.reduce((total, block) => total + block.text.length + 1, 0) - 1),
     };
   }
 }
@@ -960,7 +1292,10 @@ export class ParserLayer {
     private readonly parsers: readonly ContentParser[] = [
       new MarkdownDocumentParser(),
       new DocxDocumentParser(),
+      new LazyOfficeDocumentParser("xlsx"),
+      new LazyOfficeDocumentParser("pptx"),
       new PdfDocumentParser(),
+      new ImageDocumentParser(),
       new PlainTextDocumentParser(),
     ],
   ) {}
@@ -980,6 +1315,28 @@ export class ParserLayer {
 
   async parse(source: DocumentProcessingSource): Promise<ParsedDocument> {
     return this.resolve(source).parse(source);
+  }
+}
+
+class LazyOfficeDocumentParser implements ContentParser {
+  readonly version = "1.0.0";
+
+  constructor(readonly name: "xlsx" | "pptx") {}
+
+  supports(source: DocumentProcessingSource): boolean {
+    const extension = normalizeExtension(source.fileExtension);
+    const mimeType = normalizeMimeType(source.mimeType);
+    return this.name === "xlsx"
+      ? extension === "xlsx" || mimeType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      : extension === "pptx" || mimeType === "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+  }
+
+  async parse(source: DocumentProcessingSource): Promise<ParsedDocument> {
+    const office = await import("./ooxml-parser");
+    const parser = this.name === "xlsx"
+      ? new office.XlsxDocumentParser()
+      : new office.PptxDocumentParser();
+    return parser.parse(source);
   }
 }
 

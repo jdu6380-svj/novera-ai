@@ -8,6 +8,10 @@ import type {
   WorkspaceMetric,
 } from "@/features/workspace/domain/workspace";
 import { metricExplanation, metricLabel } from "@/features/qa/application/metric-copy";
+import {
+  extractionWarningRemediation,
+  extractionWarnings,
+} from "@/features/knowledge-processing/content/extraction-warnings";
 
 export interface WorkspaceKnowledgeBaseRow {
   id: string;
@@ -23,6 +27,9 @@ export interface WorkspaceDocumentRow {
   status: string;
   progress_pct: number;
   chunk_count: number;
+  metadata?: JsonObject;
+  error_code?: string | null;
+  error_message?: string | null;
   uploaded_at?: string | null;
   created_at?: string | null;
   updated_at: string;
@@ -175,6 +182,15 @@ function documentType(extension: string): WorkspaceDocument["type"] {
     case "doc":
     case "docx":
       return "DOCX";
+    case "xlsx":
+      return "XLSX";
+    case "pptx":
+      return "PPTX";
+    case "png":
+      return "PNG";
+    case "jpg":
+    case "jpeg":
+      return "JPG";
     default:
       return "TXT";
   }
@@ -192,6 +208,99 @@ function documentStatus(value: string): WorkspaceDocument["status"] {
     default:
       return "failed";
   }
+}
+
+function documentQuality(row: WorkspaceDocumentRow): Pick<WorkspaceDocument, "quality" | "warnings" | "qaEligible" | "qaEligibleChunkCount" | "remediation"> {
+  const parsedWarnings = extractionWarnings(row.metadata)
+    .sort((left, right) => Number(right.severity === "review_required") - Number(left.severity === "review_required"));
+  const errorMessage = row.error_message?.trim() || "";
+  const reviewRequired = row.error_code === "PARSER_REVIEW_REQUIRED" || parsedWarnings.some((warning) => warning.severity === "review_required");
+  const processing = objectValue(row.metadata?.processing);
+  const qaEligibility = objectValue(processing?.qaEligibility);
+  const eligibleChunkCount = typeof qaEligibility?.eligibleChunkCount === "number" &&
+    Number.isSafeInteger(qaEligibility.eligibleChunkCount) && qaEligibility.eligibleChunkCount > 0
+    ? qaEligibility.eligibleChunkCount
+    : 0;
+  const mappedWarnings = parsedWarnings.map((warning) => ({
+    code: warning.code,
+    message: warning.message,
+    severity: warning.severity,
+    ...(warning.location
+      ? { location: warning.location }
+      : warning.pageNumber === undefined
+        ? {}
+        : { location: `Page ${warning.pageNumber}` }),
+    remediation: extractionWarningRemediation(warning.code),
+  }));
+
+  if (row.status === "ready" && !reviewRequired) {
+    return {
+      quality: "complete",
+      warnings: mappedWarnings,
+      qaEligible: true,
+      ...(mappedWarnings[0]?.remediation ? { remediation: mappedWarnings[0].remediation } : {}),
+    };
+  }
+
+  if (row.status === "ready" && reviewRequired && eligibleChunkCount > 0) {
+    return {
+      quality: "review_required",
+      warnings: mappedWarnings,
+      qaEligible: true,
+      ...(mappedWarnings[0]?.remediation
+        ? { remediation: `${mappedWarnings[0].remediation} Unaffected verified chunks remain available for question answering; affected locations are excluded.` }
+        : {}),
+      qaEligibleChunkCount: eligibleChunkCount,
+    };
+  }
+
+  if (reviewRequired) {
+    const pageLocation = errorMessage.match(/pages?\s+(\d+(?:,\s*\d+)*)/iu)?.[1];
+    const nonPageLocation = errorMessage.match(/Review required at (.+?)\.\s+[A-Z]/u)?.[1];
+    const warnings = mappedWarnings.length > 0
+      ? mappedWarnings
+      : [{
+          code: "PARSER_REVIEW_REQUIRED",
+          message: errorMessage || "This document contains content that the parser could not verify.",
+          severity: "review_required" as const,
+          ...(pageLocation
+            ? { location: `Page${pageLocation.includes(",") ? "s" : ""} ${pageLocation}` }
+            : nonPageLocation
+              ? { location: nonPageLocation }
+              : {}),
+          remediation: errorMessage.includes("Table text was extracted")
+            ? extractionWarningRemediation("DOCX_TABLE_STRUCTURE_NOT_PRESERVED")
+            : errorMessage.includes("image or embedded object")
+              ? extractionWarningRemediation("DOCX_EMBEDDED_CONTENT_NOT_EXTRACTED")
+              : errorMessage.includes("OCR") || errorMessage.includes("handwritten")
+                ? extractionWarningRemediation("OCR_VISUAL_REVIEW_REQUIRED")
+                : /chart/iu.test(errorMessage)
+                  ? extractionWarningRemediation("PPTX_CHART_CACHE_UNAVAILABLE")
+              : extractionWarningRemediation("PAGE_HAS_NO_EXTRACTABLE_TEXT"),
+        }];
+
+    return {
+      quality: "review_required",
+      warnings,
+      qaEligible: false,
+      remediation: warnings[0]?.remediation,
+    };
+  }
+
+  if (row.status !== "failed") {
+    return { quality: "unavailable", warnings: [], qaEligible: false };
+  }
+
+  const errorCode = row.error_code ?? "DOCUMENT_NOT_READY";
+  const message = row.error_message?.trim() || "The document is not ready for evidence-backed question answering.";
+  const remediation = "Review the processing error and upload a corrected file before asking questions.";
+
+  return {
+    quality: "unavailable",
+    warnings: [{ code: errorCode, message, remediation }],
+    qaEligible: false,
+    remediation,
+  };
 }
 
 export function formatFileSize(value: number | string): string {
@@ -341,7 +450,9 @@ function buildAnswer(input: BuildWorkspaceDataInput, latestRun: WorkspaceQaRunRo
 function knowledgeHealth(input: BuildWorkspaceDataInput): number {
   if (input.documents.length === 0) return 0;
 
-  const readyRatio = input.documents.filter((document) => document.status === "ready").length / input.documents.length;
+  const readyRatio = input.documents.filter((document) =>
+    document.status === "ready" && documentQuality(document).qaEligible === true,
+  ).length / input.documents.length;
   const scoredRuns = input.qaRuns
     .map((run) => score(run.confidence_score))
     .filter((value) => value > 0);
@@ -377,6 +488,7 @@ export function buildWorkspaceData(input: BuildWorkspaceDataInput): KnowledgeWor
       size: formatFileSize(document.file_size_bytes),
       chunks: document.chunk_count,
       progress: document.progress_pct,
+      ...documentQuality(document),
     })),
     qaRuns: input.qaRuns.map((run) => ({
       id: run.id,

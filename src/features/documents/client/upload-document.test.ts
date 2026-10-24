@@ -72,4 +72,26 @@ describe("uploadDocument", () => {
     );
     expect(mockedAuthorizedFetch).toHaveBeenCalledTimes(2);
   });
+
+  it.each([
+    ["chart.png", "image/png"],
+    ["scan.jpeg", "image/jpeg"],
+  ])("sends the correct OCR image MIME type for %s", async (filename, mimeType) => {
+    const file = new File(["image bytes"], filename, { type: "application/octet-stream" });
+    mockedAuthorizedFetch
+      .mockResolvedValueOnce(jsonResponse({
+        document: { id: "00000000-0000-4000-8000-000000000010" },
+        upload: { bucket: "knowledge-files", path: "test/image", token: "token", signed_url: "https://storage.example.test/upload" },
+      }, 201))
+      .mockResolvedValueOnce(jsonResponse({
+        document: { id: "00000000-0000-4000-8000-000000000010", status: "uploaded" },
+        idempotent: false,
+      }));
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response("", { status: 200 }));
+
+    await uploadDocument(file);
+
+    const initBody = JSON.parse(String(mockedAuthorizedFetch.mock.calls[0]?.[1]?.body)) as { mime_type: string };
+    expect(initBody.mime_type).toBe(mimeType);
+  });
 });

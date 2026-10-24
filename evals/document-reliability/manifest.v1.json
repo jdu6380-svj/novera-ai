@@ -1,0 +1,1271 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_name": "Novera synthetic document reliability corpus",
+  "source_type": "synthetic",
+  "notice": "All organizations, figures, and documents in this corpus are fictional and created for controlled parser-boundary tests.",
+  "documents": [
+    {
+      "document_id": "doc-001",
+      "file_name": "01_qingyu_annual_summary.pdf",
+      "file_format": "pdf",
+      "source_type": "synthetic",
+      "company_name": "青屿精工",
+      "document_title": "2025 年经营摘要",
+      "document_version": "v1",
+      "mime_type": "application/pdf",
+      "document_hash": "7224da2bb6a5b171fcdde14b797766b5508c3e1781edfb62251a5dbcff0bbab9",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取电子文本并保留 PDF 页码定位",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 2 content blocks without a parser warning.",
+      "known_limitations": [
+        "本次仅验证解析与证据文本保留，不验证线上检索或模型回答。"
+      ]
+    },
+    {
+      "document_id": "doc-002",
+      "file_name": "02_qingyu_kpi_detail.pdf",
+      "file_format": "pdf",
+      "source_type": "synthetic",
+      "company_name": "青屿精工",
+      "document_title": "年度指标补充表",
+      "document_version": "v1",
+      "mime_type": "application/pdf",
+      "document_hash": "0fc34e0f55232b7a1d4a2328809e8348783d0d68a2d1319e682af5adda3be3bc",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取电子文本中的指标、年份及单位",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 1 content blocks without a parser warning.",
+      "known_limitations": [
+        "PDF 表格按提取顺序保留文本，本测试不判断复杂表格单元格结构。"
+      ]
+    },
+    {
+      "document_id": "doc-003",
+      "file_name": "03_yunhai_mixed_scan_appendix.pdf",
+      "file_format": "pdf",
+      "source_type": "synthetic",
+      "company_name": "云海物流",
+      "document_title": "2025 年配送运营附录",
+      "document_version": "v1",
+      "mime_type": "application/pdf",
+      "document_hash": "18a571af9aa22c12bd24b5909c7779eecf2abafa0d6357dbec3d6a4c44789635",
+      "expected_capability": "supported_parser_with_review_boundary",
+      "expected_behavior": "保留可提取页面，并标记没有提取到文本的页面供人工复核",
+      "execution_status": "PARTIAL",
+      "actual_behavior": "Content parsed, but one or more extraction warnings require review.",
+      "known_limitations": [
+        "第 2 页为图片扫描页；项目没有 OCR 能力，不能读取其中的指标。"
+      ]
+    },
+    {
+      "document_id": "doc-004",
+      "file_name": "04_board_capacity_minutes.pdf",
+      "file_format": "pdf",
+      "source_type": "synthetic",
+      "company_name": "云海物流",
+      "document_title": "产能评审会议纪要",
+      "document_version": "v1",
+      "mime_type": "application/pdf",
+      "document_hash": "969139753ae49106f01c024708f30772189a4420149ce5b0d075f00be5af1d93",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "保留会议纪要事实、阈值及页面定位",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 1 content blocks without a parser warning.",
+      "known_limitations": [
+        "文档只记录讨论结论，不验证后续执行情况。"
+      ]
+    },
+    {
+      "document_id": "doc-005",
+      "file_name": "05_scanned_only_inspection.pdf",
+      "file_format": "pdf",
+      "source_type": "synthetic",
+      "company_name": "澄禾设备",
+      "document_title": "仓储抽检记录扫描件",
+      "document_version": "v1",
+      "mime_type": "application/pdf",
+      "document_hash": "75cd7aceb9f0c1d87621c055819c9d4f02f77a3d6f3f44066f419aa28e7b06c1",
+      "expected_capability": "supported_parser_with_ocr_limit",
+      "expected_behavior": "无可提取文本时明确失败，不将图像文字当成成功解析",
+      "execution_status": "PARTIAL",
+      "actual_behavior": "No extractable text; OCR or manual review is required.",
+      "known_limitations": [
+        "整份 PDF 只有扫描图像；OCR 未实现。"
+      ]
+    },
+    {
+      "document_id": "doc-006",
+      "file_name": "06_supplier_quality_review.docx",
+      "file_format": "docx",
+      "source_type": "synthetic",
+      "company_name": "澄海零部件",
+      "document_title": "供应商质量月报",
+      "document_version": "v1",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "document_hash": "0752f0bd3784f0a6d8a5b6c2971b66b0c9bcb3b9340cf9cd4c3a328392b9947e",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取 DOCX 标题与段落文本",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 3 content blocks without a parser warning.",
+      "known_limitations": [
+        "不评估复杂表格、嵌入对象或图表的结构化解析。"
+      ]
+    },
+    {
+      "document_id": "doc-007",
+      "file_name": "07_regional_sales_table.docx",
+      "file_format": "docx",
+      "source_type": "synthetic",
+      "company_name": "青屿精工",
+      "document_title": "区域销售补充说明",
+      "document_version": "v1",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "document_hash": "36c931f7ea6236028127f937bf5bdd62e2b0f95dc1696760edcdbc6f46bf81e9",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "保留段落和表格单元格中的文本；不承诺表格行列关系",
+      "execution_status": "PARTIAL",
+      "actual_behavior": "Content parsed, but one or more extraction warnings require review.",
+      "known_limitations": [
+        "当前 DOCX 解析会扁平化表格单元格，行列关系未建模。"
+      ]
+    },
+    {
+      "document_id": "doc-008",
+      "file_name": "08_compliance_action_list.docx",
+      "file_format": "docx",
+      "source_type": "synthetic",
+      "company_name": "北辰医疗器械",
+      "document_title": "质量整改跟踪清单",
+      "document_version": "v1",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "document_hash": "e46de15b5a08c5f60e8e3b8c87c453753e711680c58e1f2c1c8e13abbc716e4f",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取标题、段落与列表内容",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 4 content blocks without a parser warning.",
+      "known_limitations": [
+        "清单内容可提取，但本次不运行检索排序。"
+      ]
+    },
+    {
+      "document_id": "doc-009",
+      "file_name": "09_rnd_budget_summary.docx",
+      "file_format": "docx",
+      "source_type": "synthetic",
+      "company_name": "澄海零部件",
+      "document_title": "研发项目进度摘要",
+      "document_version": "v1",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "document_hash": "43214b64463d9ac7163ad1c3cf67d19d2bab31e718f5bd53d4c7c1e1116f9b83",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取已披露项目进度，并保留明确的缺失信息说明",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 3 content blocks without a parser warning.",
+      "known_limitations": [
+        "本次只评估原文是否保留，不执行生成模型拒答测试。"
+      ]
+    },
+    {
+      "document_id": "doc-010",
+      "file_name": "10_product_release_notes.md",
+      "file_format": "markdown",
+      "source_type": "synthetic",
+      "company_name": "栖木软件",
+      "document_title": "知识库 2.4 发布说明",
+      "document_version": "v1",
+      "mime_type": "text/markdown",
+      "document_hash": "a65e0f378efb85e2de2844434cbc13a48e835d970b37680809d26be076190206",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "保留 Markdown 标题层级、列表与正文",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 5 content blocks without a parser warning.",
+      "known_limitations": [
+        "不评估代码块内容的语义检索。"
+      ]
+    },
+    {
+      "document_id": "doc-011",
+      "file_name": "11_annual_metric_table.md",
+      "file_format": "markdown",
+      "source_type": "synthetic",
+      "company_name": "青屿精工",
+      "document_title": "年度经营指标表",
+      "document_version": "v1",
+      "mime_type": "text/markdown",
+      "document_hash": "d9d62ed01a567bd23cd678706dde5ad3d4b56a8df4b63a856f458e1e5c5a1ec9",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "保留 Markdown 表格原文和数值单位",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 4 content blocks without a parser warning.",
+      "known_limitations": [
+        "当前 parser 将 Markdown 表格作为文本块，不构造行列对象。"
+      ]
+    },
+    {
+      "document_id": "doc-012",
+      "file_name": "12_information_gap_policy.md",
+      "file_format": "markdown",
+      "source_type": "synthetic",
+      "company_name": "栖木软件",
+      "document_title": "经营数据披露范围",
+      "document_version": "v1",
+      "mime_type": "text/markdown",
+      "document_hash": "a1e3626a1256669938c93f429e023e167d53e4afb699d31957ae9f5b35223adf",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "保留已披露事实和知识缺口说明",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 5 content blocks without a parser warning.",
+      "known_limitations": [
+        "不调用问答生成器，不能据此证明模型拒答率。"
+      ]
+    },
+    {
+      "document_id": "doc-013",
+      "file_name": "13_warehouse_capacity.txt",
+      "file_format": "txt",
+      "source_type": "synthetic",
+      "company_name": "云海物流",
+      "document_title": "仓库产能周报",
+      "document_version": "v1",
+      "mime_type": "text/plain",
+      "document_hash": "bd7254ff07dde3b2a2b09fe36c4a864abac689fc06e2ec987b419d4b4f6b32e6",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "提取纯文本段落和容量单位",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 3 content blocks without a parser warning.",
+      "known_limitations": [
+        "纯文本不包含表格单元格或字体结构。"
+      ]
+    },
+    {
+      "document_id": "doc-014",
+      "file_name": "14_support_policy.txt",
+      "file_format": "txt",
+      "source_type": "synthetic",
+      "company_name": "栖木软件",
+      "document_title": "客户支持响应规范",
+      "document_version": "v1",
+      "mime_type": "text/plain",
+      "document_hash": "dc95d40fe8d467f2aa817e6956fc7d3ff0f8b00ff616ebcea39d2216c56cb3e8",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "处理 UTF-8 中文、空行与 CRLF 换行",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 3 content blocks without a parser warning.",
+      "known_limitations": [
+        "未测试非 UTF-8 编码文件的上传流程。"
+      ]
+    },
+    {
+      "document_id": "doc-015",
+      "file_name": "15_forecast_snapshot.txt",
+      "file_format": "txt",
+      "source_type": "synthetic",
+      "company_name": "北辰医疗器械",
+      "document_title": "2026 年销售预测快照",
+      "document_version": "v1",
+      "mime_type": "text/plain",
+      "document_hash": "9fe25b7710b2e45d61bbbb752ac062f9cb1c731a5ab6a3258913b6df15efcad8",
+      "expected_capability": "supported_parser",
+      "expected_behavior": "在 UTF-8 文本中保留多段落、数字和特殊空格",
+      "execution_status": "PASS",
+      "actual_behavior": "Parsed 3 content blocks without a parser warning.",
+      "known_limitations": [
+        "不验证业务数据的真实性；所有数值均为合成值。"
+      ]
+    },
+    {
+      "document_id": "doc-016",
+      "file_name": "16_revenue_by_region.xlsx",
+      "file_format": "xlsx",
+      "source_type": "synthetic",
+      "company_name": "青屿精工",
+      "document_title": "区域收入工作簿",
+      "document_version": "v1",
+      "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "document_hash": "1273046454912602f4ff814385c5b45f2c5489a9c8f99df43861b88514dfaab9",
+      "expected_capability": "unsupported_parser",
+      "expected_behavior": "当前解析层拒绝 XLSX，不把表格数据标记为已处理",
+      "execution_status": "UNSUPPORTED",
+      "actual_behavior": "Parser layer rejected the file type before processing.",
+      "known_limitations": [
+        "当前应用没有 XLSX parser。"
+      ]
+    },
+    {
+      "document_id": "doc-017",
+      "file_name": "17_risk_register.xlsx",
+      "file_format": "xlsx",
+      "source_type": "synthetic",
+      "company_name": "云海物流",
+      "document_title": "运输风险台账",
+      "document_version": "v1",
+      "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "document_hash": "1d16a089141c420ad84e9127a5e7068684ab8f442a72aa73a1f0faf1a0e86d4f",
+      "expected_capability": "unsupported_parser",
+      "expected_behavior": "明确拒绝未支持的 XLSX 格式",
+      "execution_status": "UNSUPPORTED",
+      "actual_behavior": "Parser layer rejected the file type before processing.",
+      "known_limitations": [
+        "不评估公式、隐藏表、批注、图表或多工作表引用。"
+      ]
+    },
+    {
+      "document_id": "doc-018",
+      "file_name": "18_quarterly_strategy.pptx",
+      "file_format": "pptx",
+      "source_type": "synthetic",
+      "company_name": "栖木软件",
+      "document_title": "2025 年第四季度产品计划",
+      "document_version": "v1",
+      "mime_type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "document_hash": "7a10f63d99410f02fc6a93c2d4cd37bf683d0a6a7bc66916643ad776504b2ff1",
+      "expected_capability": "unsupported_parser",
+      "expected_behavior": "当前解析层拒绝 PPTX，要求另存为支持格式",
+      "execution_status": "UNSUPPORTED",
+      "actual_behavior": "Parser layer rejected the file type before processing.",
+      "known_limitations": [
+        "解析层不处理幻灯片、备注或图形文本。"
+      ]
+    },
+    {
+      "document_id": "doc-019",
+      "file_name": "19_capacity_review.pptx",
+      "file_format": "pptx",
+      "source_type": "synthetic",
+      "company_name": "云海物流",
+      "document_title": "分拣中心产能复盘",
+      "document_version": "v1",
+      "mime_type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "document_hash": "c6158a5324993f70081e796cacbd78e51201132e0bfa59c00aade09613f9020c",
+      "expected_capability": "unsupported_parser",
+      "expected_behavior": "以明确不支持替代静默空结果",
+      "execution_status": "UNSUPPORTED",
+      "actual_behavior": "Parser layer rejected the file type before processing.",
+      "known_limitations": [
+        "图表数据、演讲者备注和布局语义均不在本轮支持范围。"
+      ]
+    },
+    {
+      "document_id": "doc-020",
+      "file_name": "20_factory_quality_chart.png",
+      "file_format": "png",
+      "source_type": "synthetic",
+      "company_name": "澄海零部件",
+      "document_title": "一次检验合格率图表",
+      "document_version": "v1",
+      "mime_type": "image/png",
+      "document_hash": "919f2b894c8964e95c361d913c7ae7c202bb3cf0450fa7729567a140b2e9de7f",
+      "expected_capability": "unsupported_parser",
+      "expected_behavior": "明确拒绝图片格式；不宣称 OCR 或图表理解",
+      "execution_status": "UNSUPPORTED",
+      "actual_behavior": "Parser layer rejected the file type before processing.",
+      "known_limitations": [
+        "PNG 中的标签和数值均以像素绘制，当前解析器不包含 OCR。"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "case-001",
+      "document_id": "doc-001",
+      "document_name": "01_qingyu_annual_summary.pdf",
+      "question": "青屿精工 2025 年营业收入是多少？",
+      "question_type": "single_document_fact",
+      "expected_answer": "128.4 百万元",
+      "evidence_text": [
+        {
+          "document_id": "doc-001",
+          "evidence_text": "2025 revenue was 128.4 million yuan.",
+          "evidence_location": "PDF page 1"
+        }
+      ],
+      "evidence_location": [
+        "PDF page 1"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "返回数值、单位及来源页码",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-002",
+      "document_id": "doc-001",
+      "document_name": "01_qingyu_annual_summary.pdf",
+      "question": "与 2024 年相比，青屿精工 2025 年收入增加了多少？",
+      "question_type": "cross_document_comparison",
+      "expected_answer": "增加 10.8 百万元",
+      "evidence_text": [
+        {
+          "document_id": "doc-001",
+          "evidence_text": "2025 revenue was 128.4 million yuan.",
+          "evidence_location": "PDF page 1"
+        },
+        {
+          "document_id": "doc-002",
+          "evidence_text": "2024 revenue was 117.6 million yuan.",
+          "evidence_location": "PDF page 1"
+        }
+      ],
+      "evidence_location": [
+        "PDF page 1",
+        "PDF page 1"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "综合两份文档证据并保留相同单位",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED",
+      "related_document_ids": [
+        "doc-002"
+      ]
+    },
+    {
+      "case_id": "case-003",
+      "document_id": "doc-002",
+      "document_name": "02_qingyu_kpi_detail.pdf",
+      "question": "青屿精工 2025 年准时交付率是多少？",
+      "question_type": "metric_with_period",
+      "expected_answer": "97.3%",
+      "evidence_text": [
+        {
+          "document_id": "doc-002",
+          "evidence_text": "2025 on-time delivery rate was 97.3%.",
+          "evidence_location": "PDF page 1"
+        }
+      ],
+      "evidence_location": [
+        "PDF page 1"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "同时返回年份和百分比",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-004",
+      "document_id": "doc-002",
+      "document_name": "02_qingyu_kpi_detail.pdf",
+      "question": "2025 年一次检验合格率是多少？",
+      "question_type": "metric_retrieval",
+      "expected_answer": "98.6%",
+      "evidence_text": [
+        {
+          "document_id": "doc-002",
+          "evidence_text": "2025 first-pass yield was 98.6%.",
+          "evidence_location": "PDF page 1"
+        }
+      ],
+      "evidence_location": [
+        "PDF page 1"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "从指标文本中返回原值",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-005",
+      "document_id": "doc-003",
+      "document_name": "03_yunhai_mixed_scan_appendix.pdf",
+      "question": "云海物流 2025 年准时送达率是多少？",
+      "question_type": "single_document_metric",
+      "expected_answer": "96.2%",
+      "evidence_text": [
+        {
+          "document_id": "doc-003",
+          "evidence_text": "2025 on-time delivery rate was 96.2%.",
+          "evidence_location": "PDF page 1"
+        }
+      ],
+      "evidence_location": [
+        "PDF page 1"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "使用可提取页面内容回答",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "REVIEW_REQUIRED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-006",
+      "document_id": "doc-003",
+      "document_name": "03_yunhai_mixed_scan_appendix.pdf",
+      "question": "扫描页记录的 2025 年客户退货率是多少？",
+      "question_type": "scanned_page_boundary",
+      "expected_answer": "1.6%（仅存在于扫描图像，当前解析器无法读取）",
+      "evidence_text": [
+        {
+          "document_id": "doc-003",
+          "evidence_text": "2025 年客户退货率为 1.6%。",
+          "evidence_location": "PDF 第 2 页的图像"
+        }
+      ],
+      "evidence_location": [
+        "PDF 第 2 页的图像"
+      ],
+      "answerability": "requires_ocr_or_review",
+      "expected_behavior": "不得把扫描图像内容当成已解析证据；提示第 2 页需要 OCR 或人工核对",
+      "actual_result": "One or more expected evidence snippets were not extracted: PDF 第 2 页的图像.",
+      "verification_status": "REVIEW_REQUIRED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-007",
+      "document_id": "doc-004",
+      "document_name": "04_board_capacity_minutes.pdf",
+      "question": "会议决定的日均分拣目标是多少？",
+      "question_type": "numeric_threshold",
+      "expected_answer": "5,400 units",
+      "evidence_text": [
+        {
+          "document_id": "doc-004",
+          "evidence_text": "The meeting set the daily sorting target at 5,400 units.",
+          "evidence_location": "PDF page 1"
+        }
+      ],
+      "evidence_location": [
+        "PDF page 1"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "保留数值与单位",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-008",
+      "document_id": "doc-004",
+      "document_name": "04_board_capacity_minutes.pdf",
+      "question": "设备采购预算是多少？",
+      "question_type": "knowledge_gap",
+      "expected_answer": "The notes do not provide an equipment purchase budget.",
+      "evidence_text": [
+        {
+          "document_id": "doc-004",
+          "evidence_text": "The notes do not provide an equipment purchase budget.",
+          "evidence_location": "PDF page 1"
+        }
+      ],
+      "evidence_location": [
+        "PDF page 1"
+      ],
+      "answerability": "unanswerable",
+      "expected_behavior": "说明缺少预算证据，不猜测金额",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-009",
+      "document_id": "doc-005",
+      "document_name": "05_scanned_only_inspection.pdf",
+      "question": "扫描件中的库存准确率是多少？",
+      "question_type": "scanned_document_boundary",
+      "expected_answer": "98.7%（当前无法从图像中提取）",
+      "evidence_text": [
+        {
+          "document_id": "doc-005",
+          "evidence_text": "库存准确率为 98.7%。",
+          "evidence_location": "PDF 第 1 页的图像"
+        }
+      ],
+      "evidence_location": [
+        "PDF 第 1 页的图像"
+      ],
+      "answerability": "requires_ocr_or_review",
+      "expected_behavior": "解析失败并说明扫描内容需要 OCR 或人工录入",
+      "actual_result": "One or more expected evidence snippets were not extracted: PDF 第 1 页的图像.",
+      "verification_status": "REVIEW_REQUIRED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-010",
+      "document_id": "doc-005",
+      "document_name": "05_scanned_only_inspection.pdf",
+      "question": "扫描件的抽检样本量是多少？",
+      "question_type": "scanned_document_boundary",
+      "expected_answer": "620 件（当前无法从图像中提取）",
+      "evidence_text": [
+        {
+          "document_id": "doc-005",
+          "evidence_text": "抽检样本为 620 件。",
+          "evidence_location": "PDF 第 1 页的图像"
+        }
+      ],
+      "evidence_location": [
+        "PDF 第 1 页的图像"
+      ],
+      "answerability": "requires_ocr_or_review",
+      "expected_behavior": "不得声称已读取扫描图像",
+      "actual_result": "One or more expected evidence snippets were not extracted: PDF 第 1 页的图像.",
+      "verification_status": "REVIEW_REQUIRED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-011",
+      "document_id": "doc-006",
+      "document_name": "06_supplier_quality_review.docx",
+      "question": "2025 年 8 月来料一次检验合格率是多少？",
+      "question_type": "metric_with_period",
+      "expected_answer": "99.1%",
+      "evidence_text": [
+        {
+          "document_id": "doc-006",
+          "evidence_text": "2025 年 8 月来料一次检验合格率为 99.1%。",
+          "evidence_location": "DOCX 第 2 段"
+        }
+      ],
+      "evidence_location": [
+        "DOCX 第 2 段"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "返回月份与指标值",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-012",
+      "document_id": "doc-006",
+      "document_name": "06_supplier_quality_review.docx",
+      "question": "8 月退货批次比 7 月少多少？",
+      "question_type": "comparison",
+      "expected_answer": "少 2 批",
+      "evidence_text": [
+        {
+          "document_id": "doc-006",
+          "evidence_text": "同月退货批次为 7 批，较 7 月减少 2 批。",
+          "evidence_location": "DOCX 第 3 段"
+        }
+      ],
+      "evidence_location": [
+        "DOCX 第 3 段"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "保留比较基准和单位",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-013",
+      "document_id": "doc-007",
+      "document_name": "07_regional_sales_table.docx",
+      "question": "华东区 2025 年销售收入是多少？",
+      "question_type": "table_metric",
+      "expected_answer": "42.6 百万元",
+      "evidence_text": [
+        {
+          "document_id": "doc-007",
+          "evidence_text": "2025 年华东区销售收入为 42.6 百万元。",
+          "evidence_location": "DOCX 第 2 段"
+        }
+      ],
+      "evidence_location": [
+        "DOCX 第 2 段"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "答案以可核验段落为准；不依赖表格关系推断",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "REVIEW_REQUIRED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-014",
+      "document_id": "doc-007",
+      "document_name": "07_regional_sales_table.docx",
+      "question": "华南区的 2025 年收入是多少？",
+      "question_type": "table_row_context",
+      "expected_answer": "31.8 百万元；当前 parser 只保留扁平单元格文本",
+      "evidence_text": [
+        {
+          "document_id": "doc-007",
+          "evidence_text": "31.8",
+          "evidence_location": "DOCX 表格第 3 行"
+        }
+      ],
+      "evidence_location": [
+        "DOCX 表格第 3 行"
+      ],
+      "answerability": "answerable_with_structure_limit",
+      "expected_behavior": "原文值存在，但行列关联需要人工核对",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "REVIEW_REQUIRED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-015",
+      "document_id": "doc-008",
+      "document_name": "08_compliance_action_list.docx",
+      "question": "供应商补交校准证书的截止日期是什么？",
+      "question_type": "list_item",
+      "expected_answer": "10 月 12 日",
+      "evidence_text": [
+        {
+          "document_id": "doc-008",
+          "evidence_text": "供应商需在 10 月 12 日前补交校准证书。",
+          "evidence_location": "DOCX 第 2 段"
+        }
+      ],
+      "evidence_location": [
+        "DOCX 第 2 段"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "返回可执行日期与事项",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-016",
+      "document_id": "doc-008",
+      "document_name": "08_compliance_action_list.docx",
+      "question": "需要冻结的批次编号是什么？",
+      "question_type": "identifier_lookup",
+      "expected_answer": "QH-204",
+      "evidence_text": [
+        {
+          "document_id": "doc-008",
+          "evidence_text": "采购需冻结批次 QH-204。",
+          "evidence_location": "DOCX 第 4 段"
+        }
+      ],
+      "evidence_location": [
+        "DOCX 第 4 段"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "逐字保留批次编号",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-017",
+      "document_id": "doc-009",
+      "document_name": "09_rnd_budget_summary.docx",
+      "question": "轻量化连接器预计何时进入试产？",
+      "question_type": "date_retrieval",
+      "expected_answer": "2026 年 1 月",
+      "evidence_text": [
+        {
+          "document_id": "doc-009",
+          "evidence_text": "预计 2026 年 1 月进入试产。",
+          "evidence_location": "DOCX 第 2 段"
+        }
+      ],
+      "evidence_location": [
+        "DOCX 第 2 段"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "保留预计时间属性",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-018",
+      "document_id": "doc-009",
+      "document_name": "09_rnd_budget_summary.docx",
+      "question": "研发预算金额是多少？",
+      "question_type": "knowledge_gap",
+      "expected_answer": "文档未提供研发预算金额。",
+      "evidence_text": [
+        {
+          "document_id": "doc-009",
+          "evidence_text": "本摘要未列出研发预算金额。",
+          "evidence_location": "DOCX 第 3 段"
+        }
+      ],
+      "evidence_location": [
+        "DOCX 第 3 段"
+      ],
+      "answerability": "unanswerable",
+      "expected_behavior": "指出原文没有金额，不推断预算",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-019",
+      "document_id": "doc-010",
+      "document_name": "10_product_release_notes.md",
+      "question": "2025 年 9 月平均解析耗时是多少？",
+      "question_type": "metric_retrieval",
+      "expected_answer": "42 秒",
+      "evidence_text": [
+        {
+          "document_id": "doc-010",
+          "evidence_text": "2025 年 9 月平均解析耗时降至 42 秒。",
+          "evidence_location": "Markdown 第 7 行"
+        }
+      ],
+      "evidence_location": [
+        "Markdown 第 7 行"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "保留标题上下文与单位",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-020",
+      "document_id": "doc-010",
+      "document_name": "10_product_release_notes.md",
+      "question": "发布说明新增了哪个失败恢复入口？",
+      "question_type": "list_retrieval",
+      "expected_answer": "处理失败后的重试入口",
+      "evidence_text": [
+        {
+          "document_id": "doc-010",
+          "evidence_text": "新增处理失败后的重试入口",
+          "evidence_location": "Markdown 第 11 行"
+        }
+      ],
+      "evidence_location": [
+        "Markdown 第 11 行"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "从列表内容返回功能",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-021",
+      "document_id": "doc-011",
+      "document_name": "11_annual_metric_table.md",
+      "question": "2025 年营业收入是多少？",
+      "question_type": "table_metric_with_unit",
+      "expected_answer": "128.4 百万元",
+      "evidence_text": [
+        {
+          "document_id": "doc-011",
+          "evidence_text": "| 营业收入 | 117.6 | 128.4 |",
+          "evidence_location": "Markdown 表格第 7 行"
+        },
+        {
+          "document_id": "doc-011",
+          "evidence_text": "单位：百万元",
+          "evidence_location": "Markdown 第 3 行"
+        }
+      ],
+      "evidence_location": [
+        "Markdown 表格第 7 行",
+        "Markdown 第 3 行"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "年份、指标和单位一并核对",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-022",
+      "document_id": "doc-011",
+      "document_name": "11_annual_metric_table.md",
+      "question": "2025 年末研发人员有多少人？",
+      "question_type": "metric_retrieval",
+      "expected_answer": "92 人",
+      "evidence_text": [
+        {
+          "document_id": "doc-011",
+          "evidence_text": "2025 年末研发人员为 92 人。",
+          "evidence_location": "Markdown 第 10 行"
+        }
+      ],
+      "evidence_location": [
+        "Markdown 第 10 行"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "返回明确段落证据",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-023",
+      "document_id": "doc-012",
+      "document_name": "12_information_gap_policy.md",
+      "question": "2025 年付费企业客户数是多少？",
+      "question_type": "metric_retrieval",
+      "expected_answer": "1,240 家",
+      "evidence_text": [
+        {
+          "document_id": "doc-012",
+          "evidence_text": "2025 年付费企业客户数为 1,240 家。",
+          "evidence_location": "Markdown 第 5 行"
+        }
+      ],
+      "evidence_location": [
+        "Markdown 第 5 行"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "返回客户数量与单位",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-024",
+      "document_id": "doc-012",
+      "document_name": "12_information_gap_policy.md",
+      "question": "2025 年净收入留存率是多少？",
+      "question_type": "knowledge_gap",
+      "expected_answer": "文件未提供净收入留存率。",
+      "evidence_text": [
+        {
+          "document_id": "doc-012",
+          "evidence_text": "本文件未提供客户续费率或净收入留存率。",
+          "evidence_location": "Markdown 第 9 行"
+        }
+      ],
+      "evidence_location": [
+        "Markdown 第 9 行"
+      ],
+      "answerability": "unanswerable",
+      "expected_behavior": "明确缺少该指标证据",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-025",
+      "document_id": "doc-013",
+      "document_name": "13_warehouse_capacity.txt",
+      "question": "第 40 周日均处理量是多少？",
+      "question_type": "metric_with_period",
+      "expected_answer": "5,180 件",
+      "evidence_text": [
+        {
+          "document_id": "doc-013",
+          "evidence_text": "2025 年第 40 周，日均处理量为 5,180 件。",
+          "evidence_location": "TXT 第 3 行"
+        }
+      ],
+      "evidence_location": [
+        "TXT 第 3 行"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "保留周次和单位",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-026",
+      "document_id": "doc-013",
+      "document_name": "13_warehouse_capacity.txt",
+      "question": "夜班单独产量是多少？",
+      "question_type": "knowledge_gap",
+      "expected_answer": "周报未列出夜班单独产量。",
+      "evidence_text": [
+        {
+          "document_id": "doc-013",
+          "evidence_text": "周报未列出夜班单独产量。",
+          "evidence_location": "TXT 第 7 行"
+        }
+      ],
+      "evidence_location": [
+        "TXT 第 7 行"
+      ],
+      "answerability": "unanswerable",
+      "expected_behavior": "不要把日均总量当成夜班数据",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-027",
+      "document_id": "doc-014",
+      "document_name": "14_support_policy.txt",
+      "question": "一级故障的首次响应目标是多少？",
+      "question_type": "service_level",
+      "expected_answer": "30 分钟",
+      "evidence_text": [
+        {
+          "document_id": "doc-014",
+          "evidence_text": "一级故障首次响应目标为 30 分钟。",
+          "evidence_location": "TXT 第 3 行"
+        }
+      ],
+      "evidence_location": [
+        "TXT 第 3 行"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "按严重级别返回响应时限",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-028",
+      "document_id": "doc-014",
+      "document_name": "14_support_policy.txt",
+      "question": "二级问题的首次响应目标是多少？",
+      "question_type": "service_level",
+      "expected_answer": "4 小时",
+      "evidence_text": [
+        {
+          "document_id": "doc-014",
+          "evidence_text": "二级问题首次响应目标为 4 小时。",
+          "evidence_location": "TXT 第 5 行"
+        }
+      ],
+      "evidence_location": [
+        "TXT 第 5 行"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "不与一级故障时限混淆",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-029",
+      "document_id": "doc-015",
+      "document_name": "15_forecast_snapshot.txt",
+      "question": "一季度预计出货多少台？",
+      "question_type": "numeric_fact",
+      "expected_answer": "18,400 台",
+      "evidence_text": [
+        {
+          "document_id": "doc-015",
+          "evidence_text": "一季度预计出货 18,400 台。",
+          "evidence_location": "TXT 第 3 行"
+        }
+      ],
+      "evidence_location": [
+        "TXT 第 3 行"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "将预测值标为预计，不描述为实际出货",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-030",
+      "document_id": "doc-015",
+      "document_name": "15_forecast_snapshot.txt",
+      "question": "全年目标是否包含海外经销商订单？",
+      "question_type": "scope_boundary",
+      "expected_answer": "不包含海外经销商订单。",
+      "evidence_text": [
+        {
+          "document_id": "doc-015",
+          "evidence_text": "该预测不包含海外经销商订单。",
+          "evidence_location": "TXT 第 7 行"
+        }
+      ],
+      "evidence_location": [
+        "TXT 第 7 行"
+      ],
+      "answerability": "answerable",
+      "expected_behavior": "保留预测口径限制",
+      "actual_result": "Expected evidence text is present in parser output; retrieval and answer generation were not run.",
+      "verification_status": "PARSER_EVIDENCE_PRESENT_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-031",
+      "document_id": "doc-016",
+      "document_name": "16_revenue_by_region.xlsx",
+      "question": "华东区 2025 年收入是多少？",
+      "question_type": "spreadsheet_table",
+      "expected_answer": "42.6 百万元",
+      "evidence_text": [
+        {
+          "document_id": "doc-016",
+          "evidence_text": "华东区 2025 年收入为 42.6 百万元。",
+          "evidence_location": "XLSX 收入工作表第 2 行"
+        }
+      ],
+      "evidence_location": [
+        "XLSX 收入工作表第 2 行"
+      ],
+      "answerability": "answerable_in_source_format",
+      "expected_behavior": "当前版本应拒绝 XLSX，并提示导出为支持格式",
+      "actual_result": "The parser rejected this format; the question was not passed to retrieval or answer generation.",
+      "verification_status": "UNSUPPORTED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-032",
+      "document_id": "doc-016",
+      "document_name": "16_revenue_by_region.xlsx",
+      "question": "华南区 2025 年收入是多少？",
+      "question_type": "spreadsheet_table",
+      "expected_answer": "31.8 百万元",
+      "evidence_text": [
+        {
+          "document_id": "doc-016",
+          "evidence_text": "华南区 2025 年收入为 31.8 百万元。",
+          "evidence_location": "XLSX 收入工作表第 3 行"
+        }
+      ],
+      "evidence_location": [
+        "XLSX 收入工作表第 3 行"
+      ],
+      "answerability": "answerable_in_source_format",
+      "expected_behavior": "拒绝不支持格式，不伪造已检索答案",
+      "actual_result": "The parser rejected this format; the question was not passed to retrieval or answer generation.",
+      "verification_status": "UNSUPPORTED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-033",
+      "document_id": "doc-017",
+      "document_name": "17_risk_register.xlsx",
+      "question": "扫描件识别缺失风险等级是什么？",
+      "question_type": "spreadsheet_record",
+      "expected_answer": "高",
+      "evidence_text": [
+        {
+          "document_id": "doc-017",
+          "evidence_text": "扫描件识别缺失风险等级为高，措施为接入 OCR 前人工复核。",
+          "evidence_location": "XLSX 风险工作表第 3 行"
+        }
+      ],
+      "evidence_location": [
+        "XLSX 风险工作表第 3 行"
+      ],
+      "answerability": "answerable_in_source_format",
+      "expected_behavior": "当前版本拒绝 XLSX；要求转成支持格式",
+      "actual_result": "The parser rejected this format; the question was not passed to retrieval or answer generation.",
+      "verification_status": "UNSUPPORTED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-034",
+      "document_id": "doc-017",
+      "document_name": "17_risk_register.xlsx",
+      "question": "扫描件识别风险的处理措施是什么？",
+      "question_type": "spreadsheet_record",
+      "expected_answer": "接入 OCR 前人工复核",
+      "evidence_text": [
+        {
+          "document_id": "doc-017",
+          "evidence_text": "扫描件识别缺失风险等级为高，措施为接入 OCR 前人工复核。",
+          "evidence_location": "XLSX 风险工作表第 3 行"
+        }
+      ],
+      "evidence_location": [
+        "XLSX 风险工作表第 3 行"
+      ],
+      "answerability": "answerable_in_source_format",
+      "expected_behavior": "拒绝不支持格式，不将工作簿内容当成已解析证据",
+      "actual_result": "The parser rejected this format; the question was not passed to retrieval or answer generation.",
+      "verification_status": "UNSUPPORTED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-035",
+      "document_id": "doc-018",
+      "document_name": "18_quarterly_strategy.pptx",
+      "question": "第四季度产品计划中的重试成功率目标是多少？",
+      "question_type": "slide_fact",
+      "expected_answer": "85%",
+      "evidence_text": [
+        {
+          "document_id": "doc-018",
+          "evidence_text": "重试成功率目标：85%",
+          "evidence_location": "PPTX 第 1 页"
+        }
+      ],
+      "evidence_location": [
+        "PPTX 第 1 页"
+      ],
+      "answerability": "answerable_in_source_format",
+      "expected_behavior": "当前版本明确拒绝 PPTX",
+      "actual_result": "The parser rejected this format; the question was not passed to retrieval or answer generation.",
+      "verification_status": "UNSUPPORTED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-036",
+      "document_id": "doc-018",
+      "document_name": "18_quarterly_strategy.pptx",
+      "question": "计划如何衡量恢复时间？",
+      "question_type": "slide_fact",
+      "expected_answer": "观察处理失败到重新进入队列的时间",
+      "evidence_text": [
+        {
+          "document_id": "doc-018",
+          "evidence_text": "观察处理失败到重新进入队列的时间",
+          "evidence_location": "PPTX 第 2 页"
+        }
+      ],
+      "evidence_location": [
+        "PPTX 第 2 页"
+      ],
+      "answerability": "answerable_in_source_format",
+      "expected_behavior": "提示导出为 PDF 或复制文本后再上传",
+      "actual_result": "The parser rejected this format; the question was not passed to retrieval or answer generation.",
+      "verification_status": "UNSUPPORTED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-037",
+      "document_id": "doc-019",
+      "document_name": "19_capacity_review.pptx",
+      "question": "日均处理量是多少？",
+      "question_type": "slide_metric",
+      "expected_answer": "5,180 件",
+      "evidence_text": [
+        {
+          "document_id": "doc-019",
+          "evidence_text": "日均处理量：5,180 件",
+          "evidence_location": "PPTX 第 1 页"
+        }
+      ],
+      "evidence_location": [
+        "PPTX 第 1 页"
+      ],
+      "answerability": "answerable_in_source_format",
+      "expected_behavior": "当前版本拒绝 PPTX，不进入问答",
+      "actual_result": "The parser rejected this format; the question was not passed to retrieval or answer generation.",
+      "verification_status": "UNSUPPORTED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-038",
+      "document_id": "doc-019",
+      "document_name": "19_capacity_review.pptx",
+      "question": "扫描页指标的处理方式是什么？",
+      "question_type": "slide_process",
+      "expected_answer": "进入人工核对队列",
+      "evidence_text": [
+        {
+          "document_id": "doc-019",
+          "evidence_text": "扫描页指标进入人工核对队列",
+          "evidence_location": "PPTX 第 2 页"
+        }
+      ],
+      "evidence_location": [
+        "PPTX 第 2 页"
+      ],
+      "answerability": "answerable_in_source_format",
+      "expected_behavior": "不给出基于未解析幻灯片的回答",
+      "actual_result": "The parser rejected this format; the question was not passed to retrieval or answer generation.",
+      "verification_status": "UNSUPPORTED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-039",
+      "document_id": "doc-020",
+      "document_name": "20_factory_quality_chart.png",
+      "question": "图表显示 2025 年 8 月的一次检验合格率是多少？",
+      "question_type": "image_chart_metric",
+      "expected_answer": "99.1%（图片 OCR 未支持）",
+      "evidence_text": [
+        {
+          "document_id": "doc-020",
+          "evidence_text": "2025 年 8 月：99.1%",
+          "evidence_location": "PNG 图像"
+        }
+      ],
+      "evidence_location": [
+        "PNG 图像"
+      ],
+      "answerability": "answerable_in_source_format",
+      "expected_behavior": "明确提示图片格式未支持，要求 OCR 或手动录入",
+      "actual_result": "The parser rejected this format; the question was not passed to retrieval or answer generation.",
+      "verification_status": "UNSUPPORTED_RAG_NOT_EXECUTED"
+    },
+    {
+      "case_id": "case-040",
+      "document_id": "doc-020",
+      "document_name": "20_factory_quality_chart.png",
+      "question": "7 月到 8 月的合格率变化是多少？",
+      "question_type": "image_chart_comparison",
+      "expected_answer": "上升 0.7 个百分点（图片 OCR 未支持）",
+      "evidence_text": [
+        {
+          "document_id": "doc-020",
+          "evidence_text": "2025 年 7 月：98.4%",
+          "evidence_location": "PNG 图像"
+        },
+        {
+          "document_id": "doc-020",
+          "evidence_text": "2025 年 8 月：99.1%",
+          "evidence_location": "PNG 图像"
+        }
+      ],
+      "evidence_location": [
+        "PNG 图像",
+        "PNG 图像"
+      ],
+      "answerability": "answerable_in_source_format",
+      "expected_behavior": "在当前版本不得声称读懂图表",
+      "actual_result": "The parser rejected this format; the question was not passed to retrieval or answer generation.",
+      "verification_status": "UNSUPPORTED_RAG_NOT_EXECUTED"
+    }
+  ]
+}

@@ -1,0 +1,481 @@
+{
+  "schema_version": "1.0.0",
+  "mode": "prepare-v3",
+  "acceptance_version": "3.0.0",
+  "acceptance_v2_sha256": null,
+  "acceptance_v3_sha256": "daf5197a5d68baa49b636798c3b32d9fe3afa602060988053867a9d78a25faac",
+  "generated_at": "2026-10-23T19:58:54.265Z",
+  "execution_boundary": "Local parser and in-memory vector store only; no Supabase, Storage, auth, database, or business API calls.",
+  "real_model_calls_executed": false,
+  "corpus": {
+    "fixture_count": 20,
+    "question_count": 40,
+    "manifest_sha256": "ab1b8325408a0fa0fd8490b04fd0aaaf8d9a62e7170a3b2f5ecd5527441d9f06",
+    "corpus_spec_sha256": "7443bd05600f32514632016027fbfd325b14b58e2964d6a43013797daed0d861",
+    "documents": [
+      {
+        "document_id": "doc-001",
+        "file_name": "01_qingyu_annual_summary.pdf",
+        "sha256": "7224da2bb6a5b171fcdde14b797766b5508c3e1781edfb62251a5dbcff0bbab9",
+        "parser": {
+          "name": "pdf-parse",
+          "version": "2.4.5"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 282,
+        "chunk_count": 2,
+        "qa_eligible_chunk_count": 2,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 56,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-002",
+        "file_name": "02_qingyu_kpi_detail.pdf",
+        "sha256": "0fc34e0f55232b7a1d4a2328809e8348783d0d68a2d1319e682af5adda3be3bc",
+        "parser": {
+          "name": "pdf-parse",
+          "version": "2.4.5"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 132,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 33,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-003",
+        "file_name": "03_yunhai_mixed_scan_appendix.pdf",
+        "sha256": "18a571af9aa22c12bd24b5909c7779eecf2abafa0d6357dbec3d6a4c44789635",
+        "parser": {
+          "name": "pdf-parse",
+          "version": "2.4.5"
+        },
+        "status": "PASS",
+        "warning_count": 1,
+        "warnings": [
+          {
+            "code": "OCR_VISUAL_REVIEW_REQUIRED",
+            "severity": "notice",
+            "location": "Page 2",
+            "message": "OCR was applied with average raw word confidence 95%. Handwritten content is not supported."
+          }
+        ],
+        "extracted_char_count": 181,
+        "chunk_count": 3,
+        "qa_eligible_chunk_count": 3,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 43,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-004",
+        "file_name": "04_board_capacity_minutes.pdf",
+        "sha256": "969139753ae49106f01c024708f30772189a4420149ce5b0d075f00be5af1d93",
+        "parser": {
+          "name": "pdf-parse",
+          "version": "2.4.5"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 245,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 49,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-005",
+        "file_name": "05_scanned_only_inspection.pdf",
+        "sha256": "75cd7aceb9f0c1d87621c055819c9d4f02f77a3d6f3f44066f419aa28e7b06c1",
+        "parser": {
+          "name": "pdf-parse",
+          "version": "2.4.5"
+        },
+        "status": "PASS",
+        "warning_count": 1,
+        "warnings": [
+          {
+            "code": "OCR_VISUAL_REVIEW_REQUIRED",
+            "severity": "notice",
+            "location": "Page 1",
+            "message": "OCR was applied with average raw word confidence 90%. Handwritten content is not supported."
+          }
+        ],
+        "extracted_char_count": 39,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 21,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-006",
+        "file_name": "06_supplier_quality_review.docx",
+        "sha256": "0752f0bd3784f0a6d8a5b6c2971b66b0c9bcb3b9340cf9cd4c3a328392b9947e",
+        "parser": {
+          "name": "docx",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 60,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 47,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-007",
+        "file_name": "07_regional_sales_table.docx",
+        "sha256": "36c931f7ea6236028127f937bf5bdd62e2b0f95dc1696760edcdbc6f46bf81e9",
+        "parser": {
+          "name": "docx",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 204,
+        "chunk_count": 2,
+        "qa_eligible_chunk_count": 2,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 124,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-008",
+        "file_name": "08_compliance_action_list.docx",
+        "sha256": "e46de15b5a08c5f60e8e3b8c87c453753e711680c58e1f2c1c8e13abbc716e4f",
+        "parser": {
+          "name": "docx",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 80,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 59,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-009",
+        "file_name": "09_rnd_budget_summary.docx",
+        "sha256": "43214b64463d9ac7163ad1c3cf67d19d2bab31e718f5bd53d4c7c1e1116f9b83",
+        "parser": {
+          "name": "docx",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 57,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 51,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-010",
+        "file_name": "10_product_release_notes.md",
+        "sha256": "a65e0f378efb85e2de2844434cbc13a48e835d970b37680809d26be076190206",
+        "parser": {
+          "name": "markdown",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 124,
+        "chunk_count": 3,
+        "qa_eligible_chunk_count": 3,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 80,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-011",
+        "file_name": "11_annual_metric_table.md",
+        "sha256": "d9d62ed01a567bd23cd678706dde5ad3d4b56a8df4b63a856f458e1e5c5a1ec9",
+        "parser": {
+          "name": "markdown",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 137,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 82,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-012",
+        "file_name": "12_information_gap_policy.md",
+        "sha256": "a1e3626a1256669938c93f429e023e167d53e4afb699d31957ae9f5b35223adf",
+        "parser": {
+          "name": "markdown",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 73,
+        "chunk_count": 3,
+        "qa_eligible_chunk_count": 3,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 66,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-013",
+        "file_name": "13_warehouse_capacity.txt",
+        "sha256": "bd7254ff07dde3b2a2b09fe36c4a864abac689fc06e2ec987b419d4b4f6b32e6",
+        "parser": {
+          "name": "plain-text",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 69,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 51,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-014",
+        "file_name": "14_support_policy.txt",
+        "sha256": "dc95d40fe8d467f2aa817e6956fc7d3ff0f8b00ff616ebcea39d2216c56cb3e8",
+        "parser": {
+          "name": "plain-text",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 71,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 52,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-015",
+        "file_name": "15_forecast_snapshot.txt",
+        "sha256": "9fe25b7710b2e45d61bbbb752ac062f9cb1c731a5ab6a3258913b6df15efcad8",
+        "parser": {
+          "name": "plain-text",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 0,
+        "warnings": [],
+        "extracted_char_count": 64,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 47,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-016",
+        "file_name": "16_revenue_by_region.xlsx",
+        "sha256": "1273046454912602f4ff814385c5b45f2c5489a9c8f99df43861b88514dfaab9",
+        "parser": {
+          "name": "xlsx",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 1,
+        "warnings": [
+          {
+            "code": "XLSX_MERGED_CELLS_PRESENT",
+            "message": "Merged cells are retained through their anchor value; verify data meaning.",
+            "severity": "notice",
+            "location": "Sheet 数据"
+          }
+        ],
+        "extracted_char_count": 189,
+        "chunk_count": 2,
+        "qa_eligible_chunk_count": 2,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 126,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-017",
+        "file_name": "17_risk_register.xlsx",
+        "sha256": "1d16a089141c420ad84e9127a5e7068684ab8f442a72aa73a1f0faf1a0e86d4f",
+        "parser": {
+          "name": "xlsx",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 1,
+        "warnings": [
+          {
+            "code": "XLSX_MERGED_CELLS_PRESENT",
+            "message": "Merged cells are retained through their anchor value; verify data meaning.",
+            "severity": "notice",
+            "location": "Sheet 数据"
+          }
+        ],
+        "extracted_char_count": 177,
+        "chunk_count": 2,
+        "qa_eligible_chunk_count": 2,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 123,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-018",
+        "file_name": "18_quarterly_strategy.pptx",
+        "sha256": "7a10f63d99410f02fc6a93c2d4cd37bf683d0a6a7bc66916643ad776504b2ff1",
+        "parser": {
+          "name": "pptx",
+          "version": "1.0.0"
+        },
+        "status": "PARTIAL",
+        "warning_count": 2,
+        "warnings": [
+          {
+            "code": "PPTX_CHART_CACHE_USED",
+            "message": "Chart series values were extracted from embedded data, but chart labels and units must be verified before question answering.",
+            "severity": "review_required",
+            "location": "Slide 1"
+          },
+          {
+            "code": "PPTX_CHART_CACHE_USED",
+            "message": "Chart series values were extracted from embedded data, but chart labels and units must be verified before question answering.",
+            "severity": "review_required",
+            "location": "Slide 2"
+          }
+        ],
+        "extracted_char_count": 237,
+        "chunk_count": 6,
+        "qa_eligible_chunk_count": 2,
+        "excluded_chunk_indexes": [
+          0,
+          2,
+          3,
+          5
+        ],
+        "chunk_tokens_estimate": 140,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-019",
+        "file_name": "19_capacity_review.pptx",
+        "sha256": "c6158a5324993f70081e796cacbd78e51201132e0bfa59c00aade09613f9020c",
+        "parser": {
+          "name": "pptx",
+          "version": "1.0.0"
+        },
+        "status": "PARTIAL",
+        "warning_count": 2,
+        "warnings": [
+          {
+            "code": "PPTX_CHART_CACHE_USED",
+            "message": "Chart series values were extracted from embedded data, but chart labels and units must be verified before question answering.",
+            "severity": "review_required",
+            "location": "Slide 1"
+          },
+          {
+            "code": "PPTX_CHART_CACHE_USED",
+            "message": "Chart series values were extracted from embedded data, but chart labels and units must be verified before question answering.",
+            "severity": "review_required",
+            "location": "Slide 2"
+          }
+        ],
+        "extracted_char_count": 242,
+        "chunk_count": 6,
+        "qa_eligible_chunk_count": 2,
+        "excluded_chunk_indexes": [
+          0,
+          2,
+          3,
+          5
+        ],
+        "chunk_tokens_estimate": 126,
+        "qa_eligible": true
+      },
+      {
+        "document_id": "doc-020",
+        "file_name": "20_factory_quality_chart.png",
+        "sha256": "919f2b894c8964e95c361d913c7ae7c202bb3cf0450fa7729567a140b2e9de7f",
+        "parser": {
+          "name": "image-ocr",
+          "version": "1.0.0"
+        },
+        "status": "PASS",
+        "warning_count": 1,
+        "warnings": [
+          {
+            "code": "OCR_VISUAL_REVIEW_REQUIRED",
+            "severity": "notice",
+            "location": "Image page 1",
+            "message": "OCR was applied with average raw word confidence 95%. Handwritten content is not supported."
+          }
+        ],
+        "extracted_char_count": 58,
+        "chunk_count": 1,
+        "qa_eligible_chunk_count": 1,
+        "excluded_chunk_indexes": [],
+        "chunk_tokens_estimate": 29,
+        "qa_eligible": true
+      }
+    ],
+    "parser_status_counts": {
+      "PASS": 18,
+      "PARTIAL": 2
+    },
+    "total_chunks": 40,
+    "qa_eligible_chunks": 32
+  },
+  "configured_model_identity": {
+    "embedding_provider": "dashscope",
+    "embedding_model": "text-embedding-v2",
+    "embedding_dimensions": 1536,
+    "generation_provider": "deepseek",
+    "generation_model": "deepseek-flash"
+  },
+  "cost_estimate": {
+    "chunk_count": 32,
+    "document_embedding_tokens_estimate": 1297,
+    "query_embedding_tokens_estimate": 584,
+    "query_embedding_vector_upper_bound": 52,
+    "embedding_request_upper_bound": 42,
+    "document_embedding_request_upper_bound": 2,
+    "query_embedding_request_upper_bound": 40,
+    "deepseek_generation_request_upper_bound": 40,
+    "deepseek_input_tokens_upper_bound": 160000,
+    "deepseek_output_tokens_upper_bound": 20480,
+    "dashscope_price_cny_per_1k_tokens": 0.0007,
+    "dashscope_estimated_upper_bound_cny": 0.001317,
+    "deepseek_peak_price_usd_per_1m_input_tokens": 0.3,
+    "deepseek_peak_price_usd_per_1m_output_tokens": 1.2,
+    "deepseek_estimated_peak_upper_bound_usd": 0.072576,
+    "pricing_note": "Uses full list rates, DeepSeek peak rates, no free quota, and a 4,000-token input/512-token output cap per case."
+  },
+  "unresolved_product_boundary": "Only chunks without applicable review-required warnings enter retrieval. Omitted content remains unavailable until verified; cases requiring it may fail their original criteria."
+}

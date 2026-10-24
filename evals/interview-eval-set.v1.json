@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "set_id": "novera-interview-v1",
+  "purpose": "面试版真实 RAG 代表性评测集",
+  "automated_case_ids": [
+    "qa-activation-definition",
+    "summary-q2-retention",
+    "analysis-early-retention-decline",
+    "compare-permissions-integrations",
+    "qa-support-s1-response",
+    "gap-july-2026-arr",
+    "gap-retention-causal-effect"
+  ],
+  "cases": [
+    {
+      "id": "qa-activation-definition",
+      "execution": "automated",
+      "source_format": "markdown",
+      "question_type": "single_document",
+      "expected_outcome": "supported"
+    },
+    {
+      "id": "summary-q2-retention",
+      "execution": "automated",
+      "source_format": "markdown",
+      "question_type": "single_document",
+      "expected_outcome": "supported"
+    },
+    {
+      "id": "analysis-early-retention-decline",
+      "execution": "automated",
+      "source_format": "markdown",
+      "question_type": "cross_document",
+      "expected_outcome": "supported"
+    },
+    {
+      "id": "compare-permissions-integrations",
+      "execution": "automated",
+      "source_format": "markdown",
+      "question_type": "cross_document",
+      "expected_outcome": "supported"
+    },
+    {
+      "id": "qa-support-s1-response",
+      "execution": "automated",
+      "source_format": "markdown",
+      "question_type": "single_document",
+      "expected_outcome": "supported"
+    },
+    {
+      "id": "gap-july-2026-arr",
+      "execution": "automated",
+      "source_format": "markdown",
+      "question_type": "refusal",
+      "expected_outcome": "insufficient_evidence"
+    },
+    {
+      "id": "gap-retention-causal-effect",
+      "execution": "automated",
+      "source_format": "markdown",
+      "question_type": "refusal",
+      "expected_outcome": "insufficient_evidence"
+    },
+    {
+      "id": "manual-pdf-72-hour-events",
+      "execution": "manual",
+      "source_format": "pdf",
+      "question_type": "single_document",
+      "question": "超过 72 小时到达的事件如何处理？",
+      "expected_outcome": "supported",
+      "acceptance": "回答应说明超过 72 小时进入人工复核队列，并提供 PDF 页码或证据片段。"
+    }
+  ]
+}

@@ -72,7 +72,7 @@ export class SupabaseWorkspaceReader implements WorkspaceReader {
     const [documentsResult, conversationsResult, insightsResult] = await Promise.all([
       this.client
         .from("documents")
-        .select("id,display_name,file_extension,file_size_bytes,status,progress_pct,chunk_count,uploaded_at,created_at,updated_at")
+        .select("id,display_name,file_extension,file_size_bytes,status,progress_pct,chunk_count,metadata,error_code,error_message,uploaded_at,created_at,updated_at")
         .eq("knowledge_base_id", knowledgeBaseId)
         .is("deleted_at", null)
         .order("updated_at", { ascending: false })

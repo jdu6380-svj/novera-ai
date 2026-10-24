@@ -74,17 +74,19 @@ class FakeEmbeddingProvider implements EmbeddingProvider {
   readonly model = "text-embedding-3-small";
   readonly modelVersion = "text-embedding-3-small";
   readonly dimensions = EMBEDDING_DIMENSION;
+  readonly embeddedInputs: string[][] = [];
 
   constructor(private readonly batchOverride?: Partial<EmbeddingBatch>) {}
 
-  async embed(): Promise<EmbeddingBatch> {
+  async embed(inputs: readonly string[]): Promise<EmbeddingBatch> {
+    this.embeddedInputs.push([...inputs]);
     return {
       provider: this.provider,
       model: this.model,
       modelVersion: this.modelVersion,
       dimensions: this.dimensions,
       embeddedAt: NOW,
-      vectors: [vector()],
+      vectors: inputs.map(() => vector()),
       usageTokens: 4,
       ...this.batchOverride,
     };
@@ -103,9 +105,10 @@ class FakeRepository implements RetrievalRepository {
 describe("RetrieverService", () => {
   it("embeds a normalized query and returns evidence-ready top-k chunks", async () => {
     const repository = new FakeRepository();
+    const embeddingProvider = new FakeEmbeddingProvider();
     const service = new RetrieverService(
       repository,
-      new FakeEmbeddingProvider(),
+      embeddingProvider,
       config,
     );
 
@@ -137,6 +140,37 @@ describe("RetrieverService", () => {
       },
     });
     expect(result).not.toHaveProperty("queryEmbedding");
+    expect(embeddingProvider.embeddedInputs).toEqual([["为什么 用户流失增加?"]]);
+  });
+
+  it("adds generic bilingual retrieval terms without changing the user-facing query", async () => {
+    const repository = new FakeRepository();
+    const embeddingProvider = new FakeEmbeddingProvider();
+    const result = await new RetrieverService(repository, embeddingProvider, config).retrieve({
+      query: "青屿精工 2025 年准时交付率是多少？",
+      knowledgeBaseId: KNOWLEDGE_BASE_ID,
+    });
+
+    expect(embeddingProvider.embeddedInputs[0]).toEqual([
+      "青屿精工 2025 年准时交付率是多少?",
+      "on-time delivery rate",
+    ]);
+    expect(repository.matchChunks).toHaveBeenCalledTimes(2);
+    expect(result.query).toBe("青屿精工 2025 年准时交付率是多少?");
+    expect(result.embedding.queryExpansionTerms).toEqual(["on-time delivery rate"]);
+    expect(result.embedding.embeddingVariants).toBe(2);
+  });
+
+  it("adds a year-grain English variant for annual metric queries", async () => {
+    const repository = new FakeRepository();
+    const embeddingProvider = new FakeEmbeddingProvider();
+    const result = await new RetrieverService(repository, embeddingProvider, config).retrieve({
+      query: "2025 年一次检验合格率是多少？",
+      knowledgeBaseId: KNOWLEDGE_BASE_ID,
+    });
+
+    expect(embeddingProvider.embeddedInputs[0]).toContain("annual first-pass yield");
+    expect(result.embedding.queryExpansionTerms).toContain("annual first-pass yield");
   });
 
   it("honors bounded request-level retrieval controls", async () => {
@@ -157,6 +191,66 @@ describe("RetrieverService", () => {
     expect(repository.matchChunks).toHaveBeenCalledWith(
       expect.objectContaining({ topK: 4, similarityThreshold: 0.6 }),
     );
+  });
+
+  it("excludes legacy READY chunks whose source metadata contains review-required extraction warnings", async () => {
+    const repository = new FakeRepository();
+    repository.matchChunks.mockResolvedValueOnce([
+      {
+        ...chunk(),
+        chunkId: "blocked-chunk",
+        documentId: "blocked-document",
+        documentMetadata: {
+          processing: {
+            normalizedMetadata: {
+              extracted: {
+                extractionWarnings: [{
+                  code: "PAGE_HAS_NO_EXTRACTABLE_TEXT",
+                  pageNumber: 2,
+                  severity: "review_required",
+                  message: "This page has no extractable text.",
+                }],
+              },
+            },
+          },
+        },
+      },
+      { ...chunk(), chunkId: "eligible-chunk" },
+    ]);
+    const service = new RetrieverService(repository, new FakeEmbeddingProvider(), config);
+
+    const result = await service.retrieve({ query: "capacity", knowledgeBaseId: KNOWLEDGE_BASE_ID });
+
+    expect(result.chunks).toEqual([expect.objectContaining({ chunkId: "eligible-chunk", rank: 1 })]);
+    expect(result.chunks.some((item) => item.chunkId === "blocked-chunk")).toBe(false);
+  });
+
+  it("admits only explicitly cleared chunks from a partial READY document", async () => {
+    const repository = new FakeRepository();
+    const documentMetadata = {
+      processing: {
+        normalizedMetadata: {
+          extracted: {
+            extractionWarnings: [{
+              code: "OCR_LOW_CONFIDENCE",
+              pageNumber: 2,
+              severity: "review_required",
+              message: "Review the scan.",
+            }],
+          },
+        },
+      },
+    };
+    repository.matchChunks.mockResolvedValueOnce([
+      { ...chunk(), chunkId: "old", documentMetadata },
+      { ...chunk(), chunkId: "excluded", metadata: { qaEligibility: { status: "review_required" } }, documentMetadata },
+      { ...chunk(), chunkId: "cleared", metadata: { qaEligibility: { status: "eligible" } }, documentMetadata },
+    ]);
+
+    const result = await new RetrieverService(repository, new FakeEmbeddingProvider(), config)
+      .retrieve({ query: "capacity", knowledgeBaseId: KNOWLEDGE_BASE_ID });
+
+    expect(result.chunks.map((item) => item.chunkId)).toEqual(["cleared"]);
   });
 
   it.each([

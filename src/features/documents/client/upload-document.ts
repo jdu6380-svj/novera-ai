@@ -52,6 +52,22 @@ function documentMimeType(file: File): string {
     return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
   }
 
+  if (extension === "xlsx") {
+    return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  }
+
+  if (extension === "pptx") {
+    return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+  }
+
+  if (extension === "png") {
+    return "image/png";
+  }
+
+  if (extension === "jpg" || extension === "jpeg") {
+    return "image/jpeg";
+  }
+
   return file.type || "text/plain";
 }
 

@@ -1,0 +1,20 @@
+{"kind":"deck","id":"pr/sdkv54","name":"Deck"}
+{"kind":"layout","id":"ly/03qd0n29","editable":false,"name":"Master","type":"master"}
+{"kind":"layout","id":"ly/pgj6hg3q","editable":false,"name":"Title Slide","type":"title","placeholders":[{"name":"title","type":"title"},{"name":"subtitle","type":"subtitle"}]}
+{"kind":"layout","id":"ly/q9sva1sf","editable":false,"name":"Section Header","type":"sectionHeader","placeholders":[{"name":"title","type":"title"}]}
+{"kind":"layout","id":"ly/8byp8r29","editable":false,"name":"Title and Body","type":"tx","placeholders":[{"name":"title","type":"title"},{"name":"body","type":"body"}]}
+{"kind":"layout","id":"ly/7yh0nqxw","editable":false,"name":"Title and Two Column","type":"twoColTx","placeholders":[{"name":"title","type":"title"},{"name":"Left column","type":"body"},{"name":"Right column","type":"body"}]}
+{"kind":"layout","id":"ly/qdw3ahgn","editable":false,"name":"Title and One Column","type":"tx","placeholders":[{"name":"title","type":"title"},{"name":"body","type":"body"}]}
+{"kind":"layout","id":"ly/u507qx4v","editable":false,"name":"Blank","type":"blank"}
+{"kind":"slide","id":"sl/ymn4jn","slideIndex":0,"layout":{"id":"ly/u507qx4v","name":"Blank"},"title":"产能复盘","textShapes":3,"backgroundColor":"rgba(248,250,252,1)"}
+{"kind":"textbox","id":"sh/69kr2147","slideIndex":0,"position":{"left":72,"top":62,"width":1060,"height":62},"text":"产能复盘","geometry":"rect","lineWidth":0,"style":{"fontSize":34,"typeface":"Arial","color":"#1D2939","bold":true,"alignment":"left"}}
+{"kind":"textbox","id":"sh/tcbqxwny","slideIndex":0,"position":{"left":88,"top":168,"width":520,"height":300},"text":"日均处理量：5,180 件\n设计能力：5,600 件","geometry":"rect","lineWidth":0,"style":{"fontSize":22,"typeface":"Arial","color":"#344054","alignment":"left"}}
+{"kind":"textbox","id":"sh/vet8z654","slideIndex":0,"position":{"left":88,"top":620,"width":600,"height":30},"text":"Synthetic test document. Values are fictional.","geometry":"rect","lineWidth":0,"style":{"fontSize":14,"typeface":"Arial","color":"#667085","alignment":"left"}}
+{"kind":"chart","id":"ch/kjyt4r2x","slideIndex":0,"position":{"left":720,"top":168,"width":420,"height":280},"name":"","chartType":"bar"}
+{"kind":"notes","id":"nt/ymn4jn","slideIndex":0,"text":""}
+{"kind":"slide","id":"sl/7lf8c7","slideIndex":1,"layout":{"id":"ly/u507qx4v","name":"Blank"},"title":"下一步","textShapes":3,"backgroundColor":"rgba(248,250,252,1)"}
+{"kind":"textbox","id":"sh/nutw3al0","slideIndex":1,"position":{"left":72,"top":62,"width":1060,"height":62},"text":"下一步","geometry":"rect","lineWidth":0,"style":{"fontSize":34,"typeface":"Arial","color":"#1D2939","bold":true,"alignment":"left"}}
+{"kind":"textbox","id":"sh/ofmxcfml","slideIndex":1,"position":{"left":88,"top":168,"width":520,"height":300},"text":"增加周末抽检\n扫描页指标进入人工核对队列","geometry":"rect","lineWidth":0,"style":{"fontSize":22,"typeface":"Arial","color":"#344054","alignment":"left"}}
+{"kind":"textbox","id":"sh/ah4fep4r","slideIndex":1,"position":{"left":88,"top":620,"width":600,"height":30},"text":"Synthetic test document. Values are fictional.","geometry":"rect","lineWidth":0,"style":{"fontSize":14,"typeface":"Arial","color":"#667085","alignment":"left"}}
+{"kind":"chart","id":"ch/pwve94j6","slideIndex":1,"position":{"left":720,"top":168,"width":420,"height":280},"name":"","chartType":"bar"}
+{"kind":"notes","id":"nt/7lf8c7","slideIndex":1,"text":""}

@@ -21,6 +21,16 @@ describe("Phase 5 workspace API mapping", () => {
           size: "18 KB",
           chunks: 8,
           progress: 100,
+          quality: "review_required",
+          warnings: [{
+            code: "PAGE_HAS_NO_EXTRACTABLE_TEXT",
+            message: "A page needs review.",
+            severity: "review_required",
+            location: "Page 2",
+            remediation: "Upload an OCR-processed PDF.",
+          }],
+          qa_eligible: false,
+          remediation: "Upload an OCR-processed PDF.",
         },
       ],
       qa_runs: [],
@@ -41,7 +51,13 @@ describe("Phase 5 workspace API mapping", () => {
     });
 
     expect(result.knowledgeBaseName).toBe("Product knowledge");
-    expect(result.documents[0]).toMatchObject({ type: "MD", chunks: 8 });
+    expect(result.documents[0]).toMatchObject({
+      type: "MD",
+      chunks: 8,
+      quality: "review_required",
+      qaEligible: false,
+      warnings: [{ location: "Page 2", severity: "review_required" }],
+    });
     expect(result.answer.runId).toBe("");
     expect(result.dataMode).toBe("live");
   });

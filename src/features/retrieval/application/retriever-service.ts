@@ -6,7 +6,9 @@ import {
 import { RetrievalError } from "@/features/retrieval/application/retrieval-error";
 import type { RetrieverConfig } from "@/features/retrieval/application/retriever-config";
 import type { RetrievedChunk } from "@/features/retrieval/domain/retrieval";
+import { reviewRequiredExtractionWarnings } from "@/features/knowledge-processing/content/extraction-warnings";
 import type { EmbeddingProvider } from "@/providers";
+import { expandBilingualRetrievalQuery } from "@/features/retrieval/application/retrieval-query-expansion";
 
 export interface RetrieveKnowledgeInput {
   query: string;
@@ -23,6 +25,8 @@ export interface QueryEmbeddingAudit {
   dimensions: number;
   embeddedAt: ISODateTime;
   usageTokens: number | null;
+  embeddingVariants?: number;
+  queryExpansionTerms?: string[];
 }
 
 export interface RetrieveKnowledgeResult {
@@ -54,6 +58,7 @@ export class RetrieverService {
 
   async retrieve(input: RetrieveKnowledgeInput): Promise<RetrieveKnowledgeResult> {
     const query = normalizeQuery(input.query);
+    const expansion = expandBilingualRetrievalQuery(query);
     const topK = input.topK ?? this.config.defaultTopK;
     const similarityThreshold =
       input.similarityThreshold ?? this.config.defaultSimilarityThreshold;
@@ -70,7 +75,7 @@ export class RetrieverService {
     let batch;
 
     try {
-      batch = await this.embeddingProvider.embed([query]);
+      batch = await this.embeddingProvider.embed(expansion.embeddingQueries);
     } catch (error) {
       throw new RetrievalError(
         "The user query could not be embedded.",
@@ -81,13 +86,12 @@ export class RetrieverService {
       );
     }
 
-    const queryEmbedding = batch.vectors[0];
-
     if (
-      batch.vectors.length !== 1 ||
-      !queryEmbedding ||
-      batch.dimensions !== this.embeddingProvider.dimensions ||
-      queryEmbedding.length !== this.embeddingProvider.dimensions
+      batch.vectors.length !== expansion.embeddingQueries.length ||
+      batch.vectors.some((vector) =>
+        !vector || vector.length !== this.embeddingProvider.dimensions,
+      ) ||
+      batch.dimensions !== this.embeddingProvider.dimensions
     ) {
       throw new RetrievalError(
         "The query embedding response did not match the configured vector contract.",
@@ -95,7 +99,7 @@ export class RetrieverService {
         502,
         {
           expected_dimensions: this.embeddingProvider.dimensions,
-          received_dimensions: queryEmbedding?.length ?? null,
+          received_dimensions: batch.vectors[0]?.length ?? null,
           received_vector_count: batch.vectors.length,
         },
       );
@@ -104,13 +108,32 @@ export class RetrieverService {
     let chunks: RetrievedChunk[];
 
     try {
-      chunks = await this.repository.matchChunks({
-        queryEmbedding,
-        knowledgeBaseId: input.knowledgeBaseId,
-        topK,
-        similarityThreshold,
-        documentIds,
-      });
+      const results = await Promise.all(batch.vectors.map((queryEmbedding) =>
+        this.repository.matchChunks({
+          queryEmbedding,
+          knowledgeBaseId: input.knowledgeBaseId,
+          topK,
+          similarityThreshold,
+          documentIds,
+        }),
+      ));
+      const bestByChunkId = new Map<string, RetrievedChunk>();
+      for (const result of results) {
+        for (const chunk of result) {
+          const previous = bestByChunkId.get(chunk.chunkId);
+          if (!previous || chunk.similarityScore > previous.similarityScore) {
+            bestByChunkId.set(chunk.chunkId, chunk);
+          }
+        }
+      }
+      chunks = [...bestByChunkId.values()]
+        .sort((left, right) =>
+          right.similarityScore - left.similarityScore ||
+          left.documentId.localeCompare(right.documentId) ||
+          left.chunkIndex - right.chunkIndex,
+        )
+        .slice(0, topK)
+        .map((chunk, index) => ({ ...chunk, rank: index + 1 }));
     } catch (error) {
       const details =
         error instanceof RetrievalRepositoryError
@@ -126,11 +149,24 @@ export class RetrieverService {
       );
     }
 
+    const eligibleChunks = chunks
+      .filter((chunk) => {
+        const qaEligibility = chunk.metadata.qaEligibility;
+        if (qaEligibility && typeof qaEligibility === "object" && !Array.isArray(qaEligibility)) {
+          const status = qaEligibility.status;
+          if (status === "eligible") return true;
+          if (status === "review_required") return false;
+        }
+        return reviewRequiredExtractionWarnings(chunk.documentMetadata).length === 0;
+      })
+      .slice(0, topK)
+      .map((chunk, index) => ({ ...chunk, rank: index + 1 }));
+
     return {
       query,
       topK,
       similarityThreshold,
-      chunks,
+      chunks: eligibleChunks,
       embedding: {
         provider: batch.provider,
         model: batch.model,
@@ -138,6 +174,8 @@ export class RetrieverService {
         dimensions: batch.dimensions,
         embeddedAt: batch.embeddedAt,
         usageTokens: batch.usageTokens,
+        embeddingVariants: batch.vectors.length,
+        queryExpansionTerms: expansion.terms,
       },
     };
   }

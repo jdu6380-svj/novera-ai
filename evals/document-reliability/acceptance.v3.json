@@ -1,0 +1,812 @@
+{
+  "schema_version": "3.0.0",
+  "dataset_name": "Novera synthetic document reliability corpus - answer-completion acceptance v3",
+  "source_of_truth": {
+    "corpus_spec": "corpus-spec.v1.json",
+    "corpus_spec_sha256": "7443bd05600f32514632016027fbfd325b14b58e2964d6a43013797daed0d861",
+    "manifest": "manifest.v1.json",
+    "manifest_sha256": "ab1b8325408a0fa0fd8490b04fd0aaaf8d9a62e7170a3b2f5ecd5527441d9f06",
+    "actual_results": "actual-results.v1.json",
+    "actual_results_sha256": "e0708c251f20e5de91c609845f1b044487b7744d04a104d025a4cbaff2c6cdc8",
+    "original_full_run": "runs/2026-10-23T16-15-05-495Z-full.json",
+    "original_full_run_sha256": "d48fead962fd48817c9f0cd4c4d5f4a17431a97bce4811b6017b2da25191dd30",
+    "parent_acceptance_v2": "acceptance.v2.json",
+    "parent_acceptance_v2_sha256": "06daf0c82ff478c8dcc63644a6e69f8e2a9ec208de62f9be1803ef8d3e2a3482"
+  },
+  "principles": [
+    "The v1 corpus, manifest, expected answers, evidence, and thresholds remain immutable.",
+    "Every original case is mapped exactly once; expected answers continue to come from corpus-spec.v1.json.",
+    "Retrieval must search the whole eligible local corpus. The case-to-document mapping is for evaluation only and must never constrain retrieval.",
+    "A parser boundary is not a format rejection when the current parser demonstrably extracts the format.",
+    "Review-required OCR and chart-cache content is excluded from answer evidence; safe text or structured rows from the same file may remain eligible when source-scoped warnings allow it.",
+    "A case passes only when its answer or refusal, retrieved source evidence, location, Evidence verifier result, and applicable warning boundary all meet the profile below.",
+    "This independent v3 acceptance evaluates whether verified printed OCR can become cited answer evidence; it does not rewrite the v1 corpus or v2 safety result.",
+    "Printed OCR may enter the answer index only when it clears the parser confidence gate and, for low-confidence numeric tokens, independent crop recognition agrees; handwriting remains unsupported.",
+    "A source-supported question must return a grounded answer. For truly absent information, a cited explanation of the information gap is a successful answer."
+  ],
+  "standards": {
+    "grounded_answer": {
+      "decision": "answer",
+      "requirements": [
+        "The generated answer preserves the fixed v1 expected fact, including material value, unit, period, entity, and forecast/actual qualifier where applicable.",
+        "All v2 evidence assertions for the case are present in retrieved chunks from the mapped source documents.",
+        "Evidence quotes are members of retrieved chunks, source documents agree, and source locators resolve to the expected page, paragraph, line, slide, or table region.",
+        "Evidence verification reports zero invalid citations and zero unsupported claims."
+      ]
+    },
+    "information_gap_refusal": {
+      "decision": "refuse",
+      "requirements": [
+        "The answer explicitly says the requested information is absent or cannot be determined and does not invent the missing value.",
+        "The explicit gap statement is retrieved and cited from the original source.",
+        "Evidence verification reports zero invalid citations and zero unsupported claims."
+      ]
+    },
+    "review_required_ocr_refusal": {
+      "decision": "refuse",
+      "requirements": [
+        "The answer does not state or infer a value from OCR content that is flagged for visual review.",
+        "The answer identifies OCR or manual verification as the next step.",
+        "Review-required OCR chunks are excluded from retrieval evidence for the case.",
+        "Evidence verification reports zero invalid citations and zero unsupported claims."
+      ]
+    },
+    "xlsx_structured_row_answer": {
+      "decision": "answer",
+      "requirements": [
+        "The generated answer preserves the fixed v1 expected fact.",
+        "Retrieved evidence contains the configured row labels and values together with the corresponding worksheet headers.",
+        "The citation locator identifies the expected worksheet and physical row; a bare numeric cell is insufficient evidence.",
+        "Evidence verification reports zero invalid citations and zero unsupported claims."
+      ]
+    },
+    "docx_structured_row_answer": {
+      "decision": "answer",
+      "requirements": [
+        "The generated answer preserves the fixed v1 expected fact.",
+        "Retrieved evidence retains the DOCX table row and its header/value association.",
+        "The citation locator identifies the expected table row; a bare numeric cell is insufficient evidence.",
+        "Evidence verification reports zero invalid citations and zero unsupported claims."
+      ]
+    },
+    "pptx_slide_text_answer": {
+      "decision": "answer",
+      "requirements": [
+        "The generated answer preserves the fixed v1 expected fact from extracted slide text.",
+        "Retrieved evidence comes from a non-chart text block and resolves to the expected slide.",
+        "Chart-cache chunks and unverified chart-derived values are not used as evidence.",
+        "Evidence verification reports zero invalid citations and zero unsupported claims."
+      ]
+    },
+    "verified_ocr_answer": {
+      "decision": "answer",
+      "requirements": [
+        "The answer contains the fixed v1 fact or an explicitly mapped concise equivalent without the obsolete parser-limitation suffix.",
+        "Every configured OCR source assertion is present in a retrieved chunk from the mapped original document.",
+        "Retrieved evidence resolves to the expected PDF page or image page and contains OCR provenance; low-confidence numeric values require independently matching crop recognition, while chart values require date-linked numeric crop provenance.",
+        "Evidence quotes are members of retrieved chunks, source documents agree, and Evidence verification reports zero invalid citations and zero unsupported claims."
+      ]
+    }
+  },
+  "documents": [
+    {
+      "document_id": "doc-001",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_parse_with_pdf_page_locator",
+      "v3_profile": "complete_parse_with_pdf_page_locator"
+    },
+    {
+      "document_id": "doc-002",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_parse_with_pdf_page_locator",
+      "v3_profile": "complete_parse_with_pdf_page_locator"
+    },
+    {
+      "document_id": "doc-003",
+      "v1_capability": "supported_parser_with_review_boundary",
+      "v2_profile": "partial_parse_exclude_review_required_ocr_page",
+      "v3_profile": "complete_ocr_parse_with_verified_target_values"
+    },
+    {
+      "document_id": "doc-004",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_parse_with_pdf_page_locator",
+      "v3_profile": "complete_parse_with_pdf_page_locator"
+    },
+    {
+      "document_id": "doc-005",
+      "v1_capability": "supported_parser_with_ocr_limit",
+      "v2_profile": "ocr_parse_partial_exclude_review_required_content",
+      "v3_profile": "complete_ocr_parse_with_verified_target_values"
+    },
+    {
+      "document_id": "doc-006",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_docx_parse",
+      "v3_profile": "complete_docx_parse"
+    },
+    {
+      "document_id": "doc-007",
+      "v1_capability": "supported_parser",
+      "v2_profile": "structured_docx_table_rows_with_locators",
+      "v3_profile": "structured_docx_table_rows_with_locators"
+    },
+    {
+      "document_id": "doc-008",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_docx_parse",
+      "v3_profile": "complete_docx_parse"
+    },
+    {
+      "document_id": "doc-009",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_docx_parse_with_gap_statement",
+      "v3_profile": "complete_docx_parse_with_gap_statement"
+    },
+    {
+      "document_id": "doc-010",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_markdown_parse_with_heading_context",
+      "v3_profile": "complete_markdown_parse_with_heading_context"
+    },
+    {
+      "document_id": "doc-011",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_markdown_table_text_parse",
+      "v3_profile": "complete_markdown_table_text_parse"
+    },
+    {
+      "document_id": "doc-012",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_markdown_parse_with_gap_statement",
+      "v3_profile": "complete_markdown_parse_with_gap_statement"
+    },
+    {
+      "document_id": "doc-013",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_text_parse",
+      "v3_profile": "complete_text_parse"
+    },
+    {
+      "document_id": "doc-014",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_utf8_text_parse",
+      "v3_profile": "complete_utf8_text_parse"
+    },
+    {
+      "document_id": "doc-015",
+      "v1_capability": "supported_parser",
+      "v2_profile": "complete_text_parse_preserve_forecast_qualifier",
+      "v3_profile": "complete_text_parse_preserve_forecast_qualifier"
+    },
+    {
+      "document_id": "doc-016",
+      "v1_capability": "unsupported_parser",
+      "v2_profile": "xlsx_structured_rows_with_merge_notice",
+      "v3_profile": "xlsx_structured_rows_with_merge_notice"
+    },
+    {
+      "document_id": "doc-017",
+      "v1_capability": "unsupported_parser",
+      "v2_profile": "xlsx_structured_rows_with_merge_notice",
+      "v3_profile": "xlsx_structured_rows_with_merge_notice"
+    },
+    {
+      "document_id": "doc-018",
+      "v1_capability": "unsupported_parser",
+      "v2_profile": "pptx_slide_text_available_chart_cache_excluded",
+      "v3_profile": "pptx_slide_text_available_chart_cache_excluded"
+    },
+    {
+      "document_id": "doc-019",
+      "v1_capability": "unsupported_parser",
+      "v2_profile": "pptx_slide_text_available_chart_cache_excluded",
+      "v3_profile": "pptx_slide_text_available_chart_cache_excluded"
+    },
+    {
+      "document_id": "doc-020",
+      "v1_capability": "unsupported_parser",
+      "v2_profile": "ocr_partial_parse_exclude_review_required_content",
+      "v3_profile": "complete_ocr_parse_with_verified_target_values"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "case-001",
+      "document_id": "doc-001",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "PDF page 1"
+      ],
+      "answer_equivalents": [
+        "1.284 亿元",
+        "128.4 million yuan"
+      ],
+      "mapping_change": "Equivalent amount units are accepted only when the exact value is preserved",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-002",
+      "document_id": "doc-001",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quotes_all_sources",
+      "source_locators": [
+        "PDF page 1",
+        "PDF page 1"
+      ],
+      "answer_equivalents": [
+        "增加了 10.8 百万元",
+        "增加了 1,080 万元"
+      ],
+      "mapping_change": "Accept grammatical or exactly equivalent monetary-unit variants only; both independent source values and the calculated delta remain required",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-003",
+      "document_id": "doc-002",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "PDF page 1"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-004",
+      "document_id": "doc-002",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "PDF page 1"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-005",
+      "document_id": "doc-003",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "PDF page 1"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-006",
+      "document_id": "doc-003",
+      "v1_answerability": "requires_ocr_or_review",
+      "standard": "verified_ocr_answer",
+      "evidence_mode": "verified_ocr_quote_and_page_location",
+      "source_locators": [
+        "PDF page 2"
+      ],
+      "mapping_change": "The original source is now parsed by the implemented local OCR path and its exact target values were visually verified against the immutable fixture; v3 requires the actual cited OCR evidence and does not change the v1 expected fact.",
+      "v3_standard": "verified_ocr_answer",
+      "source_assertions": [
+        "2025 customer return rate was 1.6%."
+      ],
+      "answer_equivalents": [
+        "1.6%",
+        "退货率为1.6%"
+      ]
+    },
+    {
+      "case_id": "case-007",
+      "document_id": "doc-004",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "PDF page 1"
+      ],
+      "answer_equivalents": [
+        "5,400 单位",
+        "5,400 件",
+        "5,400 个单位"
+      ],
+      "mapping_change": "Unit wording variants are accepted only when the fixed quantity is preserved",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-008",
+      "document_id": "doc-004",
+      "v1_answerability": "unanswerable",
+      "standard": "information_gap_refusal",
+      "evidence_mode": "v1_gap_quote_and_location",
+      "source_locators": [
+        "PDF page 1"
+      ],
+      "answer_equivalents": [
+        "未给出设备采购预算金额"
+      ],
+      "mapping_change": "Accept the localized concise refusal only when the exact meeting-note gap quote, page, and verified citation are present",
+      "v3_standard": "information_gap_refusal"
+    },
+    {
+      "case_id": "case-009",
+      "document_id": "doc-005",
+      "v1_answerability": "requires_ocr_or_review",
+      "standard": "verified_ocr_answer",
+      "evidence_mode": "verified_ocr_quote_and_page_location",
+      "source_locators": [
+        "PDF page 1"
+      ],
+      "mapping_change": "The original source is now parsed by the implemented local OCR path and its exact target values were visually verified against the immutable fixture; v3 requires the actual cited OCR evidence and does not change the v1 expected fact.",
+      "v3_standard": "verified_ocr_answer",
+      "source_assertions": [
+        "库存准确率为98.7%"
+      ],
+      "answer_equivalents": [
+        "98.7%",
+        "库存准确率为98.7%"
+      ]
+    },
+    {
+      "case_id": "case-010",
+      "document_id": "doc-005",
+      "v1_answerability": "requires_ocr_or_review",
+      "standard": "verified_ocr_answer",
+      "evidence_mode": "verified_ocr_quote_and_page_location",
+      "source_locators": [
+        "PDF page 1"
+      ],
+      "mapping_change": "The original source is now parsed by the implemented local OCR path and its exact target values were visually verified against the immutable fixture; v3 requires the actual cited OCR evidence and does not change the v1 expected fact.",
+      "v3_standard": "verified_ocr_answer",
+      "source_assertions": [
+        "抽检样本为620件"
+      ],
+      "answer_equivalents": [
+        "620件",
+        "抽检样本为620件"
+      ]
+    },
+    {
+      "case_id": "case-011",
+      "document_id": "doc-006",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "DOCX paragraph 2 (source line 2)"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-012",
+      "document_id": "doc-006",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "DOCX paragraph 3 (source line 3)"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-013",
+      "document_id": "doc-007",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "DOCX paragraph 2 (source line 2)"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-014",
+      "document_id": "doc-007",
+      "v1_answerability": "answerable_with_structure_limit",
+      "standard": "docx_structured_row_answer",
+      "evidence_mode": "docx_table_row",
+      "source_assertions": [
+        "区域=华南",
+        "年份=2025",
+        "收入(百万元)=31.8"
+      ],
+      "source_locators": [
+        "DOCX Table 1 row 3 (source line 6)"
+      ],
+      "answer_equivalents": [
+        "31.8 百万元"
+      ],
+      "mapping_change": "Parser now preserves row/header associations, so the stale v1 parser limitation is replaced by the same row-scoped value and provenance requirement",
+      "v3_standard": "docx_structured_row_answer"
+    },
+    {
+      "case_id": "case-015",
+      "document_id": "doc-008",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "DOCX paragraph 2 (source line 2)"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-016",
+      "document_id": "doc-008",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "DOCX paragraph 4 (source line 4)"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-017",
+      "document_id": "doc-009",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "DOCX paragraph 2 (source line 2)"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-018",
+      "document_id": "doc-009",
+      "v1_answerability": "unanswerable",
+      "standard": "information_gap_refusal",
+      "evidence_mode": "v1_gap_quote_and_location",
+      "source_locators": [
+        "DOCX paragraph 3 (source line 3)"
+      ],
+      "answer_equivalents": [
+        "研发预算金额未在所提供的文档中披露"
+      ],
+      "mapping_change": "Accept a disclosure-status paraphrase only with the exact source statement, DOCX location, and verified citation",
+      "v3_standard": "information_gap_refusal"
+    },
+    {
+      "case_id": "case-019",
+      "document_id": "doc-010",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "Markdown line 9 (v1 expectation line 7 was stale after frontmatter)"
+      ],
+      "mapping_change": "Correct source line to the parser's actual Markdown line coordinate; expected content is unchanged",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-020",
+      "document_id": "doc-010",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "Markdown lines 13-14 (v1 expectation line 11 was stale after frontmatter)"
+      ],
+      "mapping_change": "Correct source line to the parser's actual Markdown line coordinate; expected content is unchanged",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-021",
+      "document_id": "doc-011",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quotes_with_unit_context",
+      "source_locators": [
+        "Markdown table line 7",
+        "Markdown line 3"
+      ],
+      "answer_equivalents": [
+        "1.284 亿元"
+      ],
+      "mapping_change": "Accept an exactly equivalent unit conversion only when the original table value and unit context are both retrieved",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-022",
+      "document_id": "doc-011",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "Markdown line 10"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-023",
+      "document_id": "doc-012",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "Markdown line 5"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-024",
+      "document_id": "doc-012",
+      "v1_answerability": "unanswerable",
+      "standard": "information_gap_refusal",
+      "evidence_mode": "v1_gap_quote_and_location",
+      "source_locators": [
+        "Markdown line 9"
+      ],
+      "answer_equivalents": [
+        "未披露净收入留存率"
+      ],
+      "mapping_change": "Accept a direct disclosure-status paraphrase only with the exact gap evidence and location",
+      "v3_standard": "information_gap_refusal"
+    },
+    {
+      "case_id": "case-025",
+      "document_id": "doc-013",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "TXT lines 3-4"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-026",
+      "document_id": "doc-013",
+      "v1_answerability": "unanswerable",
+      "standard": "information_gap_refusal",
+      "evidence_mode": "v1_gap_quote_and_location",
+      "source_locators": [
+        "TXT line 6 (v1 expectation line 7 was stale)"
+      ],
+      "answer_equivalents": [
+        "未报告夜班单独产量"
+      ],
+      "mapping_change": "Correct the source line and accept a direct Chinese paraphrase of the same explicit gap; the exact source quote and location remain required",
+      "v3_standard": "information_gap_refusal"
+    },
+    {
+      "case_id": "case-027",
+      "document_id": "doc-014",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "TXT line 3"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-028",
+      "document_id": "doc-014",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "TXT line 5"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-029",
+      "document_id": "doc-015",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "TXT lines 3-4"
+      ],
+      "mapping_change": "none",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-030",
+      "document_id": "doc-015",
+      "v1_answerability": "answerable",
+      "standard": "grounded_answer",
+      "evidence_mode": "v1_quote_and_location",
+      "source_locators": [
+        "TXT line 6 (v1 expectation line 7 was stale)"
+      ],
+      "answer_equivalents": [
+        "不含海外经销商订单"
+      ],
+      "mapping_change": "Correct the source line and accept the exact source's concise 不含 wording for the same exclusion",
+      "v3_standard": "grounded_answer"
+    },
+    {
+      "case_id": "case-031",
+      "document_id": "doc-016",
+      "v1_answerability": "answerable_in_source_format",
+      "standard": "xlsx_structured_row_answer",
+      "evidence_mode": "xlsx_header_and_row",
+      "source_assertions": [
+        "区域=华东",
+        "年份=2025",
+        "营业收入(百万元)=42.6"
+      ],
+      "source_locators": [
+        "Worksheet 数据, physical row 4"
+      ],
+      "mapping_change": "XLSX parser is now implemented; use the actual header-associated row and worksheet locator",
+      "v3_standard": "xlsx_structured_row_answer"
+    },
+    {
+      "case_id": "case-032",
+      "document_id": "doc-016",
+      "v1_answerability": "answerable_in_source_format",
+      "standard": "xlsx_structured_row_answer",
+      "evidence_mode": "xlsx_header_and_row",
+      "source_assertions": [
+        "区域=华南",
+        "年份=2025",
+        "营业收入(百万元)=31.8"
+      ],
+      "source_locators": [
+        "Worksheet 数据, physical row 5"
+      ],
+      "mapping_change": "XLSX parser is now implemented; use the actual header-associated row and worksheet locator",
+      "v3_standard": "xlsx_structured_row_answer"
+    },
+    {
+      "case_id": "case-033",
+      "document_id": "doc-017",
+      "v1_answerability": "answerable_in_source_format",
+      "standard": "xlsx_structured_row_answer",
+      "evidence_mode": "xlsx_header_and_row",
+      "source_assertions": [
+        "风险=扫描件识别缺失",
+        "优先级=高",
+        "措施=OCR 前人工复核"
+      ],
+      "source_locators": [
+        "Worksheet 数据, physical row 5"
+      ],
+      "mapping_change": "XLSX parser is now implemented; use the actual header-associated row and worksheet locator",
+      "v3_standard": "xlsx_structured_row_answer"
+    },
+    {
+      "case_id": "case-034",
+      "document_id": "doc-017",
+      "v1_answerability": "answerable_in_source_format",
+      "standard": "xlsx_structured_row_answer",
+      "evidence_mode": "xlsx_header_and_row",
+      "source_assertions": [
+        "风险=扫描件识别缺失",
+        "优先级=高",
+        "措施=OCR 前人工复核"
+      ],
+      "source_locators": [
+        "Worksheet 数据, physical row 5"
+      ],
+      "answer_equivalents": [
+        "OCR 前人工复核"
+      ],
+      "mapping_change": "XLSX parsing is implemented; the v1 expected phrase contains an unsupported extra verb, so v2 accepts the exact measure stored in the header-associated row",
+      "v3_standard": "xlsx_structured_row_answer"
+    },
+    {
+      "case_id": "case-035",
+      "document_id": "doc-018",
+      "v1_answerability": "answerable_in_source_format",
+      "standard": "pptx_slide_text_answer",
+      "evidence_mode": "non_chart_slide_text",
+      "source_assertions": [
+        "重试成功率目标:85%"
+      ],
+      "source_locators": [
+        "PPTX slide 1, non-chart text block"
+      ],
+      "mapping_change": "PPTX parser now extracts slide text; keep chart-cache data excluded and cite the independent text block",
+      "v3_standard": "pptx_slide_text_answer"
+    },
+    {
+      "case_id": "case-036",
+      "document_id": "doc-018",
+      "v1_answerability": "answerable_in_source_format",
+      "standard": "pptx_slide_text_answer",
+      "evidence_mode": "non_chart_slide_text",
+      "source_assertions": [
+        "观察处理失败到重新进入队列的时间"
+      ],
+      "source_locators": [
+        "PPTX slide 2, non-chart text block"
+      ],
+      "answer_equivalents": [
+        "观察从处理失败到重新进入队列的时间"
+      ],
+      "mapping_change": "PPTX parser now extracts slide text; keep chart-cache data excluded and cite the independent text block",
+      "v3_standard": "pptx_slide_text_answer"
+    },
+    {
+      "case_id": "case-037",
+      "document_id": "doc-019",
+      "v1_answerability": "answerable_in_source_format",
+      "standard": "pptx_slide_text_answer",
+      "evidence_mode": "non_chart_slide_text",
+      "source_assertions": [
+        "日均处理量:5,180 件"
+      ],
+      "source_locators": [
+        "PPTX slide 1, non-chart text block"
+      ],
+      "mapping_change": "PPTX parser now extracts slide text; keep chart-cache data excluded and cite the independent text block",
+      "v3_standard": "pptx_slide_text_answer"
+    },
+    {
+      "case_id": "case-038",
+      "document_id": "doc-019",
+      "v1_answerability": "answerable_in_source_format",
+      "standard": "pptx_slide_text_answer",
+      "evidence_mode": "non_chart_slide_text",
+      "source_assertions": [
+        "扫描页指标进入人工核对队列"
+      ],
+      "source_locators": [
+        "PPTX slide 2, non-chart text block"
+      ],
+      "mapping_change": "PPTX parser now extracts slide text; keep chart-cache data excluded and cite the independent text block",
+      "v3_standard": "pptx_slide_text_answer"
+    },
+    {
+      "case_id": "case-039",
+      "document_id": "doc-020",
+      "v1_answerability": "answerable_in_source_format",
+      "standard": "verified_ocr_answer",
+      "evidence_mode": "verified_ocr_quote_and_page_location",
+      "source_locators": [
+        "PNG image page 1"
+      ],
+      "mapping_change": "The original source is now parsed by the implemented local OCR path and its exact target values were visually verified against the immutable fixture; v3 requires the actual cited OCR evidence and does not change the v1 expected fact.",
+      "v3_standard": "verified_ocr_answer",
+      "source_assertions": [
+        "2025年8月：99.1%"
+      ],
+      "answer_equivalents": [
+        "99.1%",
+        "8月一次检验合格率为99.1%"
+      ]
+    },
+    {
+      "case_id": "case-040",
+      "document_id": "doc-020",
+      "v1_answerability": "answerable_in_source_format",
+      "standard": "verified_ocr_answer",
+      "evidence_mode": "verified_ocr_quote_and_page_location",
+      "source_locators": [
+        "PNG image page 1",
+        "PNG image page 1"
+      ],
+      "mapping_change": "The original source is now parsed by the implemented local OCR path and its exact target values were visually verified against the immutable fixture; v3 requires the actual cited OCR evidence and does not change the v1 expected fact.",
+      "v3_standard": "verified_ocr_answer",
+      "source_assertions": [
+        "2025年7月：98.4%",
+        "2025年8月：99.1%"
+      ],
+      "answer_equivalents": [
+        "上升0.7个百分点",
+        "上升了0.7个百分点",
+        "提高0.7个百分点"
+      ]
+    }
+  ]
+}

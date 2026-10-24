@@ -24,10 +24,10 @@ describe("getLanguageModelConfig", () => {
 
   it("defaults to the selected DeepSeek provider and current model", () => {
     expect(DEFAULT_LANGUAGE_MODEL_PROVIDER).toBe("deepseek");
-    expect(DEFAULT_LANGUAGE_MODEL).toBe("deepseek-chat");
+    expect(DEFAULT_LANGUAGE_MODEL).toBe("deepseek-flash");
     expect(getLanguageModelConfig({ DEEPSEEK_API_KEY: " test-key " })).toEqual({
       provider: "deepseek",
-      model: "deepseek-chat",
+      model: "deepseek-flash",
       promptVersion: DEFAULT_LANGUAGE_MODEL_PROMPT_VERSION,
       apiKey: "test-key",
       baseURL: DEFAULT_DEEPSEEK_BASE_URL,
@@ -78,7 +78,7 @@ describe("getLanguageModelConfig", () => {
       }),
     ).toMatchObject({
       provider: "deepseek",
-      model: "deepseek-chat",
+      model: "deepseek-flash",
       apiKey: "deepseek-secret",
       baseURL: DEFAULT_DEEPSEEK_BASE_URL,
     });

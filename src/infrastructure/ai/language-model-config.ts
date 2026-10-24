@@ -3,9 +3,8 @@ import "server-only";
 import { LanguageModelConfigurationError } from "./language-model-provider-error";
 
 export const DEFAULT_LANGUAGE_MODEL_PROVIDER = "deepseek";
-// DeepSeek's public OpenAI-compatible API exposes deepseek-chat and
-// deepseek-reasoner. Keep chat as the safe default for structured QA output.
-export const DEFAULT_LANGUAGE_MODEL = "deepseek-chat";
+// DeepSeek's current OpenAI-compatible API uses deepseek-flash for generation.
+export const DEFAULT_LANGUAGE_MODEL = "deepseek-flash";
 export const DEFAULT_LANGUAGE_MODEL_MAX_OUTPUT_TOKENS = 1_600;
 export const DEFAULT_LANGUAGE_MODEL_PROMPT_VERSION = "phase4-v1";
 export const DEFAULT_DEEPSEEK_BASE_URL = "https://api.deepseek.com";
@@ -27,16 +26,6 @@ export type OpenAILanguageModelConfig = LanguageModelConfig;
 
 function optionalString(value: string | undefined): string | undefined {
   return value?.trim() || undefined;
-}
-
-function normalizeLanguageModel(provider: string, model: string): string {
-  // Older deployments used the non-public `deepseek-flash` name. Treat it as
-  // the chat model so a stale Vercel variable cannot break every QA request.
-  if (provider.toLowerCase() === "deepseek" && model.toLowerCase() === "deepseek-flash") {
-    return "deepseek-chat";
-  }
-
-  return model;
 }
 
 function requiredString(name: string, value: string | undefined): string {
@@ -69,10 +58,7 @@ export function getLanguageModelIdentityConfig(
   const provider =
     optionalString(environment.LANGUAGE_MODEL_PROVIDER) ??
     DEFAULT_LANGUAGE_MODEL_PROVIDER;
-  const model = normalizeLanguageModel(
-    provider,
-    optionalString(environment.LANGUAGE_MODEL) ?? DEFAULT_LANGUAGE_MODEL,
-  );
+  const model = optionalString(environment.LANGUAGE_MODEL) ?? DEFAULT_LANGUAGE_MODEL;
 
   return {
     provider,

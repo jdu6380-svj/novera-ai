@@ -898,6 +898,8 @@ body {
 .phase75-file-md { background: #f1edff; color: #7855df; }
 .phase75-file-txt { background: #eaf6ff; color: #4385c9; }
 .phase75-file-docx { background: #eaf1ff; color: #4774d1; }
+.phase75-file-xlsx { background: #eaf6ef; color: #268052; }
+.phase75-file-pptx { background: #fff3e8; color: #c46b32; }
 
 .phase75-document-copy,
 .phase75-question-copy {
@@ -948,6 +950,7 @@ body {
 .phase75-document-status-good { background: var(--phase75-green-soft); color: #269a6d; }
 .phase75-document-status-progress { background: var(--phase75-violet-soft); color: var(--phase75-violet-deep); }
 .phase75-document-status-danger { background: var(--phase75-red-soft); color: var(--phase75-red); }
+.phase75-document-status-warn { background: #fff4df; color: #a15b12; }
 
 .phase75-row-chevron {
   width: 15px;
@@ -7468,7 +7471,7 @@ button:disabled {
 .phase75-managed-document {
   display: grid;
   min-height: 76px;
-  grid-template-columns: 38px minmax(140px, 1fr) 100px 190px auto;
+  grid-template-columns: 38px minmax(140px, 1fr) minmax(100px, 190px) 190px auto;
   align-items: center;
   gap: 14px;
   padding: 12px 22px;
@@ -7502,6 +7505,20 @@ button:disabled {
   margin-top: 4px;
   color: #92909d;
   font-size: 10px;
+}
+
+.phase75-managed-document-quality {
+  min-width: 0;
+}
+
+.phase75-managed-document > div > small,
+.phase75-managed-document-copy > small {
+  display: block;
+  max-width: 190px;
+  margin-top: 5px;
+  color: #a15b12;
+  font-size: 10px;
+  line-height: 1.45;
 }
 
 .phase75-managed-document-time {
@@ -7831,7 +7848,7 @@ button:disabled {
     padding: 13px 14px;
   }
 
-  .phase75-managed-document > .phase75-document-status {
+  .phase75-managed-document-quality {
     grid-column: 2;
     grid-row: 2;
     justify-self: start;
